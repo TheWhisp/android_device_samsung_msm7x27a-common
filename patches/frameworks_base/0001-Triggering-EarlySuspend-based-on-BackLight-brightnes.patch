@@ -1,0 +1,109 @@
+From 6ba3454c79ed408ef07e29880f502c581c0a83fc Mon Sep 17 00:00:00 2001
+From: Sravan Kumar Ambapuram <asravan@codeaurora.org>
+Date: Mon, 30 Jul 2012 15:35:17 -0700
+Subject: [PATCH] Triggering EarlySuspend based on BackLight brightness
+
+EarlySuspend is triggered currently based on just timeout. Due to this,
+backlight brightness is not coming down to zero.
+
+Allowing display turning off animation before Early suspend.
+
+This change passes display turning off information to
+animation call so that display off animation can be played
+before early suspend call.
+Reverted two and three changes in the below list with this patch.
+Changes introduced in previous patch were:
+1.Send early suspend call after display baclklight off
+2.All animations off once display goes to dim.
+3.Removed duration to turn off screen as i don't see this in ICS.
+
+My edits:
+PS1: Add a config option so it doesn't break non-qcom devies. Thanks to Arne for the idea
+PS2: Fix up logic
+
+Change-Id: I640ca93843bc15c7761ba2fb2b2188c8a092bb9c
+---
+ core/res/res/values/config.xml                     |    3 +++
+ core/res/res/values/public.xml                     |    3 +++
+ .../com/android/server/PowerManagerService.java    |   20 +++++++++++++++++---
+ 3 files changed, 23 insertions(+), 3 deletions(-)
+
+diff --git a/core/res/res/values/config.xml b/core/res/res/values/config.xml
+index 3bfbe28..a11759f 100755
+--- a/core/res/res/values/config.xml
++++ b/core/res/res/values/config.xml
+@@ -973,4 +973,7 @@
+ 
+     <!-- Boolean to enable Stylus gestures -->
+     <bool name="config_stylusGestures">false</bool>
++
++    <!-- Boolean to enable electron beam animation to be shown on Qualcomm devices -->
++    <bool name="config_qualcommElectronBeam">false</bool>
+ </resources>
+diff --git a/core/res/res/values/public.xml b/core/res/res/values/public.xml
+index 61f3b88..c3a5fc3 100644
+--- a/core/res/res/values/public.xml
++++ b/core/res/res/values/public.xml
+@@ -3941,4 +3941,7 @@
+ 
+   <!-- Stylus gestures -->
+   <java-symbol type="bool" name="config_stylusGestures" />
++
++  <!-- Qualcomm electron beam -->
++  <java-symbol type="bool" name="config_qualcommElectronBeam" />
+ </resources>
+diff --git a/services/java/com/android/server/PowerManagerService.java b/services/java/com/android/server/PowerManagerService.java
+index 588b9f3..70c24a7 100644
+--- a/services/java/com/android/server/PowerManagerService.java
++++ b/services/java/com/android/server/PowerManagerService.java
+@@ -179,6 +179,7 @@ public class PowerManagerService extends IPowerManager.Stub
+ 
+     // animate screen lights in PowerManager (as opposed to SurfaceFlinger)
+     boolean mAnimateScreenLights = true;
++    boolean mQualcommElectronBeam = false;
+ 
+     static final int ANIM_STEPS = 60; // nominal # of frames at 60Hz
+     // Slower animation for autobrightness changes
+@@ -682,6 +683,9 @@ public class PowerManagerService extends IPowerManager.Stub
+         mAnimateScreenLights = resources.getBoolean(
+                 com.android.internal.R.bool.config_animateScreenLights);
+ 
++        mQualcommElectronBeam = resources.getBoolean(
++                com.android.internal.R.bool.config_qualcommElectronBeam);
++
+         mUnplugTurnsOnScreen = resources.getBoolean(
+                 com.android.internal.R.bool.config_unplugTurnsOnScreen);
+ 
+@@ -2394,6 +2398,14 @@ public class PowerManagerService extends IPowerManager.Stub
+                     Message msg = mScreenBrightnessHandler
+                             .obtainMessage(ANIMATE_LIGHTS, mask, newValue);
+                     mScreenBrightnessHandler.sendMessageDelayed(msg, delay);
++                } else if(mQualcommElectronBeam) {
++                    final boolean doScreenAnimation = (mask & (SCREEN_BRIGHT_BIT | SCREEN_ON_BIT)) != 0;
++                    final boolean turnOff = currentValue == PowerManager.BRIGHTNESS_OFF;
++                    if (turnOff && doScreenAnimation) {
++                        // Cancel all pending animations since we're turning off
++                        mScreenBrightnessHandler.removeCallbacksAndMessages(null);
++                        screenOffFinishedAnimatingLocked(mScreenOffReason);
++                    }
+                 }
+             }
+         }
+@@ -2457,9 +2469,11 @@ public class PowerManagerService extends IPowerManager.Stub
+                     final boolean doScreenAnim = (mask & (SCREEN_BRIGHT_BIT | SCREEN_ON_BIT)) != 0;
+                     final boolean turningOff = endValue == PowerManager.BRIGHTNESS_OFF;
+                     if (turningOff && doScreenAnim) {
+-                        // Cancel all pending animations since we're turning off
+-                        mScreenBrightnessHandler.removeCallbacksAndMessages(null);
+-                        screenOffFinishedAnimatingLocked(mScreenOffReason);
++                        if (!mQualcommElectronBeam) {
++                            // Cancel all pending animations since we're turning off
++                             mScreenBrightnessHandler.removeCallbacksAndMessages(null);
++                             screenOffFinishedAnimatingLocked(mScreenOffReason);
++                        }
+                         duration = 200; // TODO: how long should this be?
+                     }
+                     if (doScreenAnim) {
+-- 
+1.7.9.5
+
