@@ -15,7 +15,7 @@
 
 intermediates := $(local-intermediates-dir)
 
-SRC := $(call my-dir)/$(addprefix vnd_, $(addsuffix .txt,$(basename $(TARGET_DEVICE))))
+SRC := $(call my-dir)/$(addprefix vnd_, $(addsuffix .txt,$(basename samsung)))
 GEN := $(intermediates)/vnd_buildcfg.h
 TOOL := $(TOP_DIR)external/bluetooth/bluedroid/tools/gen-buildcfg.sh
 
