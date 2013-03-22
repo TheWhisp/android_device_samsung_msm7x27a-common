@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#define LOG_TAG "lights"
+#define LOG_TAG "lights msm7k"
 
 #define LOG_NDEBUG 1
 

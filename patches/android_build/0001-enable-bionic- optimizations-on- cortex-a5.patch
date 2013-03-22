@@ -1,0 +1,25 @@
+From b8d82853fa8ca1667a708ca67a88dc0db0f4b0f7 Mon Sep 17 00:00:00 2001
+From: Konsta <konsta09@gmail.com>
+Date: Thu, 14 Mar 2013 17:34:28 +0200
+Subject: [PATCH] enable bionic optimizations on cortex-a5
+
+Change-Id: I7b687e0dabbb155fa426d89e84358504d22b93b9
+---
+ core/combo/arch/arm/armv7-a-neon.mk | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/core/combo/arch/arm/armv7-a-neon.mk b/core/combo/arch/arm/armv7-a-neon.mk
+index e43ff61..b68a669 100644
+--- a/core/combo/arch/arm/armv7-a-neon.mk
++++ b/core/combo/arch/arm/armv7-a-neon.mk
+@@ -19,3 +19,8 @@ ARCH_ARM_HAVE_NEON_UNALIGNED_ACCESS    := true
+ ARCH_ARM_NEON_MEMSET_DIVIDER           := 132
+ ARCH_ARM_NEON_MEMCPY_ALIGNMENT_DIVIDER := 224
+ endif
++ifeq ($(TARGET_ARCH_VARIANT_CPU), cortex-a5)
++ARCH_ARM_HAVE_NEON_UNALIGNED_ACCESS    := true
++ARCH_ARM_NEON_MEMSET_DIVIDER           := 132
++ARCH_ARM_NEON_MEMCPY_ALIGNMENT_DIVIDER := 224
++endif
+-- 
+1.8.1.5

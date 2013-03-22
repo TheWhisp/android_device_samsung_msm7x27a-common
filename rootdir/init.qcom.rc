@@ -18,27 +18,27 @@ on early-init
     export EXTERNAL_STORAGE /storage/sdcard0
     export SECONDARY_STORAGE /storage/sdcard1
 
-on emmc-fs
-    # Mount partitions
+on fs
+	# Mount partitions
 	mount_all /fstab.qcom
 
 on boot
 
-    chown bluetooth bluetooth /sys/module/bluetooth_power/parameters/power
-    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/type
-    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/state
-    chown bluetooth bluetooth /proc/bluetooth/sleep/proto
-    chown bluetooth bluetooth /proc/bcm/sleep/proto
+    chown bluetooth net_bt_stack /sys/module/bluetooth_power/parameters/power
+    chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/type
+    chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/state
+    chown bluetooth net_bt_stack /proc/bluetooth/sleep/proto
+    chown bluetooth net_bt_stack /proc/bcm/sleep/proto
     chown system system /sys/module/sco/parameters/disable_esco
-    chown bluetooth bluetooth /sys/module/hci_smd/parameters/hcismd_set
+    chown bluetooth net_bt_stack /sys/module/hci_smd/parameters/hcismd_set
     chmod 0660 /sys/module/bluetooth_power/parameters/power
     chmod 0660 /sys/module/hci_smd/parameters/hcismd_set
     chmod 0660 /sys/class/rfkill/rfkill0/state
     chmod 0660 /proc/bluetooth/sleep/proto
     chmod 0660 /proc/bcm/sleep/proto
-    chown bluetooth bluetooth /dev/ttyHS0
+    chown bluetooth net_bt_stack /dev/ttyHS0
     chmod 0660 /dev/ttyHS0
-    chown bluetooth bluetooth /sys/devices/platform/msm_serial_hs.0/clock
+    chown bluetooth net_bt_stack /sys/devices/platform/msm_serial_hs.0/clock
     chmod 0660 /sys/devices/platform/msm_serial_hs.0/clock
 
 	## Setup Wi-Fi
@@ -54,7 +54,7 @@ on boot
     chmod 0660 /data/hostapd/hostapd.conf
 
     ## Setup NFC
-    chmod 0600 /dev/pn544
+    chmod 0660 /dev/pn544
     chown nfc nfc /dev/pn544
     setprop ro.nfc.port I2C
 
@@ -90,21 +90,11 @@ on boot
     write /proc/sys/net/ipv6/conf/rmnet_sdio7/accept_ra 2
     write /proc/sys/vm/vfs_cache_pressure 100
 
-
     # Chown polling nodes as needed from UI running on system server
     chown system system /sys/devices/platform/msm_sdcc.1/polling
     chown system system /sys/devices/platform/msm_sdcc.2/polling
     chown system system /sys/devices/platform/msm_sdcc.3/polling
     chown system system /sys/devices/platform/msm_sdcc.4/polling
-
-	# Permissions for CyanogenMod IO Scheduler settings
-    chown system system /sys/block/mmcblk0/queue/scheduler
-    chmod 0664 /sys/block/mmcblk0/queue/scheduler
-
-    # Configure and enable KSM
-    write /sys/kernel/mm/ksm/pages_to_scan 600
-    write /sys/kernel/mm/ksm/sleep_millisecs 3000
-    write /sys/kernel/mm/ksm/run 1
 
 	# For qmuxd socket
     mkdir /data/radio 0770 radio radio
@@ -134,7 +124,7 @@ on boot
 
 on post-fs-data
 
-    mkdir /data/misc/bluetooth 0770 bluetooth bluetooth
+    mkdir /data/misc/bluetooth 0770 bluetooth net_bt_stack
 
     ## Create log system
     mkdir /data/log 0775 system log
@@ -148,7 +138,7 @@ service rmt_storage /system/bin/rmt_storage /dev/block/mmcblk0p10 /dev/block/mmc
     user root
     disabled
 
-on property:ro.emmc=1
+on property:ro.boot.emmc=true
     start rmt_storage
 
 on property:init.svc.bluetoothd=running
@@ -161,14 +151,14 @@ on property:init.svc.bluetoothd=stopped
 service hciattach /system/bin/sh /system/etc/init.qcom.bt.sh
     class main
     user bluetooth
-    group qcom_oncrpc bluetooth net_bt_admin
+    group qcom_oncrpc bluetooth net_bt_admin net_bt_stack
     disabled
     oneshot
 
 service abtfilt /system/bin/abtfilt -d -z -n -v -s -a -q
     class main
     user bluetooth
-    group system bluetooth net_bt_admin inet net_raw
+    group system bluetooth net_bt_admin inet net_raw net_bt_stack
     disabled
     oneshot 
 

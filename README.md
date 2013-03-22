@@ -1,4 +1,4 @@
-CyanogenMod 10 common device configuration for Samsung MSM7x27A devices
+CyanogenMod 10.1 common device configuration for Samsung MSM7x27A devices
 
 Curently supports:
 
@@ -7,4 +7,4 @@ Curently supports:
 
 Maintained by TheWhisp
 
-http://forum.xda-developers.com/showthread.php?t=2012939
+http://forum.xda-developers.com/showthread.php?t=2169122
