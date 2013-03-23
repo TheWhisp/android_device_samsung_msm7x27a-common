@@ -5,9 +5,9 @@ on early-init
     mount debugfs debugfs /sys/kernel/debug
 
 	## Setup storage
-	mkdir /storage 0050 system sdcard_r
-    mkdir /storage/sdcard0 0000 system system
-    mkdir /storage/sdcard1 0000 system system
+	mkdir /storage 0775 system sdcard_r
+    mkdir /storage/sdcard0 0775 system system
+    mkdir /storage/sdcard1 0775 system system
 
     ## Backwards compability
     symlink /storage/sdcard0 /mnt/sdcard
