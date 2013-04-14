@@ -17,3 +17,7 @@ cd external/bluetooth/bluez
 echo "Applying external/bluetooth/bluez patches..."
 git am $rootdirectory/device/samsung/msm7x27a-common/patches/external_bluetooth_bluez/*.patch
 cd $rootdirectory
+cd hardware/qcom/display
+echo "Applying hardware/qcom/display patches..."
+git am $rootdirectory/device/samsung/msm7x27a-common/patches/hardware_qcom_display/*.patch
+cd $rootdirectory
