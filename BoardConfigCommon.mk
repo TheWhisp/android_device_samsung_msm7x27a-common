@@ -15,67 +15,49 @@
 # BoardConfig.mk
 #
 
-# This variable is set first, so it can be overridden
-# by BoardConfigVendor.mk
-
-USE_CAMERA_STUB := false
-
-# Use the non-open-source parts, if they're present
--include vendor/samsung/msm7x27a-common/BoardConfigVendor.mk
-
 ## Kernel, bootloader etc.
 TARGET_NO_BOOTLOADER := true
 TARGET_NO_RADIOIMAGE := true
 BOARD_KERNEL_BASE := 0x00200000
 BOARD_KERNEL_PAGESIZE := 4096
 TARGET_KERNEL_SOURCE := kernel/samsung/msm7x27a
-TARGET_KERNEL_CUSTOM_TOOLCHAIN := arm-eabi-4.4.3
 
 ## Platform
 TARGET_ARCH := arm
 TARGET_ARCH_VARIANT := armv7-a-neon
+TARGET_ARCH_VARIANT_CPU := cortex-a5
 TARGET_BOARD_PLATFORM := msm7x27a
 TARGET_BOARD_PLATFORM_GPU := qcom-adreno200
 TARGET_CPU_ABI := armeabi-v7a
 TARGET_CPU_ABI2 := armeabi
-TARGET_CORTEX_CACHE_LINE_32 := true
-ARCH_ARM_HAVE_TLS_REGISTER := true
 TARGET_SPECIFIC_HEADER_PATH := device/samsung/msm7x27a-common/include
 
-TARGET_GLOBAL_CFLAGS += -mfpu=neon -mfloat-abi=softfp
-TARGET_GLOBAL_CPPFLAGS += -mfpu=neon -mfloat-abi=softfp
+TARGET_GLOBAL_CFLAGS += -mtune=cortex-a5 -mfpu=neon -mfloat-abi=softfp
+TARGET_GLOBAL_CPPFLAGS += -mtune=cortex-a5 -mfpu=neon -mfloat-abi=softfp
+
+## Bionic
+TARGET_CORTEX_CACHE_LINE_32 := true
+ARCH_ARM_HAVE_32_BYTE_CACHE_LINES := true
+ARCH_ARM_HAVE_TLS_REGISTER := true
+TARGET_USE_SPARROW_BIONIC_OPTIMIZATION := true
 
 ## Camera
+USE_CAMERA_STUB := false
 BOARD_NEEDS_MEMORYHEAPPMEM := true
-COMMON_GLOBAL_CFLAGS += -DICS_CAMERA_BLOB
+BOARD_USES_LEGACY_OVERLAY := true
+COMMON_GLOBAL_CFLAGS += -DSAMSUNG_CAMERA_QCOM
+COMMON_GLOBAL_CFLAGS += -DBINDER_COMPAT
 
 ## Webkit
 ENABLE_WEBGL := true
 TARGET_FORCE_CPU_UPLOAD := true
 
-## V8
-JS_ENGINE := v8
-HTTP := chrome
-
-## JIT
-WITH_JIT := true
-ENABLE_JSC_JIT := true
-
-## Graphics
+## Graphics, media
 USE_OPENGL_RENDERER := true
-TARGET_GRALLOC_USES_ASHMEM := true
 BOARD_EGL_CFG := device/samsung/msm7x27a-common/prebuilt/lib/egl/egl.cfg
-
-## QCOM hardware
 BOARD_USES_QCOM_HARDWARE := true
 BOARD_ADRENO_DECIDE_TEXTURE_TARGET := true
-BOARD_USES_QCOM_PMEM := true
-BOARD_USES_QCOM_LIBS := true
 COMMON_GLOBAL_CFLAGS += -DQCOM_HARDWARE -DQCOM_NO_SECURE_PLAYBACK -DQCOM_ICS_DECODERS
-
-## Other QCOM
-TARGET_AVOID_DRAW_TEXTURE_EXTENSION := true
-TARGET_USES_16BPPSURFACE_FOR_OPAQUE := true
 
 ## GPS
 BOARD_USES_QCOM_LIBRPC := true
@@ -119,11 +101,9 @@ TARGET_BOOTANIMATION_USE_RGB565 := true
 
 ## Use device specific modules
 TARGET_PROVIDES_LIBLIGHTS := true
-TARGET_PROVIDES_POWERHAL := true
 
 ## Recovery
-BOARD_CUSTOM_GRAPHICS := ../../../device/samsung/msm7x27a-common/recovery/graphics.c
-TARGET_RECOVERY_INITRC := device/samsung/msm7x27a-common/recovery/recovery.rc
+TARGET_RECOVERY_INITRC := device/samsung/msm7x27a-common/recovery/init.rc
 TARGET_RECOVERY_FSTAB := device/samsung/msm7x27a-common/recovery/recovery.fstab
 TARGET_USERIMAGES_USE_EXT4 := true
 BOARD_HAS_NO_SELECT_BUTTON := true

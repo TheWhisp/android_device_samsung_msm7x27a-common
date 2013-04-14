@@ -5,9 +5,9 @@ on early-init
     mount debugfs debugfs /sys/kernel/debug
 
 	## Setup storage
-	mkdir /storage 0050 system sdcard_r
-    mkdir /storage/sdcard0 0000 system system
-    mkdir /storage/sdcard1 0000 system system
+	mkdir /storage 0775 system sdcard_r
+    mkdir /storage/sdcard0 0775 system system
+    mkdir /storage/sdcard1 0775 system system
 
     ## Backwards compability
     symlink /storage/sdcard0 /mnt/sdcard
@@ -19,7 +19,7 @@ on early-init
     export SECONDARY_STORAGE /storage/sdcard1
 
 on emmc-fs
-    # Mount partitions
+	# Mount partitions
 	mount_all /fstab.qcom
 
 on boot
@@ -54,7 +54,7 @@ on boot
     chmod 0660 /data/hostapd/hostapd.conf
 
     ## Setup NFC
-    chmod 0600 /dev/pn544
+    chmod 0660 /dev/pn544
     chown nfc nfc /dev/pn544
     setprop ro.nfc.port I2C
 
@@ -90,21 +90,11 @@ on boot
     write /proc/sys/net/ipv6/conf/rmnet_sdio7/accept_ra 2
     write /proc/sys/vm/vfs_cache_pressure 100
 
-
     # Chown polling nodes as needed from UI running on system server
     chown system system /sys/devices/platform/msm_sdcc.1/polling
     chown system system /sys/devices/platform/msm_sdcc.2/polling
     chown system system /sys/devices/platform/msm_sdcc.3/polling
     chown system system /sys/devices/platform/msm_sdcc.4/polling
-
-	# Permissions for CyanogenMod IO Scheduler settings
-    chown system system /sys/block/mmcblk0/queue/scheduler
-    chmod 0664 /sys/block/mmcblk0/queue/scheduler
-
-    # Configure and enable KSM
-    write /sys/kernel/mm/ksm/pages_to_scan 600
-    write /sys/kernel/mm/ksm/sleep_millisecs 3000
-    write /sys/kernel/mm/ksm/run 1
 
 	# For qmuxd socket
     mkdir /data/radio 0770 radio radio
