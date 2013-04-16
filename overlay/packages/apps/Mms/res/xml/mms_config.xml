@@ -1,4 +1,0 @@
-<mms_config version="4">
-    <!-- User-Agent parameter used in MMS http request -->
-    <string name="userAgent">Samsung GT-S6500</string>
-</mms_config>

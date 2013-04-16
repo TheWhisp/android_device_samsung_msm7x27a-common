@@ -21,3 +21,7 @@ cd hardware/qcom/display
 echo "Applying hardware/qcom/display patches..."
 git am $rootdirectory/device/samsung/msm7x27a-common/patches/hardware_qcom_display/*.patch
 cd $rootdirectory
+cd hardware/qcom/audio
+echo "Applying hardware/qcom/audio patches..."
+git am $rootdirectory/device/samsung/msm7x27a-common/patches/hardware_qcom_audio/*.patch
+cd $rootdirectory
