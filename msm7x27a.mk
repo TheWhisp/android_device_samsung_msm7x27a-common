@@ -1,4 +1,4 @@
-# Copyright (C) 2012 The CyanogenMod Project
+# Copyright (C) 2013 The CyanogenMod Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -34,8 +34,12 @@ PRODUCT_PACKAGES += \
 
 ## Bluetooth
 PRODUCT_PACKAGES += \
+	bluetoothd \
+    libbluetoothd \
+    hcitool \
     hciconfig \
-    hcitool
+    hciattach \
+	javax.btobex
 
 ## Audio
 PRODUCT_PACKAGES += \
@@ -80,7 +84,13 @@ PRODUCT_COPY_FILES += \
 ## Bluetooth
 PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/prebuilt/etc/init.qcom.bt.sh:/system/etc/init.qcom.bt.sh \
-    system/bluetooth/data/main.le.conf:system/etc/bluetooth/main.conf
+    system/bluetooth/data/audio.conf:system/etc/bluetooth/audio.conf \
+    system/bluetooth/data/auto_pairing.conf:system/etc/bluetooth/auto_pairing.conf \
+    system/bluetooth/data/blacklist.conf:system/etc/bluetooth/blacklist.conf \
+    system/bluetooth/data/input.conf:system/etc/bluetooth/input.conf \
+    system/bluetooth/data/main.le.conf:system/etc/bluetooth/main.conf \
+    system/bluetooth/data/network.conf:system/etc/bluetooth/network.conf \
+	system/bluetooth/data/stack.conf:system/etc/bluetooth/stack.conf
 
 ## Network
 PRODUCT_COPY_FILES += \
@@ -119,6 +129,19 @@ PRODUCT_COPY_FILES += \
 ## Enable repeatable keys in CWM
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.cwm.enable_key_repeat=true
+
+## Stagefright properties
+PRODUCT_PROPERTY_OVERRIDES += \
+    media.stagefright.enable-player=true \
+    media.stagefright.enable-meta=false \
+    media.stagefright.enable-scan=true \
+    media.stagefright.enable-http=true \
+    media.stagefright.enable-aac=true \
+    media.stagefright.enable-qcp=true
+
+## Bluetooth
+PRODUCT_PROPERTY_OVERRIDES += \
+	ro.qc.bluetooth.stack=bluez
 
 ## This is an MDPI device
 PRODUCT_AAPT_CONFIG := normal mdpi
