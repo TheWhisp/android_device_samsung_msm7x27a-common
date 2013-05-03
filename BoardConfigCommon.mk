@@ -1,4 +1,4 @@
-# Copyright (C) 2012 The CyanogenMod Project
+# Copyright (C) 2013 The CyanogenMod Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,14 +15,6 @@
 # BoardConfig.mk
 #
 
-# This variable is set first, so it can be overridden
-# by BoardConfigVendor.mk
-
-USE_CAMERA_STUB := false
-
-# Use the non-open-source parts, if they're present
--include vendor/samsung/msm7x27a-common/BoardConfigVendor.mk
-
 ## Kernel, bootloader etc.
 TARGET_NO_BOOTLOADER := true
 TARGET_NO_RADIOIMAGE := true
@@ -38,17 +30,24 @@ TARGET_BOARD_PLATFORM := msm7x27a
 TARGET_BOARD_PLATFORM_GPU := qcom-adreno200
 TARGET_CPU_ABI := armeabi-v7a
 TARGET_CPU_ABI2 := armeabi
-TARGET_CORTEX_CACHE_LINE_32 := true
-ARCH_ARM_HAVE_TLS_REGISTER := true
-TARGET_USE_SPARROW_BIONIC_OPTIMIZATION := true
 TARGET_SPECIFIC_HEADER_PATH := device/samsung/msm7x27a-common/include
 
-TARGET_GLOBAL_CFLAGS += -mfpu=neon -mfloat-abi=softfp
-TARGET_GLOBAL_CPPFLAGS += -mfpu=neon -mfloat-abi=softfp
+TARGET_GLOBAL_CFLAGS += -mtune=cortex-a5 -mfpu=neon -mfloat-abi=softfp
+TARGET_GLOBAL_CPPFLAGS += -mtune=cortex-a5 -mfpu=neon -mfloat-abi=softfp
+
+## Bionic
+TARGET_CORTEX_CACHE_LINE_32 := true
+ARCH_ARM_HAVE_32_BYTE_CACHE_LINES := true
+ARCH_ARM_HAVE_TLS_REGISTER := true
+TARGET_USE_SPARROW_BIONIC_OPTIMIZATION := true
 
 ## Camera
+USE_CAMERA_STUB := false
 BOARD_NEEDS_MEMORYHEAPPMEM := true
-COMMON_GLOBAL_CFLAGS += -DICS_CAMERA_BLOB
+BOARD_USES_LEGACY_OVERLAY := true
+TARGET_DISABLE_ARM_PIE := true
+COMMON_GLOBAL_CFLAGS += -DSAMSUNG_CAMERA_QCOM
+COMMON_GLOBAL_CFLAGS += -DBINDER_COMPAT
 
 ## Webkit
 ENABLE_WEBGL := true
@@ -70,14 +69,13 @@ BOARD_VENDOR_QCOM_GPS_LOC_API_HARDWARE := msm7x27a
 BOARD_VENDOR_QCOM_GPS_LOC_API_AMSS_VERSION := 50000
 
 ## Bluetooth
-BOARD_HAVE_BLUETOOTH := true
+BOARD_HAVE_BLUETOOTH_BLUEZ := true
 
 ## Wi-Fi
 WPA_SUPPLICANT_VERSION := VER_0_8_X
 BOARD_WLAN_DEVICE := ath6kl
 BOARD_WPA_SUPPLICANT_DRIVER := WEXT
-BOARD_HOSTAPD_DRIVER := WEXT
-BOARD_HOSTAPD_PRIVATE_LIB := lib_driver_cmd_ath6kl
+BOARD_HOSTAPD_DRIVER := NL80211
 BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_ath6kl
 WIFI_DRIVER_MODULE_PATH := "/system/wifi/ar6000.ko"
 WIFI_DRIVER_MODULE_NAME := "ar6000"
@@ -142,8 +140,6 @@ BOARD_USERDATAIMAGE_PARTITION_SIZE := 979369984
 DEVICE_RESOLUTION := 320x480
 RECOVERY_GRAPHICS_USE_LINELENGTH := true
 TARGET_RECOVERY_PIXEL_FORMAT := "RGB_565"
-TW_BRIGHTNESS_PATH := /sys/class/leds/lcd-backlight/brightness
-TW_MAX_BRIGHTNESS := 255
 TW_DEFAULT_EXTERNAL_STORAGE := false
 TW_INTERNAL_STORAGE_PATH := "/emmc"
 TW_INTERNAL_STORAGE_MOUNT_POINT := "emmc"

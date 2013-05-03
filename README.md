@@ -9,5 +9,8 @@ Created and maintained by TheWhisp
 
 http://forum.xda-developers.com/showthread.php?t=2169122
 
-DO NOT EDIT. IF YOU CLONE OR FORK THE SOURCES AND THEN BUILD A ROM, DOESN'T MAKE YOU A MAINTER OF THIS CODE.
-HAVE SOME RESPECT FOR PEOPLE WHO BRICK THEIR DEVICES IN ORDER TO PROVIDE A WORKING ROM.
+Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0

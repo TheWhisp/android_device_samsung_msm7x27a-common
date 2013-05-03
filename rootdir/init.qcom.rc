@@ -24,21 +24,21 @@ on fs
 
 on boot
 
-    chown bluetooth net_bt_stack /sys/module/bluetooth_power/parameters/power
-    chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/type
-    chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/state
-    chown bluetooth net_bt_stack /proc/bluetooth/sleep/proto
-    chown bluetooth net_bt_stack /proc/bcm/sleep/proto
+    chown bluetooth bluetooth /sys/module/bluetooth_power/parameters/power
+    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/type
+    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/state
+    chown bluetooth bluetooth /proc/bluetooth/sleep/proto
+    chown bluetooth bluetooth /proc/bcm/sleep/proto
     chown system system /sys/module/sco/parameters/disable_esco
-    chown bluetooth net_bt_stack /sys/module/hci_smd/parameters/hcismd_set
+    chown bluetooth bluetooth /sys/module/hci_smd/parameters/hcismd_set
     chmod 0660 /sys/module/bluetooth_power/parameters/power
     chmod 0660 /sys/module/hci_smd/parameters/hcismd_set
     chmod 0660 /sys/class/rfkill/rfkill0/state
     chmod 0660 /proc/bluetooth/sleep/proto
     chmod 0660 /proc/bcm/sleep/proto
-    chown bluetooth net_bt_stack /dev/ttyHS0
+    chown bluetooth bluetooth /dev/ttyHS0
     chmod 0660 /dev/ttyHS0
-    chown bluetooth net_bt_stack /sys/devices/platform/msm_serial_hs.0/clock
+    chown bluetooth bluetooth /sys/devices/platform/msm_serial_hs.0/clock
     chmod 0660 /sys/devices/platform/msm_serial_hs.0/clock
 
 	## Setup Wi-Fi
@@ -124,7 +124,7 @@ on boot
 
 on post-fs-data
 
-    mkdir /data/misc/bluetooth 0770 bluetooth net_bt_stack
+    mkdir /data/misc/bluetooth 0770 bluetooth bluetooth
 
     ## Create log system
     mkdir /data/log 0775 system log
@@ -151,14 +151,14 @@ on property:init.svc.bluetoothd=stopped
 service hciattach /system/bin/sh /system/etc/init.qcom.bt.sh
     class main
     user bluetooth
-    group qcom_oncrpc bluetooth net_bt_admin net_bt_stack
+    group qcom_oncrpc bluetooth net_bt_admin
     disabled
     oneshot
 
 service abtfilt /system/bin/abtfilt -d -z -n -v -s -a -q
     class main
     user bluetooth
-    group system bluetooth net_bt_admin inet net_raw net_bt_stack
+    group system bluetooth net_bt_admin inet net_raw
     disabled
     oneshot 
 

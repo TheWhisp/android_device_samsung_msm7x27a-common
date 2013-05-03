@@ -14,7 +14,7 @@
 
 LOCAL_PATH := $(call my-dir)
 
-SAMSUNG_TARGETS := s6500 s6500d s7500
+SAMSUNG_TARGETS := jena jenad trebon
 
 ifneq ($(filter $(SAMSUNG_TARGETS),$(TARGET_DEVICE)),)
 include $(all-subdir-makefiles)
