@@ -52,8 +52,6 @@ PRODUCT_PACKAGES += \
     gps.msm7x27a \
     power.msm7x27a
 
-$(call inherit-product, build/target/product/full.mk) 
-
 ## Permissions
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml \
@@ -131,6 +129,7 @@ PRODUCT_LOCALES += mdpi
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=2
 PRODUCT_TAGS += dalvik.gc.type-precise
 
+$(call inherit-product, build/target/product/full.mk)
 $(call inherit-product, frameworks/native/build/phone-hdpi-512-dalvik-heap.mk)
 $(call inherit-product, vendor/samsung/msm7x27a-common/blobs.mk)
 $(call inherit-product, device/common/gps/gps_eu_supl.mk)
