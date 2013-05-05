@@ -77,6 +77,7 @@ PRODUCT_COPY_FILES += \
 ## rootdir
 PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/rootdir/init.qcom.rc:root/init.qcom.rc \
+	device/samsung/msm7x27a-common/rootdir/init.qcom.bluetooth.rc:root/init.qcom.bluetooth.rc \
     device/samsung/msm7x27a-common/rootdir/init.qcom.usb.rc:root/init.qcom.usb.rc \
     device/samsung/msm7x27a-common/rootdir/ueventd.qcom.rc:root/ueventd.qcom.rc \
     device/samsung/msm7x27a-common/rootdir/fstab.qcom:root/fstab.qcom
@@ -126,27 +127,9 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/prebuilt/usr/idc/sec_touchscreen.idc:system/usr/idc/sec_touchscreen.idc
 
-## Enable repeatable keys in CWM
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.cwm.enable_key_repeat=true
-
-## Stagefright properties
-PRODUCT_PROPERTY_OVERRIDES += \
-    media.stagefright.enable-player=true \
-    media.stagefright.enable-meta=false \
-    media.stagefright.enable-scan=true \
-    media.stagefright.enable-http=true \
-    media.stagefright.enable-aac=true \
-    media.stagefright.enable-qcp=true
-
-## Bluetooth
-PRODUCT_PROPERTY_OVERRIDES += \
-	ro.qc.bluetooth.stack=bluez
-
 ## This is an MDPI device
 PRODUCT_AAPT_CONFIG := normal mdpi
 PRODUCT_AAPT_PREF_CONFIG := mdpi
-PRODUCT_LOCALES += mdpi
 
 ## Other
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=2

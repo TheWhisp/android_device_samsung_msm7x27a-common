@@ -188,7 +188,7 @@ static void cm_power_hint(struct power_module *module, power_hint_t hint,
 
             if (len < 0) {
                 strerror_r(errno, buf, sizeof(buf));
-                ALOGE("Error writing to boostpulse: %s\n", buf);
+	            ALOGE("Error writing to boostpulse: %s\n", buf);
 
                 pthread_mutex_lock(&cm->lock);
                 close(cm->boostpulse_fd);
