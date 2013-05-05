@@ -111,14 +111,14 @@ TARGET_PROVIDES_LIBAUDIO := true
 ## Recovery
 TARGET_RECOVERY_INITRC := device/samsung/msm7x27a-common/recovery/init.rc
 TARGET_RECOVERY_FSTAB := device/samsung/msm7x27a-common/recovery/recovery.fstab
+BOARD_CUSTOM_RECOVERY_KEYMAPPING := ../../device/samsung/msm7x27a-common/recovery/recovery_keys.c
+BOARD_CUSTOM_GRAPHICS := ../../../device/samsung/msm7x27a-common/recovery/graphics.c
 TARGET_USERIMAGES_USE_EXT4 := true
-BOARD_HAS_NO_SELECT_BUTTON := true
 BOARD_HAS_SDCARD_INTERNAL := true
-BOARD_FLASH_BLOCK_SIZE := 131072
 BOARD_HAS_DOWNLOAD_MODE := true
 BOARD_USES_MMCUTILS := true
-BOARD_HAS_LARGE_FILESYSTEM := true
 BOARD_HAS_NO_MISC_PARTITION := true
+BOARD_FLASH_BLOCK_SIZE := 131072
 
 ## Filesystem
 BOARD_DATA_DEVICE := /dev/block/mmcblk0p18

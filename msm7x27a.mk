@@ -74,13 +74,15 @@ PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/prebuilt/etc/media_profiles.xml:system/etc/media_profiles.xml \
     device/samsung/msm7x27a-common/prebuilt/etc/media_codecs.xml:system/etc/media_codecs.xml
 
-## rootdir
+## Rootdir
 PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/rootdir/init.qcom.rc:root/init.qcom.rc \
 	device/samsung/msm7x27a-common/rootdir/init.qcom.bluetooth.rc:root/init.qcom.bluetooth.rc \
     device/samsung/msm7x27a-common/rootdir/init.qcom.usb.rc:root/init.qcom.usb.rc \
     device/samsung/msm7x27a-common/rootdir/ueventd.qcom.rc:root/ueventd.qcom.rc \
-    device/samsung/msm7x27a-common/rootdir/fstab.qcom:root/fstab.qcom
+    device/samsung/msm7x27a-common/rootdir/fstab.qcom:root/fstab.qcom \
+    device/samsung/msm7x27a-common/recovery/postrecoveryboot.sh:recovery/root/sbin/postrecoveryboot.sh \
+    device/samsung/msm7x27a-common/recovery/postrecoveryboot.sh:recovery/system/bin/postrecoveryboot.sh
    
 ## Bluetooth
 PRODUCT_COPY_FILES += \
