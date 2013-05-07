@@ -1,0 +1,220 @@
+From e7bc00ee305119dabbaf38b903cc97b419d7fb7d Mon Sep 17 00:00:00 2001
+From: Neti Ravi Kumar <ravineti@codeaurora.org>
+Date: Thu, 15 Nov 2012 19:15:09 +0200
+Subject: [PATCH] surfacetexture: Select texture target based on pixel format
+
+Adreno is not optimized for GL_TEXTURE_EXTERNAL_OES, making GPU
+utilization (and power), high with GL_TEXTURE_EXTERNAL_OES for
+RGB formats.
+
+Change texture target from GL_EXTERNAL_TEXTURE_OES to dynamically
+select between GL_EXTERNAL_TEXTURE_OES, and GL_TEXTURE_2D based
+on the pixel format.
+
+This change is done to reduce the composition time for 8x55
+
+use BOARD_ADRENO_DECIDE_TEXTURE_TARGET := true in Boardconfig
+
+Ported from CM9.
+https://github.com/CyanogenMod/android_frameworks_base/commit/82876a4d5f62cbbeb86c5ee8406f8864f201d061
+https://github.com/CyanogenMod/android_frameworks_base/commit/417d89259effb373c0c3a411b7a7d1f7f75b2eb2
+https://github.com/CyanogenMod/android_frameworks_base/commit/2961a0f0d63285caed48ea1d2573db347ffeb5ab
+
+Also thanks to erikcas:
+https://github.com/Jellaxy/android_frameworks_native/commit/1fb8eba0a8de3852555db48c25a9c0de65f2a75d
+
+Change-Id: I775e3a67df9f2aa0b6352634b863590503716d0d
+---
+ include/gui/SurfaceTexture.h       |    8 ++++++++
+ libs/gui/Android.mk                |    4 ++++
+ libs/gui/SurfaceTexture.cpp        |   27 +++++++++++++++++++++++++++
+ services/surfaceflinger/Android.mk |    4 ++++
+ services/surfaceflinger/Layer.cpp  |   34 ++++++++++++++++++++++++++++++++++
+ 5 files changed, 77 insertions(+)
+
+diff --git a/include/gui/SurfaceTexture.h b/include/gui/SurfaceTexture.h
+index 2635e2f..d116b21 100644
+--- a/include/gui/SurfaceTexture.h
++++ b/include/gui/SurfaceTexture.h
+@@ -248,7 +248,11 @@ private:
+         virtual ~BufferRejecter() { }
+     };
+     friend class Layer;
++#ifdef DECIDE_TEXTURE_TARGET
++    status_t updateTexImage(BufferRejecter* rejecter, bool isComposition=false);
++#else
+     status_t updateTexImage(BufferRejecter* rejecter);
++#endif
+ 
+     // createImage creates a new EGLImage from a GraphicBuffer.
+     EGLImageKHR createImage(EGLDisplay dpy,
+@@ -329,7 +333,11 @@ private:
+     // glCopyTexSubImage to read from the texture.  This is a hack to work
+     // around a GL driver limitation on the number of FBO attachments, which the
+     // browser's tile cache exceeds.
++#ifdef DECIDE_TEXTURE_TARGET
++    GLenum mTexTarget;
++#else
+     const GLenum mTexTarget;
++#endif
+ 
+     // EGLSlot contains the information and object references that
+     // SurfaceTexture maintains about a BufferQueue buffer slot.
+diff --git a/libs/gui/Android.mk b/libs/gui/Android.mk
+index e71650f..e46b3fd 100644
+--- a/libs/gui/Android.mk
++++ b/libs/gui/Android.mk
+@@ -51,6 +51,10 @@ ifeq ($(TARGET_BOARD_PLATFORM), tegra)
+ 	LOCAL_CFLAGS += -DALLOW_DEQUEUE_CURRENT_BUFFER
+ endif
+ 
++ifeq ($(BOARD_ADRENO_DECIDE_TEXTURE_TARGET),true)
++    LOCAL_CFLAGS += -DDECIDE_TEXTURE_TARGET
++endif
++
+ ifeq ($(BOARD_USES_QCOM_HARDWARE), true)
+     LOCAL_C_INCLUDES += hardware/qcom/display/libgralloc
+     LOCAL_C_INCLUDES += hardware/qcom/display/libqdutils
+diff --git a/libs/gui/SurfaceTexture.cpp b/libs/gui/SurfaceTexture.cpp
+index 68014da..9012588 100644
+--- a/libs/gui/SurfaceTexture.cpp
++++ b/libs/gui/SurfaceTexture.cpp
+@@ -183,7 +183,11 @@ status_t SurfaceTexture::updateTexImage() {
+     return SurfaceTexture::updateTexImage(NULL);
+ }
+ 
++#ifdef DECIDE_TEXTURE_TARGET
++status_t SurfaceTexture::updateTexImage(BufferRejecter* rejecter, bool isComposition) {
++#else
+ status_t SurfaceTexture::updateTexImage(BufferRejecter* rejecter) {
++#endif
+     ATRACE_CALL();
+     ST_LOGV("updateTexImage");
+     Mutex::Autolock lock(mMutex);
+@@ -263,6 +267,29 @@ status_t SurfaceTexture::updateTexImage(BufferRejecter* rejecter) {
+                 if(gpuSupportedFormat) {
+                     image = createImage(dpy, mEGLSlots[buf].mGraphicBuffer);
+                     mEGLSlots[buf].mEglImage = image;
++
++#ifdef DECIDE_TEXTURE_TARGET
++                // GPU is not efficient in handling GL_TEXTURE_EXTERNAL_OES
++                // texture target. Depending on the image format, decide,
++                // the texture target to be used
++
++                if(isComposition){
++                    switch (mEGLSlots[buf].mGraphicBuffer->format) {
++                        case HAL_PIXEL_FORMAT_RGBA_8888:
++                        case HAL_PIXEL_FORMAT_RGBX_8888:
++                        case HAL_PIXEL_FORMAT_RGB_888:
++                        case HAL_PIXEL_FORMAT_RGB_565:
++                        case HAL_PIXEL_FORMAT_BGRA_8888:
++                        case HAL_PIXEL_FORMAT_RGBA_5551:
++                        case HAL_PIXEL_FORMAT_RGBA_4444:
++                            mTexTarget = GL_TEXTURE_2D;
++                            break;
++                        default:
++                            mTexTarget = GL_TEXTURE_EXTERNAL_OES;
++                            break;
++                    }
++                }
++#endif
+                     if (image == EGL_NO_IMAGE_KHR) {
+                         // NOTE: if dpy was invalid, createImage() is guaranteed to
+                         // fail. so we'd end up here.
+diff --git a/services/surfaceflinger/Android.mk b/services/surfaceflinger/Android.mk
+index a0b298b..e466bc5 100644
+--- a/services/surfaceflinger/Android.mk
++++ b/services/surfaceflinger/Android.mk
+@@ -32,6 +32,10 @@ ifeq ($(TARGET_DISABLE_TRIPLE_BUFFERING), true)
+ 	LOCAL_CFLAGS += -DTARGET_DISABLE_TRIPLE_BUFFERING
+ endif
+ 
++ifeq ($(BOARD_ADRENO_DECIDE_TEXTURE_TARGET),true)
++    LOCAL_CFLAGS += -DDECIDE_TEXTURE_TARGET
++endif
++
+ LOCAL_SHARED_LIBRARIES := \
+ 	libcutils \
+ 	libhardware \
+diff --git a/services/surfaceflinger/Layer.cpp b/services/surfaceflinger/Layer.cpp
+index 84a9060..8345f85 100644
+--- a/services/surfaceflinger/Layer.cpp
++++ b/services/surfaceflinger/Layer.cpp
+@@ -366,6 +366,9 @@ void Layer::onDraw(const Region& clip) const
+         clearWithOpenGL(clip, 0, 0, 0, 1);
+         return;
+     }
++#ifdef DECIDE_TEXTURE_TARGET
++    GLuint currentTextureTarget = mSurfaceTexture->getCurrentTextureTarget();
++#endif
+ #endif
+     if (!isProtected()) {
+         // TODO: we could be more subtle with isFixedSize()
+@@ -377,25 +380,46 @@ void Layer::onDraw(const Region& clip) const
+         mSurfaceTexture->getTransformMatrix(textureMatrix);
+ 
+         // Set things up for texturing.
++#ifdef DECIDE_TEXTURE_TARGET
++        glBindTexture(currentTextureTarget, mTextureName);
++#else
+         glBindTexture(GL_TEXTURE_EXTERNAL_OES, mTextureName);
++#endif
+         GLenum filter = GL_NEAREST;
+         if (useFiltering) {
+             filter = GL_LINEAR;
+         }
++#ifdef DECIDE_TEXTURE_TARGET
++        glTexParameterx(currentTextureTarget, GL_TEXTURE_MAG_FILTER, filter);
++        glTexParameterx(currentTextureTarget, GL_TEXTURE_MIN_FILTER, filter);
++#else
+         glTexParameterx(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MAG_FILTER, filter);
+         glTexParameterx(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MIN_FILTER, filter);
++#endif
+         glMatrixMode(GL_TEXTURE);
+         glLoadMatrixf(textureMatrix);
+         glMatrixMode(GL_MODELVIEW);
+         glDisable(GL_TEXTURE_2D);
++#ifdef DECIDE_TEXTURE_TARGET
++        glEnable(currentTextureTarget);
++#else
+         glEnable(GL_TEXTURE_EXTERNAL_OES);
++#endif
+     } else {
++#ifdef DECIDE_TEXTURE_TARGET
++        glBindTexture(currentTextureTarget, mFlinger->getProtectedTexName());
++#else
+         glBindTexture(GL_TEXTURE_2D, mFlinger->getProtectedTexName());
++#endif
+         glMatrixMode(GL_TEXTURE);
+         glLoadIdentity();
+         glMatrixMode(GL_MODELVIEW);
++#ifdef DECIDE_TEXTURE_TARGET
++        glEnable(currentTextureTarget);
++#else
+         glDisable(GL_TEXTURE_EXTERNAL_OES);
+         glEnable(GL_TEXTURE_2D);
++#endif
+     }
+ 
+     drawWithOpenGL(clip);
+@@ -646,7 +670,17 @@ void Layer::lockPageFlip(bool& recomputeVisibleRegions)
+ 
+         Reject r(mDrawingState, currentState(), recomputeVisibleRegions);
+ 
++#ifdef DECIDE_TEXTURE_TARGET
++        // While calling updateTexImage() from SurfaceFlinger, let it know
++        // by passing an extra parameter
++        // This will be true always.
++
++        bool isComposition = true;
++
++        if (mSurfaceTexture->updateTexImage(&r, isComposition) < NO_ERROR) {
++#else
+         if (mSurfaceTexture->updateTexImage(&r) < NO_ERROR) {
++#endif
+             // something happened!
+             recomputeVisibleRegions = true;
+             return;
+-- 
+1.7.9.5
+

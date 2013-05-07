@@ -1,4 +1,4 @@
-# Copyright (C) 2012 The CyanogenMod Project
+# Copyright (C) 2013 The CyanogenMod Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -81,6 +81,7 @@ BOARD_HAVE_SAMSUNG_WIFI := true
 
 ## RIL
 BOARD_USES_LEGACY_RIL := true
+BOARD_USES_LIBSECRIL_STUB := true
 BOARD_MOBILEDATA_INTERFACE_NAME := "pdp0"
 
 ## Vold
@@ -107,13 +108,11 @@ TARGET_PROVIDES_LIBLIGHTS := true
 TARGET_RECOVERY_INITRC := device/samsung/msm7x27a-common/recovery/init.rc
 TARGET_RECOVERY_FSTAB := device/samsung/msm7x27a-common/recovery/recovery.fstab
 TARGET_USERIMAGES_USE_EXT4 := true
-BOARD_HAS_NO_SELECT_BUTTON := true
 BOARD_HAS_SDCARD_INTERNAL := true
-BOARD_FLASH_BLOCK_SIZE := 131072
 BOARD_HAS_DOWNLOAD_MODE := true
 BOARD_USES_MMCUTILS := true
-BOARD_HAS_LARGE_FILESYSTEM := true
 BOARD_HAS_NO_MISC_PARTITION := true
+BOARD_FLASH_BLOCK_SIZE := 131072
 
 ## Filesystem
 BOARD_DATA_DEVICE := /dev/block/mmcblk0p18

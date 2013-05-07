@@ -1,4 +1,4 @@
-# Copyright (C) 2012 The CyanogenMod Project
+# Copyright (C) 2013 The CyanogenMod Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -52,8 +52,6 @@ PRODUCT_PACKAGES += \
     gps.msm7x27a \
     power.msm7x27a
 
-$(call inherit-product, build/target/product/full.mk) 
-
 ## Permissions
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml \
@@ -72,7 +70,7 @@ PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/prebuilt/etc/media_profiles.xml:system/etc/media_profiles.xml \
     device/samsung/msm7x27a-common/prebuilt/etc/media_codecs.xml:system/etc/media_codecs.xml
 
-## rootdir
+## Rootdir
 PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/rootdir/init.qcom.rc:root/init.qcom.rc \
     device/samsung/msm7x27a-common/rootdir/init.qcom.usb.rc:root/init.qcom.usb.rc \
@@ -118,19 +116,14 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/prebuilt/usr/idc/sec_touchscreen.idc:system/usr/idc/sec_touchscreen.idc
 
-## Enable repeatable keys in CWM
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.cwm.enable_key_repeat=true
-
 ## This is an MDPI device
-PRODUCT_AAPT_CONFIG := normal mdpi
 PRODUCT_AAPT_PREF_CONFIG := mdpi
-PRODUCT_LOCALES += mdpi
 
 ## Other
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=2
 PRODUCT_TAGS += dalvik.gc.type-precise
 
+$(call inherit-product, build/target/product/full.mk)
 $(call inherit-product, frameworks/native/build/phone-hdpi-512-dalvik-heap.mk)
 $(call inherit-product, vendor/samsung/msm7x27a-common/blobs.mk)
 $(call inherit-product, device/common/gps/gps_eu_supl.mk)
