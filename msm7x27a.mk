@@ -33,6 +33,7 @@ PRODUCT_PACKAGES += \
     setup_fs \
     com.android.future.usb.accessory
 
+ifeq ($(BOARD_HAVE_BLUETOOTH_BLUEZ),true)
 ## Bluetooth
 PRODUCT_PACKAGES += \
 	bluetoothd \
@@ -41,6 +42,7 @@ PRODUCT_PACKAGES += \
     hciconfig \
     hciattach \
 	javax.btobex
+endif
 
 ## Audio
 PRODUCT_PACKAGES += \
@@ -52,7 +54,6 @@ PRODUCT_PACKAGES += \
 
 ## Other hardware
 PRODUCT_PACKAGES += \
-	camtest \
     camera.msm7x27a \
     lights.msm7x27a \
     gps.msm7x27a \
@@ -79,16 +80,16 @@ PRODUCT_COPY_FILES += \
 ## Rootdir
 PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/rootdir/init.qcom.rc:root/init.qcom.rc \
-	device/samsung/msm7x27a-common/rootdir/init.qcom.bluez.rc:root/init.qcom.bluez.rc \
     device/samsung/msm7x27a-common/rootdir/init.qcom.usb.rc:root/init.qcom.usb.rc \
     device/samsung/msm7x27a-common/rootdir/ueventd.qcom.rc:root/ueventd.qcom.rc \
-    device/samsung/msm7x27a-common/rootdir/fstab.qcom:root/fstab.qcom \
+    device/samsung/msm7x27a-common/rootdir/fstab.qcom:root/fstab.qcom
 
 ## Recovery
 PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/recovery/postrecoveryboot.sh:recovery/root/sbin/postrecoveryboot.sh \
     device/samsung/msm7x27a-common/recovery/postrecoveryboot.sh:recovery/system/bin/postrecoveryboot.sh
-   
+
+ifeq ($(BOARD_HAVE_BLUETOOTH_BLUEZ),true)
 ## Bluetooth
 PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/prebuilt/etc/init.qcom.bt.sh:/system/etc/init.qcom.bt.sh \
@@ -98,14 +99,15 @@ PRODUCT_COPY_FILES += \
     system/bluetooth/data/input.conf:system/etc/bluetooth/input.conf \
     system/bluetooth/data/main.le.conf:system/etc/bluetooth/main.conf \
     system/bluetooth/data/network.conf:system/etc/bluetooth/network.conf \
-	system/bluetooth/data/stack.conf:system/etc/bluetooth/stack.conf
+	system/bluetooth/data/stack.conf:system/etc/bluetooth/stack.conf \
+	device/samsung/msm7x27a-common/rootdir/init.qcom.bluez.rc:root/init.qcom.bluez.rc
+endif
 
 ## Network
 PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/prebuilt/etc/wifi/wpa_supplicant.conf:system/etc/wifi/wpa_supplicant.conf \
     device/samsung/msm7x27a-common/prebuilt/etc/wifi/hostapd.conf:system/etc/wifi/hostapd.conf \
-    device/samsung/msm7x27a-common/prebuilt/bin/get_macaddrs:system/bin/get_macaddrs \
-	device/samsung/msm7x27a-common/prebuilt/bin/wlan_tool:system/bin/wlan_tool
+    device/samsung/msm7x27a-common/prebuilt/bin/get_macaddrs:system/bin/get_macaddrs
 
 ## Vold config
 PRODUCT_COPY_FILES += \
@@ -136,7 +138,7 @@ PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/prebuilt/usr/idc/sec_touchscreen.idc:system/usr/idc/sec_touchscreen.idc
 
 ## This is an MDPI device
-PRODUCT_AAPT_PREF_CONFIG := mdpi
+PRODUCT_AAPT_PREF_CONFIG := mdpi hdpi
 
 ## Other
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=2
