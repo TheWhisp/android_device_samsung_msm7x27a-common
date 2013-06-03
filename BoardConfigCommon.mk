@@ -35,6 +35,9 @@ TARGET_SPECIFIC_HEADER_PATH := device/samsung/msm7x27a-common/include
 TARGET_GLOBAL_CFLAGS += -mtune=cortex-a5 -mfpu=neon -mfloat-abi=softfp
 TARGET_GLOBAL_CPPFLAGS += -mtune=cortex-a5 -mfpu=neon -mfloat-abi=softfp
 
+## Uncomment if building jena NFC variant
+#TARGET_JENA_NFC := true
+
 ## Bionic
 TARGET_CORTEX_CACHE_LINE_32 := true
 ARCH_ARM_HAVE_32_BYTE_CACHE_LINES := true
@@ -45,7 +48,6 @@ TARGET_USE_SPARROW_BIONIC_OPTIMIZATION := true
 USE_CAMERA_STUB := false
 BOARD_NEEDS_MEMORYHEAPPMEM := true
 BOARD_USES_LEGACY_OVERLAY := true
-BOARD_CAMERA_USE_MM_HEAP := true
 TARGET_DISABLE_ARM_PIE := true
 COMMON_GLOBAL_CFLAGS += -DSAMSUNG_CAMERA_LEGACY -DBINDER_COMPAT
 
@@ -70,7 +72,6 @@ BOARD_VENDOR_QCOM_GPS_LOC_API_AMSS_VERSION := 50000
 
 ## Bluetooth
 BOARD_HAVE_BLUETOOTH_BLUEZ := true
-BOARD_HAVE_SAMSUNG_BLUEZ := true
 
 ## Wi-Fi
 WPA_SUPPLICANT_VERSION := VER_0_8_X

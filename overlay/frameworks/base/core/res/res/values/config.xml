@@ -33,7 +33,7 @@
          Wifi interfaces.  If the device doesn't want to support tethering over Wifi this
          should be empty.  An example would be "softap.*" -->
     <string-array translatable="false" name="config_tether_wifi_regexs">
-		<item>"wlan\\d"</item>
+		<item>"softap\\d"</item>
     </string-array>
 
 	<!-- Boolean indicating whether Softap requires reloading AP firmware -->
@@ -100,10 +100,6 @@
 
 	<!-- Minimum screen brightness allowed by the power manager. -->
     <integer name="config_screenBrightnessDim">20</integer>
-
-	<!-- Values greater or equal to 0 will enable electronbeam screen-on
-         animation with the specified delay (in milliseconds), -1 will disable the animation -->
-    <integer name="config_screenOnAnimation">250</integer>
 
 	<!-- Is the battery LED intrusive? Used to decide if there should be a disable option -->
     <bool name="config_intrusiveNotificationLed">false</bool>
