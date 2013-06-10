@@ -36,11 +36,11 @@
 		<item>"softap\\d"</item>
     </string-array>
 
-	<!-- Boolean indicating whether Softap requires reloading AP firmware -->
-    <bool name="config_wifiApFirmwareReload">false</bool>
-
 	<!-- Boolean indicating if current platform supports quick switch-on/off of Bluetooth Module -->
     <bool name="config_bluetooth_adapter_quick_switch">false</bool>
+
+	<!-- Boolean indicating if current platform supports quick switch-on/off of Bluetooth Module -->
+    <!--<bool name="config_bluetooth_adapter_quick_switch">false</bool> -->
 
     <!-- List of regexpressions describing the interface (if any) that represent tetherable
          bluetooth interfaces.  If the device doesn't want to support tethering over bluetooth this
@@ -91,7 +91,7 @@
 
     <!-- Timeout in MS for how long you have to long-press the back key to
          kill the foreground app. -->
-    <integer name="config_backKillTimeout">1000</integer>
+    <integer name="config_backKillTimeout">1500</integer>
 
     <bool name="config_animateScreenLights">false</bool>
 

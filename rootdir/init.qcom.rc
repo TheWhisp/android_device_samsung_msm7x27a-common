@@ -173,10 +173,8 @@ service iprenew_wlan0 /system/bin/dhcpcd -n
     oneshot
 
 service hostapd /system/bin/hostapd /data/misc/wifi/hostapd.conf
-    class main
-    socket hostapd_softap0 dgram 660 system wifi
-    user system
-    group wifi net_raw net_admin system inet keystore
+    socket hostapd_softap0 dgram 660 wifi wifi
+    group wifi inet
     oneshot
     disabled
 

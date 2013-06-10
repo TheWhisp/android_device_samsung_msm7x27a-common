@@ -33,7 +33,6 @@ PRODUCT_PACKAGES += \
     setup_fs \
     com.android.future.usb.accessory
 
-ifeq ($(BOARD_HAVE_BLUETOOTH_BLUEZ),true)
 ## Bluetooth
 PRODUCT_PACKAGES += \
 	bluetoothd \
@@ -42,7 +41,6 @@ PRODUCT_PACKAGES += \
     hciconfig \
     hciattach \
 	javax.btobex
-endif
 
 ## Audio
 PRODUCT_PACKAGES += \
@@ -54,7 +52,6 @@ PRODUCT_PACKAGES += \
 
 ## Other hardware
 PRODUCT_PACKAGES += \
-    camera.msm7x27a \
     lights.msm7x27a \
     gps.msm7x27a \
     power.msm7x27a
@@ -89,19 +86,17 @@ PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/recovery/postrecoveryboot.sh:recovery/root/sbin/postrecoveryboot.sh \
     device/samsung/msm7x27a-common/recovery/postrecoveryboot.sh:recovery/system/bin/postrecoveryboot.sh
 
-ifeq ($(BOARD_HAVE_BLUETOOTH_BLUEZ),true)
 ## Bluetooth
 PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/prebuilt/etc/init.qcom.bt.sh:/system/etc/init.qcom.bt.sh \
-    system/bluetooth/data/audio.conf:system/etc/bluetooth/audio.conf \
+	system/bluetooth/data/audio.conf:system/etc/bluetooth/audio.conf \
     system/bluetooth/data/auto_pairing.conf:system/etc/bluetooth/auto_pairing.conf \
     system/bluetooth/data/blacklist.conf:system/etc/bluetooth/blacklist.conf \
     system/bluetooth/data/input.conf:system/etc/bluetooth/input.conf \
     system/bluetooth/data/main.le.conf:system/etc/bluetooth/main.conf \
     system/bluetooth/data/network.conf:system/etc/bluetooth/network.conf \
-	system/bluetooth/data/stack.conf:system/etc/bluetooth/stack.conf \
+    system/bluetooth/data/stack.conf:system/etc/bluetooth/stack.conf \
 	device/samsung/msm7x27a-common/rootdir/init.qcom.bluez.rc:root/init.qcom.bluez.rc
-endif
 
 ## Network
 PRODUCT_COPY_FILES += \
@@ -138,13 +133,26 @@ PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/prebuilt/usr/idc/sec_touchscreen.idc:system/usr/idc/sec_touchscreen.idc
 
 ## This is an MDPI device
-PRODUCT_AAPT_PREF_CONFIG := mdpi hdpi
+PRODUCT_AAPT_CONFIG := normal mdpi hdpi
+PRODUCT_AAPT_PREF_CONFIG := mdpi
 
 ## Other
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=2
 PRODUCT_TAGS += dalvik.gc.type-precise
 
+## Dalvik VM
+PRODUCT_PROPERTY_OVERRIDES += \
+    dalvik.vm.heapstartsize=5m \
+    dalvik.vm.heapgrowthlimit=32m \
+    dalvik.vm.heapsize=96m \
+    dalvik.vm.heaptargetutilization=0.75 \
+    dalvik.vm.heapminfree=512k \
+    dalvik.vm.heapmaxfree=2m
+
+## Bluetooth
+PRODUCT_PROPERTY_OVERRIDES += \
+	ro.qc.bluetooth.stack=bluez
+
 $(call inherit-product, build/target/product/full.mk)
-$(call inherit-product, frameworks/native/build/phone-hdpi-512-dalvik-heap.mk)
 $(call inherit-product, vendor/samsung/msm7x27a-common/blobs.mk)
 $(call inherit-product, device/common/gps/gps_eu_supl.mk)

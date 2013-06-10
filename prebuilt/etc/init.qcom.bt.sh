@@ -35,6 +35,8 @@ LOG_NAME="${0}:"
 
 hciattach_pid=""
 
+$STACK="bluez"
+
 loge ()
 {
   /system/bin/log -t $LOG_TAG -p e "$LOG_NAME $@"
