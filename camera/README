@@ -1,0 +1,2 @@
+Camera HAL for Samsung Galaxy Series
+To build camera HAL you need to put stock GB libcamera.so to this directory
