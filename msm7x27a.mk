@@ -50,8 +50,9 @@ PRODUCT_PACKAGES += \
     audio_policy.conf \
     libaudioutils
 
-## Other hardware
+## Other HALs
 PRODUCT_PACKAGES += \
+	camera.msm7x27a \
     lights.msm7x27a \
     gps.msm7x27a \
     power.msm7x27a
@@ -64,7 +65,7 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.wifi.xml:system/etc/permissions/android.hardware.wifi.xml \
     frameworks/native/data/etc/android.hardware.sensor.proximity.xml:system/etc/permissions/android.hardware.sensor.proximity.xml \
     frameworks/native/data/etc/android.hardware.sensor.compass.xml:system/etc/permissions/android.hardware.sensor.compass.xml \
-    frameworks/native/data/etc/android.hardware.touchscreen.multitouch.distinct.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.jazzhand.xml \
+    frameworks/native/data/etc/android.hardware.touchscreen.multitouch.jazzhand.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.jazzhand.xml \
     frameworks/native/data/etc/android.software.sip.voip.xml:system/etc/permissions/android.software.sip.voip.xml \
     packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:system/etc/permissions/android.software.live_wallpaper.xml \
     frameworks/native/data/etc/android.hardware.usb.accessory.xml:system/etc/permissions/android.hardware.usb.accessory.xml
@@ -133,7 +134,7 @@ PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/prebuilt/usr/idc/sec_touchscreen.idc:system/usr/idc/sec_touchscreen.idc
 
 ## This is an MDPI device
-PRODUCT_AAPT_CONFIG := normal mdpi hdpi
+PRODUCT_AAPT_CONFIG := normal mdpi
 PRODUCT_AAPT_PREF_CONFIG := mdpi
 
 ## Other
@@ -156,3 +157,4 @@ PRODUCT_PROPERTY_OVERRIDES += \
 $(call inherit-product, build/target/product/full.mk)
 $(call inherit-product, vendor/samsung/msm7x27a-common/blobs.mk)
 $(call inherit-product, device/common/gps/gps_eu_supl.mk)
+$(call inherit-product, device/mdpi-common/mdpi.mk)
