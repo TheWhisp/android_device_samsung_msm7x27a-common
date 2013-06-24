@@ -30,6 +30,8 @@ on boot
     mkdir /data/misc/dhcp 0770 dhcp dhcp
     chown dhcp dhcp /data/misc/dhcp
 
+	setprop ro.bt.bdaddr_path "/data/.nvmac_bt.info"
+
     ## Setup hostapd
     mkdir /data/misc/wifi/hostapd 0770 wifi wifi
     # Provide the access to hostapd.conf only to root and group
@@ -42,10 +44,14 @@ on boot
 
 	chown radio radio /sys/devices/virtual/pdp/pdp/waketime
 
-	chown system system /sys/class/leds/lcd-backlight/brightness
+	chown system system /sys/class/misc/backlightnotification/enabled
+    chown system system /sys/class/leds/lcd-backlight/brightness
     chown system system /sys/class/leds/button-backlight/brightness
+    chown system camera /sys/class/leds/flashlight/brightness
+    chmod 0666 /sys/class/misc/backlightnotification/enabled
     chmod 0660 /sys/class/leds/lcd-backlight/brightness
     chmod 0660 /sys/class/leds/button-backlight/brightness
+    chmod 0660 /sys/class/leds/flashlight/brightness
     chmod 0664 /sys/devices/virtual/sec/ts/brightness
     chown system system /sys/devices/virtual/sec/ts/brightness
 
@@ -152,7 +158,7 @@ service wpa_supplicant /system/bin/logwrapper /system/bin/wpa_supplicant -Dwext 
     disabled
     oneshot
 
-service dhcpcd_bnep0 /system/bin/dhcpcd -ABDKL
+service dhcpcd_bnep0 /system/bin/dhcpcd -ABKL
     class main
     disabled
     oneshot
@@ -162,7 +168,7 @@ service iprenew_bnep0 /system/bin/dhcpcd -n
     disabled
     oneshot
 
-service dhcpcd_wlan0 /system/bin/dhcpcd -ABDKL
+service dhcpcd_wlan0 /system/bin/dhcpcd -aABDKL
     class main
     disabled
     oneshot
@@ -172,9 +178,11 @@ service iprenew_wlan0 /system/bin/dhcpcd -n
     disabled
     oneshot
 
-service hostapd /system/bin/hostapd /data/misc/wifi/hostapd.conf
-    socket hostapd_softap0 dgram 660 wifi wifi
-    group wifi inet
+service hostapd /system/bin/hostapd -dddd /data/misc/wifi/hostapd.conf
+    class late_start
+    socket hostapd_wlan0 dgram 660 root wifi
+    user root
+	group wifi
     oneshot
     disabled
 

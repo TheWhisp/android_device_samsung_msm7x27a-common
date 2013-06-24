@@ -16,6 +16,6 @@ LOCAL_C_INCLUDES       += hardware/qcom/display-legacy/libgralloc
 LOCAL_SHARED_LIBRARIES := liblog libutils libcutils
 LOCAL_SHARED_LIBRARIES += libui libhardware libcamera_client
 
-LOCAL_LDFLAGS          += -Lvendor/samsung/msm7x27a-common/proprietary/lib -lcamera
+LOCAL_LDFLAGS          += -Lvendor/samsung/jena/proprietary/lib -lcamera
 
 include $(BUILD_SHARED_LIBRARY)

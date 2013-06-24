@@ -44,7 +44,7 @@ TARGET_USE_SPARROW_BIONIC_OPTIMIZATION := true
 ## Camera
 BOARD_NEEDS_MEMORYHEAPPMEM := true
 #COMMON_GLOBAL_CFLAGS += -DICS_CAMERA_BLOB
-#TARGET_DISABLE_ARM_PIE := true
+TARGET_DISABLE_ARM_PIE := true
 BOARD_USE_NASTY_PTHREAD_CREATE_HACK := true
 COMMON_GLOBAL_CFLAGS += -DBINDER_COMPAT 
 COMMON_GLOBAL_CFLAGS += -DSAMSUNG_CAMERA_QCOM
@@ -54,6 +54,7 @@ ENABLE_WEBGL := true
 TARGET_FORCE_CPU_UPLOAD := true
 
 ## Graphics, media
+TARGET_USES_ION := false
 USE_OPENGL_RENDERER := true
 TARGET_QCOM_DISPLAY_VARIANT := legacy
 TARGET_NO_HW_VSYNC := false
@@ -113,7 +114,6 @@ TARGET_RECOVERY_INITRC := device/samsung/msm7x27a-common/recovery/init.rc
 TARGET_RECOVERY_FSTAB := device/samsung/msm7x27a-common/recovery/recovery.fstab
 BOARD_CUSTOM_RECOVERY_KEYMAPPING := ../../device/samsung/msm7x27a-common/recovery/recovery_keys.c
 BOARD_CUSTOM_GRAPHICS := ../../../device/samsung/msm7x27a-common/recovery/graphics.c
-BOARD_USE_CUSTOM_RECOVERY_FONT := '"font_7x16.h"'
 TARGET_USERIMAGES_USE_EXT4 := true
 BOARD_HAS_SDCARD_INTERNAL := true
 BOARD_HAS_DOWNLOAD_MODE := true

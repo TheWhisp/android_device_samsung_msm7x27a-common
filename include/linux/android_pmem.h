@@ -154,6 +154,28 @@ struct android_pmem_platform_data
 	unsigned buffered;
 	/* which memory type (i.e. SMI, EBI1) this PMEM device is backed by */
 	unsigned memory_type;
+	/*
+	 * function to be called when the number of allocations goes from
+	 * 0 -> 1
+	 */
+	int (*request_region)(void *);
+	/*
+	 * function to be called when the number of allocations goes from
+	 * 1 -> 0
+	 */
+	int (*release_region)(void *);
+	/*
+	 * function to be called upon pmem registration
+	 */
+	void *(*setup_region)(void);
+	/*
+	 * indicates that this region should be mapped/unmaped as needed
+	 */
+	int map_on_demand;
+	/*
+	 * indicates this pmem may be reused via fmem
+	 */
+	int reusable;
 };
 
 int pmem_setup(struct android_pmem_platform_data *pdata,

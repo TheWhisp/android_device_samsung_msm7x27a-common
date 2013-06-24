@@ -33,8 +33,11 @@
          Wifi interfaces.  If the device doesn't want to support tethering over Wifi this
          should be empty.  An example would be "softap.*" -->
     <string-array translatable="false" name="config_tether_wifi_regexs">
-		<item>"softap\\d"</item>
+		<item>"wlan0"</item>
     </string-array>
+
+	<!-- Boolean indicating whether Softap requires reloading AP firmware -->
+	<bool name="config_wifiApFirmwareReload">false</bool>
 
 	<!-- Boolean indicating if current platform supports quick switch-on/off of Bluetooth Module -->
     <bool name="config_bluetooth_adapter_quick_switch">false</bool>
@@ -85,10 +88,6 @@
 
     <bool name="config_unplugTurnsOnScreen">true</bool>
 
-	<!-- Component name of the default wallpaper. This will be ImageWallpaper if not
-                  specified -->
-    <string name="default_wallpaper_component">com.android.phasebeam/.PhaseBeamWallpaper</string>
-
     <!-- Timeout in MS for how long you have to long-press the back key to
          kill the foreground app. -->
     <integer name="config_backKillTimeout">1500</integer>
@@ -98,18 +97,15 @@
 	<!-- Indicate whether the SD card is accessible without removing the battery. -->
     <bool name="config_batterySdCardAccessibility">true</bool>
 
-	<!-- Minimum screen brightness allowed by the power manager. -->
-    <integer name="config_screenBrightnessDim">20</integer>
-
 	<!-- Is the battery LED intrusive? Used to decide if there should be a disable option -->
     <bool name="config_intrusiveNotificationLed">false</bool>
 
 	<!-- Display low battery warning when battery level dips to this value.
          Also, the battery stats are flushed to disk when we hit this level.  -->
-    <integer name="config_criticalBatteryWarningLevel">5</integer>
+    <integer name="config_criticalBatteryWarningLevel">10</integer>
 
     <!-- Display low battery warning when battery level dips to this value -1 -->
-    <integer name="config_lowBatteryWarningLevel">15</integer>
+    <integer name="config_lowBatteryWarningLevel">25</integer>
 
 	<string-array name="config_locationProviderPackageNames" translatable="false">
         <!-- The standard AOSP fused location provider -->

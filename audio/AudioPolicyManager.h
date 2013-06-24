@@ -44,8 +44,8 @@ public:
         virtual ~AudioPolicyManager() {}
 
         virtual status_t setDeviceConnectionState(audio_devices_t device,
-                                                          AudioSystem::device_connection_state state,
-                                                          const char *device_address);
+                                                           AudioSystem::device_connection_state state,
+                                                           const char *device_address);
         virtual AudioSystem::device_connection_state getDeviceConnectionState(audio_devices_t device,
                                                                               const char *device_address);
         virtual audio_io_handle_t getInput(int inputSource,
@@ -54,17 +54,21 @@ public:
                                             uint32_t channels,
                                             AudioSystem::audio_in_acoustics acoustics);
 
+        virtual audio_devices_t getDeviceForVolume(audio_devices_t device);
+
+        virtual uint32_t  checkDeviceMuteStrategies(AudioOutputDescriptor *outputDesc,
+                                            audio_devices_t prevDevice,
+                                            uint32_t delayMs);
         virtual void setForceUse(AudioSystem::force_use usage, AudioSystem::forced_config config);
 protected:
+        virtual audio_devices_t getDeviceForStrategy(routing_strategy strategy, bool fromCache = true);
 
- virtual audio_devices_t getDeviceForStrategy(routing_strategy strategy, bool fromCache = true);
         fm_modes fmMode;
 
 #ifdef WITH_A2DP
         // true is current platform supports suplication of notifications and ringtones over A2DP output
         //virtual bool a2dpUsedForSonification() const { return true; }
 #endif
-
         // when a device is connected, checks if an open output can be routed
         // to this device. If none is open, tries to open one of the available outputs.
         // Returns an output suitable to this device or 0.
