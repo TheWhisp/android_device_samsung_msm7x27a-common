@@ -129,6 +129,12 @@ PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/prebuilt/usr/keylayout/surf_keypad.kl:system/usr/keylayout/surf_keypad.kl \
     device/samsung/msm7x27a-common/prebuilt/usr/keylayout/sec_touchscreen.kl:system/usr/keylayout/sec_touchscreen.kl
 
+## Some calibration files
+PRODUCT_COPY_FILES += \
+	device/samsung/msm7x27a-common/prebuilt/etc/calib.dat:system/etc/calib.dat \
+	device/samsung/msm7x27a-common/prebuilt/etc/param.dat:system/etc/param.dat \
+	device/samsung/msm7x27a-common/prebuilt/etc/sensors.dat:system/etc/sensors.dat
+
 ## Touchscreen
 PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/prebuilt/usr/idc/sec_touchscreen.idc:system/usr/idc/sec_touchscreen.idc

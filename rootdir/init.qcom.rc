@@ -55,6 +55,13 @@ on boot
     chmod 0664 /sys/devices/virtual/sec/ts/brightness
     chown system system /sys/devices/virtual/sec/ts/brightness
 
+	chown system system /system/etc/sensors.dat
+	chown system system /system/etc/calib.dat
+	chown system system /system/etc/param.dat
+	chmod 0666 /system/etc/sensors.dat
+	chmod 0666 /system/etc/calib.dat
+	chmod 0666 /system/etc/param.dat
+
     # Sensors
 	chown root system /dev/alps_io
     chmod 0660 /dev/alps_io
@@ -178,11 +185,11 @@ service iprenew_wlan0 /system/bin/dhcpcd -n
     disabled
     oneshot
 
-service hostapd /system/bin/hostapd -dddd /data/misc/wifi/hostapd.conf
-    class late_start
-    socket hostapd_wlan0 dgram 660 root wifi
-    user root
-	group wifi
+service hostapd /system/bin/hostapd /data/misc/wifi/hostapd.conf
+    class main
+    socket hostapd_softap0 dgram 660 system wifi
+    user system
+    group wifi net_raw net_admin system inet keystore
     oneshot
     disabled
 

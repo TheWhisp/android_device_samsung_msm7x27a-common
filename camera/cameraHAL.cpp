@@ -215,7 +215,7 @@ static void wrap_data_callback_timestamp(nsecs_t timestamp, int32_t msg_type, co
 
 void CameraHAL_FixupParams(android::CameraParameters &camParams) {
     const char *video_sizes            = "640x480,384x288,352x288,320x240,240x160,176x144";
-    const char *preferred_size         = "352x288";
+    const char *preferred_size         = "640x480";
     const char *preview_frame_rates    = "30,24,15";
 
     camParams.set(CameraParameters::KEY_VIDEO_FRAME_FORMAT, CameraParameters::PIXEL_FORMAT_YUV420SP);
