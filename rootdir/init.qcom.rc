@@ -18,6 +18,9 @@ on early-init
     export EXTERNAL_STORAGE /storage/sdcard0
     export SECONDARY_STORAGE /storage/sdcard1
 
+on init
+	write /proc/sys/kernel/randomize_va_space 1
+
 on fs
 	# Mount partitions
 	mount_all /fstab.qcom
