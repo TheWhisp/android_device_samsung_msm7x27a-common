@@ -168,6 +168,13 @@ service wpa_supplicant /system/bin/logwrapper /system/bin/wpa_supplicant -Dwext 
     disabled
     oneshot
 
+service fm_dl /system/bin/sh /system/etc/init.qcom.fm.sh
+	class main
+    user root
+    group system qcom_oncrpc
+    disabled
+    oneshot
+
 service dhcpcd_bnep0 /system/bin/dhcpcd -ABKL
     class main
     disabled
@@ -188,7 +195,7 @@ service iprenew_wlan0 /system/bin/dhcpcd -n
     disabled
     oneshot
 
-service hostapd /system/bin/hostapd /data/misc/wifi/hostapd.conf
+service hostapd /system/bin/hostapd -dddd /data/misc/wifi/hostapd.conf
     class main
     socket hostapd_softap0 dgram 660 system wifi
     user system

@@ -45,17 +45,12 @@ ifeq ($(BOARD_USES_QCOM_AUDIO_RESETALL),true)
 endif
 
 LOCAL_CFLAGS += -DQCOM_VOIP_ENABLED
-LOCAL_CFLAGS += -DQCOM_TUNNEL_LPA_ENABLED
+#LOCAL_CFLAGS += -DQCOM_TUNNEL_LPA_ENABLED
 
 LOCAL_SHARED_LIBRARIES := \
     libcutils       \
     libutils        \
-    libmedia        \
-#    libaudioalsa
-
-# hack for prebuilt
-$(shell mkdir -p $(OUT)/obj/SHARED_LIBRARIES/libaudioalsa_intermediates/)
-$(shell touch $(OUT)/obj/SHARED_LIBRARIES/libaudioalsa_intermediates/export_includes)
+    libmedia
 
 ifneq ($(TARGET_SIMULATOR),true)
 LOCAL_SHARED_LIBRARIES += libdl

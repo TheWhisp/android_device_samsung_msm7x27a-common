@@ -9,7 +9,7 @@
 # these should not be world writable
 /dev/ttyHS0               0660   bluetooth  bluetooth
 /dev/uinput               0660   system     bluetooth
-/dev/graphics/fb0         0666   system     graphics
+/dev/graphics/*           0666   system     graphics
 /dev/msm_rotator          0666   system     graphics
 /dev/pmem_audio           0660   system     audio
 /dev/pmem_smipool*        0660   system     camera

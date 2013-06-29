@@ -57,6 +57,10 @@ PRODUCT_PACKAGES += \
     gps.msm7x27a \
     power.msm7x27a
 
+# FM Radio
+PRODUCT_PACKAGES += \
+	FM
+
 ## Permissions
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml \
@@ -98,6 +102,10 @@ PRODUCT_COPY_FILES += \
     system/bluetooth/data/network.conf:system/etc/bluetooth/network.conf \
     system/bluetooth/data/stack.conf:system/etc/bluetooth/stack.conf \
 	device/samsung/msm7x27a-common/rootdir/init.qcom.bluez.rc:root/init.qcom.bluez.rc
+
+## FM
+PRODUCT_COPY_FILES += \
+    device/samsung/msm7x27a-common/prebuilt/etc/init.qcom.fm.sh:/system/etc/init.qcom.fm.sh
 
 ## Network
 PRODUCT_COPY_FILES += \
