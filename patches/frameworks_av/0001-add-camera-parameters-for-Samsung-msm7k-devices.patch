@@ -1,16 +1,16 @@
-From c14671a5cc76ca7c34819bae6a11fce6dce41402 Mon Sep 17 00:00:00 2001
-From: TheWhisp <daavis.90@gmail.com>
-Date: Sun, 14 Apr 2013 12:06:15 +0300
-Subject: [PATCH] add Samsung msm7k camera parameters
+From 807e18495d0c3b1fbdc48d7795e943420b921d6e Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?D=C4=81vis=20M=C4=81lnieks?= <daavis.90@gmail.com>
+Date: Sat, 29 Jun 2013 14:39:40 +0300
+Subject: [PATCH] add camera parameters for Samsung msm7k devices
 
-Change-Id: I9d42276572e7e158bfb4664aa65536a4140dfdf4
+Change-Id: Ibbc492972dfe57d14c28cd65555e8dfea8960f2c
 ---
- camera/CameraParameters.cpp       |   42 +++++++++++++++++++++++++++++++++----
- include/camera/CameraParameters.h |   22 +++++++++++++++++++
+ camera/CameraParameters.cpp       | 42 +++++++++++++++++++++++++++++++++++----
+ include/camera/CameraParameters.h | 22 ++++++++++++++++++++
  2 files changed, 60 insertions(+), 4 deletions(-)
 
 diff --git a/camera/CameraParameters.cpp b/camera/CameraParameters.cpp
-index b0ba26c..ccb92c8 100644
+index 4114458..1fa4b29 100644
 --- a/camera/CameraParameters.cpp
 +++ b/camera/CameraParameters.cpp
 @@ -130,7 +130,11 @@ const char CameraParameters::KEY_ISO_MODE[] = "iso";
@@ -25,16 +25,16 @@ index b0ba26c..ccb92c8 100644
  const char CameraParameters::KEY_SUPPORTED_AUTO_EXPOSURE[] = "auto-exposure-values";
  const char CameraParameters::KEY_DENOISE[] = "denoise";
  const char CameraParameters::KEY_SUPPORTED_DENOISE[] = "denoise-values";
-@@ -243,7 +247,7 @@ const char CameraParameters::SCENE_MODE_FIREWORKS[] = "fireworks";
- const char CameraParameters::SCENE_MODE_SPORTS[] = "sports";
- const char CameraParameters::SCENE_MODE_PARTY[] = "party";
- const char CameraParameters::SCENE_MODE_CANDLELIGHT[] = "candlelight";
+@@ -249,7 +253,7 @@ const char CameraParameters::SCENE_MODE_DUSKDAWN[] = "duskdawn";
+ const char CameraParameters::SCENE_MODE_FALLCOLOR[] = "fallcolor";
+ const char CameraParameters::SCENE_MODE_TEXT[] = "text";
+ #endif
 -#ifdef QCOM_HARDWARE
 +#if defined(QCOM_HARDWARE) && !defined(SAMSUNG_CAMERA_QCOM)
  const char CameraParameters::SCENE_MODE_BACKLIGHT[] = "backlight";
  const char CameraParameters::SCENE_MODE_FLOWERS[] = "flowers";
  #endif
-@@ -310,9 +314,15 @@ const char CameraParameters::LENSSHADE_ENABLE[] = "enable";
+@@ -330,9 +334,15 @@ const char CameraParameters::LENSSHADE_ENABLE[] = "enable";
  const char CameraParameters::LENSSHADE_DISABLE[] = "disable";
  
  // Values for auto exposure settings.
@@ -50,7 +50,7 @@ index b0ba26c..ccb92c8 100644
  
  #ifdef QCOM_SONY_HARDWARE
  const char CameraParameters::KEY_SEMC_METRY_MODE[] = "semc-metering-mode";
-@@ -337,21 +347,21 @@ const char CameraParameters::SKIN_TONE_ENHANCEMENT_ENABLE[] = "enable";
+@@ -357,21 +367,21 @@ const char CameraParameters::SKIN_TONE_ENHANCEMENT_ENABLE[] = "enable";
  const char CameraParameters::SKIN_TONE_ENHANCEMENT_DISABLE[] = "disable";
  
  const char CameraParameters::KEY_SHARPNESS[] = "sharpness";
@@ -75,7 +75,7 @@ index b0ba26c..ccb92c8 100644
  const char CameraParameters::KEY_MAX_SATURATION[] = "saturation-max";
  const char CameraParameters::KEY_MIN_SATURATION[] = "saturation-min";
  #else
-@@ -396,6 +406,30 @@ const char CameraParameters::AE_BRACKET_HDR_OFF[] = "Off";
+@@ -416,6 +426,30 @@ const char CameraParameters::AE_BRACKET_HDR_OFF[] = "Off";
  const char CameraParameters::AE_BRACKET_HDR[] = "HDR";
  const char CameraParameters::AE_BRACKET[] = "AE-Bracket";
  
@@ -107,10 +107,10 @@ index b0ba26c..ccb92c8 100644
  const char CameraParameters::LOW_POWER[] = "Low_Power";
  const char CameraParameters::NORMAL_POWER[] = "Normal_Power";
 diff --git a/include/camera/CameraParameters.h b/include/camera/CameraParameters.h
-index 7ec8a73..f4f1493 100644
+index a871f0f..cb4ba7c 100644
 --- a/include/camera/CameraParameters.h
 +++ b/include/camera/CameraParameters.h
-@@ -929,6 +929,28 @@ public:
+@@ -949,6 +949,28 @@ public:
      static const char HDR_ENABLE[];
      static const char HDR_DISABLE[];
  
@@ -140,5 +140,5 @@ index 7ec8a73..f4f1493 100644
      static const char KEY_EX_SUPPORTED_METERING_MODES[];
      static const char KEY_SEMC_METRY_MODE[];
 -- 
-1.7.9.5
+1.8.1.2
 

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Button backlight -->
+    <CheckBoxPreference
+        android:key="button_backlight"
+        android:title="@string/button_backlight_title_head"
+        android:defaultValue="true" />
+
+</PreferenceScreen>

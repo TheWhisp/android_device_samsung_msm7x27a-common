@@ -11,4 +11,3 @@
 /emmc	        vfat	    /dev/block/mmcblk0p23
 /sdcard         vfat        /dev/block/mmcblk1p1
 
-

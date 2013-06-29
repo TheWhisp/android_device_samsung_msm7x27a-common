@@ -96,3 +96,14 @@ on property:sys.usb.config=mass_storage,adb
     start adbd
     setprop sys.usb.state ${sys.usb.config}
 
+on property:persist.service.adb.enable=1
+    start adbd
+
+on property:persist.service.adb.enable=0
+    stop adbd
+
+on property:service.adb.root=1
+    setprop sys.usb.config none
+    sleep 1
+    setprop sys.usb.config ${persist.sys.usb.config}
+
