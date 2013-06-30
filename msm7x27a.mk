@@ -28,7 +28,7 @@ PRODUCT_PACKAGES += \
 
 ## Misc.
 PRODUCT_PACKAGES += \
-	DeviceParts \
+    DeviceParts \
     make_ext4fs \
     setup_fs \
     com.android.future.usb.accessory
@@ -52,14 +52,14 @@ PRODUCT_PACKAGES += \
 
 ## Other HALs
 PRODUCT_PACKAGES += \
-	camera.msm7x27a \
+    camera.msm7x27a \
     lights.msm7x27a \
     gps.msm7x27a \
     power.msm7x27a
 
 ## Additional packages
 PRODUCT_PACKAGES += \
-	Email2 \
+    Email2 \
     Exchange2 \
     Provision
 
@@ -96,14 +96,14 @@ PRODUCT_COPY_FILES += \
 ## Bluetooth
 PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/prebuilt/etc/init.qcom.bt.sh:/system/etc/init.qcom.bt.sh \
-	system/bluetooth/data/audio.conf:system/etc/bluetooth/audio.conf \
+    system/bluetooth/data/audio.conf:system/etc/bluetooth/audio.conf \
     system/bluetooth/data/auto_pairing.conf:system/etc/bluetooth/auto_pairing.conf \
     system/bluetooth/data/blacklist.conf:system/etc/bluetooth/blacklist.conf \
     system/bluetooth/data/input.conf:system/etc/bluetooth/input.conf \
     system/bluetooth/data/main.le.conf:system/etc/bluetooth/main.conf \
     system/bluetooth/data/network.conf:system/etc/bluetooth/network.conf \
     system/bluetooth/data/stack.conf:system/etc/bluetooth/stack.conf \
-	device/samsung/msm7x27a-common/rootdir/init.qcom.bluez.rc:root/init.qcom.bluez.rc
+    device/samsung/msm7x27a-common/rootdir/init.qcom.bluez.rc:root/init.qcom.bluez.rc
 
 ## FM
 PRODUCT_COPY_FILES += \
@@ -124,7 +124,7 @@ PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/prebuilt/etc/audio_policy.conf:system/etc/audio_policy.conf \
     device/samsung/msm7x27a-common/prebuilt/etc/AutoVolumeControl.txt:system/etc/AutoVolumeControl.txt \
     device/samsung/msm7x27a-common/prebuilt/etc/AudioFilter.csv:system/etc/AudioFilter.csv
-	
+
 ## Keychar
 PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/prebuilt/usr/keychars/7x27a_kp.kcm.bin:system/usr/keychars/7x27a_kp.kcm.bin \
@@ -141,9 +141,9 @@ PRODUCT_COPY_FILES += \
 
 ## Some calibration files
 PRODUCT_COPY_FILES += \
-	device/samsung/msm7x27a-common/prebuilt/etc/calib.dat:system/etc/calib.dat \
-	device/samsung/msm7x27a-common/prebuilt/etc/param.dat:system/etc/param.dat \
-	device/samsung/msm7x27a-common/prebuilt/etc/sensors.dat:system/etc/sensors.dat
+    device/samsung/msm7x27a-common/prebuilt/etc/calib.dat:system/etc/calib.dat \
+    device/samsung/msm7x27a-common/prebuilt/etc/param.dat:system/etc/param.dat \
+    device/samsung/msm7x27a-common/prebuilt/etc/sensors.dat:system/etc/sensors.dat
 
 ## Touchscreen
 PRODUCT_COPY_FILES += \
@@ -168,7 +168,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 ## Bluetooth
 PRODUCT_PROPERTY_OVERRIDES += \
-	ro.qc.bluetooth.stack=bluez
+    ro.qc.bluetooth.stack=bluez
 
 $(call inherit-product, build/target/product/full.mk)
 $(call inherit-product, vendor/samsung/msm7x27a-common/blobs.mk)
