@@ -35,12 +35,12 @@ PRODUCT_PACKAGES += \
 
 ## Bluetooth
 PRODUCT_PACKAGES += \
-	bluetoothd \
+    bluetoothd \
     libbluetoothd \
     hcitool \
     hciconfig \
     hciattach \
-	javax.btobex
+    javax.btobex
 
 ## Audio
 PRODUCT_PACKAGES += \
