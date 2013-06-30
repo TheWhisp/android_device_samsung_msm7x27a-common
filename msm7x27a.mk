@@ -57,9 +57,11 @@ PRODUCT_PACKAGES += \
     gps.msm7x27a \
     power.msm7x27a
 
-# FM Radio
+## Additional packages
 PRODUCT_PACKAGES += \
-	FM
+	Email2 \
+    Exchange2 \
+    Provision
 
 ## Permissions
 PRODUCT_COPY_FILES += \
