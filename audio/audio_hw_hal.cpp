@@ -241,6 +241,58 @@ static int out_get_render_position(const struct audio_stream_out *stream,
     return out->qcom_out->getRenderPosition(dsp_frames);
 }
 
+static int out_set_observer(const struct audio_stream_out *stream,
+                                   void *observer)
+{
+    const struct qcom_stream_out *out =
+        reinterpret_cast<const struct qcom_stream_out *>(stream);
+    return out->qcom_out->setObserver(observer);
+}
+
+static int out_get_buffer_info(const struct audio_stream_out *stream,
+                                   buf_info ** buf)
+{
+    const struct qcom_stream_out *out =
+        reinterpret_cast<const struct qcom_stream_out *>(stream);
+    return out->qcom_out->getBufferInfo(buf);
+}
+
+static int out_is_buffer_available(const struct audio_stream_out *stream,
+                                   int *isAvail)
+{
+    const struct qcom_stream_out *out =
+        reinterpret_cast<const struct qcom_stream_out *>(stream);
+    return out->qcom_out->isBufferAvailable(isAvail);
+}
+
+static status_t out_start(struct audio_stream_out *stream)
+{
+    struct qcom_stream_out *out =
+        reinterpret_cast<struct qcom_stream_out *>(stream);
+    return out->qcom_out->start();
+}
+
+static status_t out_pause(struct audio_stream_out *stream)
+{
+    struct qcom_stream_out *out =
+        reinterpret_cast<struct qcom_stream_out *>(stream);
+    return out->qcom_out->pause();
+}
+
+static status_t out_flush(struct audio_stream_out *stream)
+{
+    struct qcom_stream_out *out =
+        reinterpret_cast<struct qcom_stream_out *>(stream);
+    return out->qcom_out->flush();
+}
+
+static status_t out_stop(struct audio_stream_out *stream)
+{
+    struct qcom_stream_out *out =
+        reinterpret_cast<struct qcom_stream_out *>(stream);
+    return out->qcom_out->stop();
+}
+
 static int out_add_audio_effect(const struct audio_stream *stream, effect_handle_t effect)
 {
     return 0;
@@ -254,7 +306,9 @@ static int out_remove_audio_effect(const struct audio_stream *stream, effect_han
 static int out_get_next_write_timestamp(const struct audio_stream_out *stream,
                                         int64_t *timestamp)
 {
-    return -EINVAL;
+    const struct qcom_stream_out *out =
+        reinterpret_cast<const struct qcom_stream_out *>(stream);
+    return out->qcom_out->getNextWriteTimestamp(timestamp);
 }
 
 /** audio_stream_in implementation **/
@@ -475,43 +529,6 @@ static size_t adev_get_input_buffer_size(const struct audio_hw_device *dev,
     return qadev->hwif->getInputBufferSize(config->sample_rate,config->format,channelCount);
 }
 
-#ifdef QCOM_TUNNEL_LPA_ENABLED
-static int adev_open_output_session(struct audio_hw_device *dev,
-                                   uint32_t devices,
-                                   int *format,
-                                   int sessionId,
-                                   uint32_t samplingRate,
-                                   uint32_t channels,
-                                   struct audio_stream_out **stream_out)
-{
-    struct qcom_audio_device *qadev = to_ladev(dev);
-    status_t status;
-    struct qcom_stream_out *out;
-    int ret;
-
-    out = (struct qcom_stream_out *)calloc(1, sizeof(*out));
-    if (!out)
-        return -ENOMEM;
-
-    out->qcom_out = qadev->hwif->openOutputSession(devices, format,&status,sessionId,samplingRate,channels);
-    if (!out->qcom_out) {
-        ret = status;
-        goto err_open;
-    }
-
-    out->stream.common.standby = out_standby;
-    out->stream.common.set_parameters = out_set_parameters;
-    out->stream.set_volume = out_set_volume;
-
-    *stream_out = &out->stream;
-    return 0;
-
-err_open:
-    free(out);
-    *stream_out = NULL;
-    return ret;
-}
-#endif
 
 static int adev_open_output_stream(struct audio_hw_device *dev,
                                    audio_io_handle_t handle,
@@ -558,6 +575,13 @@ static int adev_open_output_stream(struct audio_hw_device *dev,
     out->stream.write = out_write;
     out->stream.get_render_position = out_get_render_position;
     out->stream.get_next_write_timestamp = out_get_next_write_timestamp;
+    out->stream.start = out_start;
+    out->stream.pause = out_pause;
+    out->stream.flush = out_flush;
+    out->stream.stop = out_stop;
+    out->stream.set_observer = out_set_observer;
+    out->stream.get_buffer_info = out_get_buffer_info;
+    out->stream.is_buffer_available = out_is_buffer_available;
 
     *stream_out = &out->stream;
     return 0;
@@ -697,9 +721,6 @@ static int qcom_adev_open(const hw_module_t* module, const char* name,
     qadev->device.get_parameters = adev_get_parameters;
     qadev->device.get_input_buffer_size = adev_get_input_buffer_size;
     qadev->device.open_output_stream = adev_open_output_stream;
-#ifdef QCOM_TUNNEL_LPA_ENABLED
-    qadev->device.open_output_session = adev_open_output_session;
-#endif
     qadev->device.close_output_stream = adev_close_output_stream;
     qadev->device.open_input_stream = adev_open_input_stream;
     qadev->device.close_input_stream = adev_close_input_stream;
