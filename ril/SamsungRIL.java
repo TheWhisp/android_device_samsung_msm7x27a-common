@@ -57,13 +57,13 @@ import com.android.internal.telephony.cdma.SignalToneUtil;
 
 import android.util.Log;
 
-public class SamsungMSMRIL extends RIL implements CommandsInterface {
+public class SamsungRIL extends RIL implements CommandsInterface {
 
     private boolean mSignalbarCount = SystemProperties.getInt("ro.telephony.sends_barcount", 0) == 1 ? true : false;
     private boolean mIsSamsungCdma = SystemProperties.getBoolean("ro.ril.samsung_cdma", false);
     private Object mCatProCmdBuffer;
 
-    public SamsungMSMRIL(Context context, int networkMode, int cdmaSubscription) {
+    public SamsungRIL(Context context, int networkMode, int cdmaSubscription) {
         super(context, networkMode, cdmaSubscription);
     }
 
