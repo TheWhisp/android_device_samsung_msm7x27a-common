@@ -214,14 +214,14 @@ static void wrap_data_callback_timestamp(nsecs_t timestamp, int32_t msg_type, co
 }
 
 void CameraHAL_FixupParams(android::CameraParameters &camParams) {
-	const char *preview_sizes =
-		"480x320,384x288,352x288,320x240,240x160,176x144";
-	const char *video_sizes =
-		"640x480,352x288,320x240,176x144";
-	const char *preferred_size       = "640x480";
-	const char *preview_frame_rates  = "31,30,24,15";
-	const char *preferred_frame_rate = "24";
-	const char *frame_rate_range     = "(15,31)";
+    const char *preview_sizes =
+      "480x320,384x288,352x288,320x240,240x160,176x144";
+    const char *video_sizes =
+      "640x480,352x288,320x240,176x144";
+    const char *preferred_size       = "640x480";
+    const char *preview_frame_rates  = "31,30,24,15";
+    const char *preferred_frame_rate = "24";
+    const char *frame_rate_range     = "(15,31)";
 
     camParams.set(CameraParameters::KEY_VIDEO_FRAME_FORMAT, CameraParameters::PIXEL_FORMAT_YUV420SP);
 
@@ -454,7 +454,7 @@ void sighandle(int s) {
 }
 
 int camera_device_open(const hw_module_t* module, const char* name, hw_device_t** device) {
-    ALOGI("CameraHAL v0.3");
+    ALOGI("CameraHAL v0.3.1");
     int rv = 0;
     int cameraid;
     int num_cameras = 0;
