@@ -33,6 +33,7 @@
          Wifi interfaces.  If the device doesn't want to support tethering over Wifi this
          should be empty.  An example would be "softap.*" -->
     <string-array translatable="false" name="config_tether_wifi_regexs">
+		<item>"wlan0"</item>
 		<item>"softap0"</item>
     </string-array>
 
@@ -50,6 +51,7 @@
          should be empty. -->
     <string-array translatable="false" name="config_tether_bluetooth_regexs">
         <item>"bnep\\d"</item>
+		<item>"bt-pan"</item>
     </string-array>
 
     <!-- Array of ConnectivityManager.TYPE_xxxx values allowable for tethering -->

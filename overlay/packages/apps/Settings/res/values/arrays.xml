@@ -1,0 +1,17 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <string-array name="pref_zram_size_entries">
+        <item>Disabled (default)</item>
+        <item>10%</item>
+        <item>30%</item>
+        <item>50%</item>
+    </string-array>
+
+    <string-array name="pref_zram_size_values" translatable="false">
+        <item>0</item>
+        <item>10</item>
+        <item>30</item>
+        <item>50</item>
+    </string-array>
+
+</resources>

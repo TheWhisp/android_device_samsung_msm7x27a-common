@@ -214,20 +214,12 @@ static void wrap_data_callback_timestamp(nsecs_t timestamp, int32_t msg_type, co
 }
 
 void CameraHAL_FixupParams(android::CameraParameters &camParams) {
-    const char *preview_sizes =
-      "480x320,384x288,352x288,320x240,240x160,176x144";
-    const char *video_sizes =
-      "640x480,352x288,320x240,176x144";
-    const char *preferred_size       = "640x480";
-    const char *preview_frame_rates  = "31,30,24,15";
-    const char *preferred_frame_rate = "24";
-    const char *frame_rate_range     = "(15,31)";
+    const char *video_sizes            = "640x480,384x288,352x288,320x240,240x160,176x144";
+    const char *preferred_size         = "640x480";
 
     camParams.set(CameraParameters::KEY_VIDEO_FRAME_FORMAT, CameraParameters::PIXEL_FORMAT_YUV420SP);
 
     camParams.set(CameraParameters::KEY_PREFERRED_PREVIEW_SIZE_FOR_VIDEO,  preferred_size);
-
-    camParams.set(CameraParameters::KEY_SUPPORTED_PREVIEW_FRAME_RATES, preview_frame_rates);
 
     if (!camParams.get(CameraParameters::KEY_SUPPORTED_VIDEO_SIZES)) {
          camParams.set(CameraParameters::KEY_SUPPORTED_VIDEO_SIZES, video_sizes);
@@ -240,7 +232,6 @@ void CameraHAL_FixupParams(android::CameraParameters &camParams) {
     if (!camParams.get(CameraParameters::KEY_VIDEO_SIZE)) {
          camParams.set(CameraParameters::KEY_VIDEO_SIZE, preferred_size);
     }
-    camParams.set("orientation", "landscape");
 }
 
 int camera_set_preview_window(struct camera_device * device, struct preview_stream_ops *window) {
@@ -454,7 +445,7 @@ void sighandle(int s) {
 }
 
 int camera_device_open(const hw_module_t* module, const char* name, hw_device_t** device) {
-    ALOGI("CameraHAL v0.3.1");
+    ALOGI("CameraHAL v0.3");
     int rv = 0;
     int cameraid;
     int num_cameras = 0;

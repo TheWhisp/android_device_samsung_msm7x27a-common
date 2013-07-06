@@ -85,6 +85,7 @@ case $mode in
    /system/bin/fm_qsoc_patches $version 2
      ;;
   "config_dac")
+	logi "Shell: config_dac"
    /system/bin/fm_qsoc_patches $version 3 $isAnalog
      ;;
    *)

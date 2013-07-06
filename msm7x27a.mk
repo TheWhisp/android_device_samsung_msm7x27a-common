@@ -63,6 +63,12 @@ PRODUCT_PACKAGES += \
     Exchange2 \
     Provision
 
+## FM radio
+#PRODUCT_PACKAGES += \
+#    qcom.fmradio \
+#    libqcomfm_jni \
+#    FM2
+
 ## Permissions
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml \
@@ -106,12 +112,13 @@ PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/rootdir/init.qcom.bluez.rc:root/init.qcom.bluez.rc
 
 ## FM
-PRODUCT_COPY_FILES += \
-    device/samsung/msm7x27a-common/prebuilt/etc/init.qcom.fm.sh:/system/etc/init.qcom.fm.sh
+#PRODUCT_COPY_FILES += \
+#    device/samsung/msm7x27a-common/prebuilt/etc/init.qcom.fm.sh:/system/etc/init.qcom.fm.sh
 
 ## Network
 PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/prebuilt/etc/wifi/wpa_supplicant.conf:system/etc/wifi/wpa_supplicant.conf \
+    device/samsung/msm7x27a-common/prebuilt/etc/wifi/p2p_supplicant.conf:system/etc/wifi/p2p_supplicant.conf \
     device/samsung/msm7x27a-common/prebuilt/etc/wifi/hostapd.conf:system/etc/wifi/hostapd.conf \
     device/samsung/msm7x27a-common/prebuilt/bin/get_macaddrs:system/bin/get_macaddrs
 
