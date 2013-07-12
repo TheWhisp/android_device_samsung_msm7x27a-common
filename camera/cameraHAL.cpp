@@ -214,12 +214,24 @@ static void wrap_data_callback_timestamp(nsecs_t timestamp, int32_t msg_type, co
 }
 
 void CameraHAL_FixupParams(android::CameraParameters &camParams) {
-    const char *video_sizes            = "640x480,384x288,352x288,320x240,240x160,176x144";
-    const char *preferred_size         = "640x480";
+    const char *video_sizes = "640x480,384x288,352x288,320x240,240x160,176x144";
+    const char *preferred_size = "640x480";
+#ifdef HAVE_AUTOFOCUS
+	const char *focus_mode_values = "auto,infinity,touch";
+#elif defined(HAVE_FLASH)
+	const char *flash_mode_values = "auto,on,off";
+#endif
+
+	camParams.set(CameraParameters::KEY_ROTATION, "0");
 
     camParams.set(CameraParameters::KEY_VIDEO_FRAME_FORMAT, CameraParameters::PIXEL_FORMAT_YUV420SP);
 
     camParams.set(CameraParameters::KEY_PREFERRED_PREVIEW_SIZE_FOR_VIDEO,  preferred_size);
+#ifdef HAVE_AUTOFOCUS
+	camParams.set(CameraParameters::KEY_SUPPORTED_FOCUS_MODES, focus_mode_values);
+#elif defined(HAVE_FLASH)
+	camParams.set(CameraParameters::KEY_SUPPORTED_FLASH_MODES, flash_mode_values);
+#endif
 
     if (!camParams.get(CameraParameters::KEY_SUPPORTED_VIDEO_SIZES)) {
          camParams.set(CameraParameters::KEY_SUPPORTED_VIDEO_SIZES, video_sizes);
@@ -551,8 +563,8 @@ int camera_get_camera_info(int camera_id, struct camera_info *info) {
 
     HAL_getCameraInfo(camera_id, &cameraInfo);
 
-    info->facing = cameraInfo.facing;
-    info->orientation = info->facing == 1 ? 270 : 90;
+	info->facing = cameraInfo.facing;
+	info->orientation = info->facing == 1 ? 270 : 90;
 
     return 0;
 }
