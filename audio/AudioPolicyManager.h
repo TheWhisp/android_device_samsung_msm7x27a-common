@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 The Android Open Source Project
- * Copyright (C) 2012, Code Aurora Forum. All rights reserved.
+ * Copyright (C) 2012, The Linux Foundation. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,8 +44,8 @@ public:
         virtual ~AudioPolicyManager() {}
 
         virtual status_t setDeviceConnectionState(audio_devices_t device,
-                                                           AudioSystem::device_connection_state state,
-                                                           const char *device_address);
+                                                          AudioSystem::device_connection_state state,
+                                                          const char *device_address);
         virtual AudioSystem::device_connection_state getDeviceConnectionState(audio_devices_t device,
                                                                               const char *device_address);
         virtual audio_io_handle_t getInput(int inputSource,
@@ -54,21 +54,26 @@ public:
                                             uint32_t channels,
                                             AudioSystem::audio_in_acoustics acoustics);
 
+        virtual void setPhoneState(int state);
+
         virtual audio_devices_t getDeviceForVolume(audio_devices_t device);
 
         virtual uint32_t  checkDeviceMuteStrategies(AudioOutputDescriptor *outputDesc,
                                             audio_devices_t prevDevice,
                                             uint32_t delayMs);
         virtual void setForceUse(AudioSystem::force_use usage, AudioSystem::forced_config config);
-protected:
-        virtual audio_devices_t getDeviceForStrategy(routing_strategy strategy, bool fromCache = true);
 
+protected:
+
+        virtual audio_devices_t getDeviceForStrategy(routing_strategy strategy, bool fromCache = true);
         fm_modes fmMode;
+        bool pendingForceNone;
 
 #ifdef WITH_A2DP
         // true is current platform supports suplication of notifications and ringtones over A2DP output
         //virtual bool a2dpUsedForSonification() const { return true; }
 #endif
+
         // when a device is connected, checks if an open output can be routed
         // to this device. If none is open, tries to open one of the available outputs.
         // Returns an output suitable to this device or 0.
@@ -95,6 +100,7 @@ protected:
                                     audio_output_flags_t flags);
         // check that volume change is permitted, compute and send new volume to audio hardware
         status_t checkAndSetVolume(int stream, int index, audio_io_handle_t output, audio_devices_t device, int delayMs = 0, bool force = false);
+        status_t stopInput(audio_io_handle_t input);
         // select input device corresponding to requested audio source
         virtual audio_devices_t getDeviceForInputSource(int inputSource);
 

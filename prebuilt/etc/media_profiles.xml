@@ -92,9 +92,9 @@
     <!-- Back Camera -->
     <CamcorderProfiles cameraId="0">
 
-    <EncoderProfile quality="high" fileFormat="mp4" duration="30">
-        <Video codec="h264"
-            bitRate="1200000"
+    <EncoderProfile quality="high" fileFormat="mp4" duration="60">
+        <Video codec="h263"
+            bitRate="2000000"
             width="640"
             height="480"
             frameRate="31" />
@@ -104,7 +104,7 @@
             channels="1" />
     </EncoderProfile>
 
-    <EncoderProfile quality="low" fileFormat="mp4" duration="30">
+    <EncoderProfile quality="low" fileFormat="mp4" duration="60">
         <Video codec="h264"
             bitRate="192000"
             width="176"
@@ -116,8 +116,8 @@
             channels="1" />
     </EncoderProfile>
 
-    <EncoderProfile quality="timelapsehigh" fileFormat="mp4" duration="30">
-      <Video codec="h264"
+    <EncoderProfile quality="timelapsehigh" fileFormat="mp4" duration="60">
+      <Video codec="h263"
              bitRate="2000000"
              width="640"
              height="480"
@@ -128,7 +128,7 @@
             channels="1" />
     </EncoderProfile>
 
-    <EncoderProfile quality="timelapselow" fileFormat="mp4" duration="30">
+    <EncoderProfile quality="timelapselow" fileFormat="mp4" duration="60">
         <Video codec="h264"
             bitRate="192000"
             width="176"
@@ -143,7 +143,7 @@
     <ImageEncoding quality="90" />
     <ImageEncoding quality="80" />
     <ImageEncoding quality="70" />
-    <ImageDecoding memCap="20000000" />
+    <ImageDecoding memCap="30000000" />
 
     </CamcorderProfiles>
 
@@ -161,7 +161,7 @@
         minFrameRate="1" maxFrameRate="31" />
 
     <VideoEncoderCap name="h263" enabled="true"
-        minBitRate="64000" maxBitRate="8000000"
+        minBitRate="64000" maxBitRate="20000000"
         minFrameWidth="176" maxFrameWidth="864"
         minFrameHeight="144" maxFrameHeight="480"
         minFrameRate="1" maxFrameRate="31" />

@@ -215,24 +215,32 @@ static void wrap_data_callback_timestamp(nsecs_t timestamp, int32_t msg_type, co
 
 void CameraHAL_FixupParams(android::CameraParameters &camParams) {
     const char *video_sizes = "640x480,384x288,352x288,320x240,240x160,176x144";
-    const char *preferred_size = "640x480";
+    const char *preferred_video_size = "640x480";
+	const char *preview_size = "352x288";
+	const char *fps_supported_ranges = "(15,31)";
+	const char *fps_preview = "31";
 #ifdef HAVE_AUTOFOCUS
 	const char *focus_mode_values = "auto,infinity,touch";
 #elif defined(HAVE_FLASH)
 	const char *flash_mode_values = "auto,on,off";
 #endif
-
-	camParams.set(CameraParameters::KEY_ROTATION, "0");
+	camParams.set(CameraParameters::KEY_ROTATION, "270");
 
     camParams.set(CameraParameters::KEY_VIDEO_FRAME_FORMAT, CameraParameters::PIXEL_FORMAT_YUV420SP);
 
-    camParams.set(CameraParameters::KEY_PREFERRED_PREVIEW_SIZE_FOR_VIDEO,  preferred_size);
+    camParams.set(CameraParameters::KEY_PREFERRED_PREVIEW_SIZE_FOR_VIDEO, preview_size);
+
+	camParams.set(CameraParameters::KEY_PREVIEW_SIZE, preview_size);
+
+	camParams.set(CameraParameters::KEY_SUPPORTED_PREVIEW_FPS_RANGE, fps_supported_ranges);
+
+	camParams.set(CameraParameters::KEY_PREVIEW_FRAME_RATE, fps_preview);
+
 #ifdef HAVE_AUTOFOCUS
 	camParams.set(CameraParameters::KEY_SUPPORTED_FOCUS_MODES, focus_mode_values);
 #elif defined(HAVE_FLASH)
 	camParams.set(CameraParameters::KEY_SUPPORTED_FLASH_MODES, flash_mode_values);
 #endif
-
     if (!camParams.get(CameraParameters::KEY_SUPPORTED_VIDEO_SIZES)) {
          camParams.set(CameraParameters::KEY_SUPPORTED_VIDEO_SIZES, video_sizes);
     }
@@ -242,7 +250,7 @@ void CameraHAL_FixupParams(android::CameraParameters &camParams) {
     }
 
     if (!camParams.get(CameraParameters::KEY_VIDEO_SIZE)) {
-         camParams.set(CameraParameters::KEY_VIDEO_SIZE, preferred_size);
+         camParams.set(CameraParameters::KEY_VIDEO_SIZE, preferred_video_size);
     }
 }
 
@@ -457,7 +465,7 @@ void sighandle(int s) {
 }
 
 int camera_device_open(const hw_module_t* module, const char* name, hw_device_t** device) {
-    ALOGI("CameraHAL v0.3");
+    ALOGI("CameraHAL v0.3.2");
     int rv = 0;
     int cameraid;
     int num_cameras = 0;

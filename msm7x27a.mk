@@ -58,12 +58,6 @@ PRODUCT_PACKAGES += \
     gps.msm7x27a \
     power.msm7x27a
 
-## Additional packages
-PRODUCT_PACKAGES += \
-    Email2 \
-    Exchange2 \
-    Provision
-
 ## FM radio
 PRODUCT_PACKAGES += \
     qcom.fmradio \
@@ -162,10 +156,6 @@ PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=2
 PRODUCT_TAGS += dalvik.gc.type-precise
 PRODUCT_AAPT_CONFIG := normal mdpi hdpi
 PRODUCT_AAPT_PREF_CONFIG := mdpi
-
-## Bluetooth
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.qc.bluetooth.stack=bluez
 
 $(call inherit-product, build/target/product/full.mk)
 $(call inherit-product, vendor/samsung/msm7x27a-common/blobs.mk)
