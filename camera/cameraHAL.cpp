@@ -217,41 +217,27 @@ void CameraHAL_FixupParams(android::CameraParameters &camParams) {
     const char *video_sizes = "640x480,384x288,352x288,320x240,240x160,176x144";
     const char *preferred_video_size = "640x480";
 	const char *preview_size = "352x288";
-	const char *fps_supported_ranges = "(15,31)";
-	const char *fps_preview = "31";
-#ifdef HAVE_AUTOFOCUS
+#ifdef ENABLE_FLASH_AND_AUTOFOCUS
 	const char *focus_mode_values = "auto,infinity,touch";
-#elif defined(HAVE_FLASH)
 	const char *flash_mode_values = "auto,on,off";
 #endif
-	camParams.set(CameraParameters::KEY_ROTATION, "270");
-
     camParams.set(CameraParameters::KEY_VIDEO_FRAME_FORMAT, CameraParameters::PIXEL_FORMAT_YUV420SP);
-
     camParams.set(CameraParameters::KEY_PREFERRED_PREVIEW_SIZE_FOR_VIDEO, preview_size);
-
 	camParams.set(CameraParameters::KEY_PREVIEW_SIZE, preview_size);
-
-	camParams.set(CameraParameters::KEY_SUPPORTED_PREVIEW_FPS_RANGE, fps_supported_ranges);
-
-	camParams.set(CameraParameters::KEY_PREVIEW_FRAME_RATE, fps_preview);
-
-#ifdef HAVE_AUTOFOCUS
+#ifdef ENABLE_FLASH_AND_AUTOFOCUS
 	camParams.set(CameraParameters::KEY_SUPPORTED_FOCUS_MODES, focus_mode_values);
-#elif defined(HAVE_FLASH)
 	camParams.set(CameraParameters::KEY_SUPPORTED_FLASH_MODES, flash_mode_values);
 #endif
     if (!camParams.get(CameraParameters::KEY_SUPPORTED_VIDEO_SIZES)) {
          camParams.set(CameraParameters::KEY_SUPPORTED_VIDEO_SIZES, video_sizes);
     }
-
     if (!camParams.get(CameraParameters::KEY_MAX_NUM_FOCUS_AREAS)) {
         camParams.set(CameraParameters::KEY_MAX_NUM_FOCUS_AREAS, 1);
     }
-
     if (!camParams.get(CameraParameters::KEY_VIDEO_SIZE)) {
          camParams.set(CameraParameters::KEY_VIDEO_SIZE, preferred_video_size);
     }
+    camParams.set("orientation", "landscape");
 }
 
 int camera_set_preview_window(struct camera_device * device, struct preview_stream_ops *window) {
@@ -571,8 +557,8 @@ int camera_get_camera_info(int camera_id, struct camera_info *info) {
 
     HAL_getCameraInfo(camera_id, &cameraInfo);
 
-	info->facing = cameraInfo.facing;
-	info->orientation = info->facing == 1 ? 270 : 90;
+    info->facing = cameraInfo.facing;
+    info->orientation = info->facing == 1 ? 270 : 90;
 
     return 0;
 }

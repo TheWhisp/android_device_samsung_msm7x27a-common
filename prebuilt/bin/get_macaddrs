@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# get_macaddrs (Cyanogen 7)
+# get_macaddrs (CyanogenMod)
 # by subpsyke
 #
 # This script will read the MAC addresses from Samsung's RIL.
@@ -15,7 +15,6 @@ fi
 # Wait until Samsung's RIL announces MAC addresses
 until [ $(expr length "$WIFIMAC") == 17 ]; do
 	WIFIMAC=`getprop ril.wifi_macaddr`
-	echo `getprop ril.wifi_macaddr` > /data/.nvmac.info
 	sleep 1
 done
 
@@ -29,6 +28,8 @@ echo $WIFIMAC >/data/.mac.info
 
 # Convert BT MAC address to proper format
 echo $BTMAC | sed 's!^M$!!;s!\-!!g;s!\.!!g;s!\(..\)!\1:!g;s!:$!!' >/data/.bt.info
-setprop ro.bt.bdaddr_path "/data/.bt.info"
+
+chmod 666 /data/.bt.info
+chmod 666 /data/.mac.info
 
 exit

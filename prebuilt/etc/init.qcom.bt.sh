@@ -65,6 +65,13 @@ config_bt ()
 
   logi "Bluetooth stack is bluez"
   setprop ro.qc.bluetooth.stack bluez
+
+  reason=`getprop vold.decrypt`
+  case "$reason" in
+      "trigger_restart_framework")
+          start dbus
+          ;;
+  esac
 }
 
 start_hciattach ()

@@ -85,6 +85,7 @@ PRODUCT_COPY_FILES += \
 ## Rootdir
 PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/rootdir/init.qcom.rc:root/init.qcom.rc \
+    device/samsung/msm7x27a-common/rootdir/init.qcom.bluez.rc:root/init.qcom.bluez.rc \
     device/samsung/msm7x27a-common/rootdir/init.qcom.usb.rc:root/init.qcom.usb.rc \
     device/samsung/msm7x27a-common/rootdir/ueventd.qcom.rc:root/ueventd.qcom.rc \
     device/samsung/msm7x27a-common/rootdir/fstab.qcom:root/fstab.qcom
@@ -103,8 +104,7 @@ PRODUCT_COPY_FILES += \
     system/bluetooth/data/input.conf:system/etc/bluetooth/input.conf \
     system/bluetooth/data/main.le.conf:system/etc/bluetooth/main.conf \
     system/bluetooth/data/network.conf:system/etc/bluetooth/network.conf \
-    system/bluetooth/data/stack.conf:system/etc/bluetooth/stack.conf \
-    device/samsung/msm7x27a-common/rootdir/init.qcom.bluez.rc:root/init.qcom.bluez.rc
+    system/bluetooth/data/stack.conf:system/etc/bluetooth/stack.conf
 
 ## FM
 PRODUCT_COPY_FILES += \
@@ -141,13 +141,13 @@ PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/prebuilt/usr/keylayout/surf_keypad.kl:system/usr/keylayout/surf_keypad.kl \
     device/samsung/msm7x27a-common/prebuilt/usr/keylayout/sec_touchscreen.kl:system/usr/keylayout/sec_touchscreen.kl
 
-## Some calibration files
+## Sensor calibration files
 PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/prebuilt/etc/calib.dat:system/etc/calib.dat \
     device/samsung/msm7x27a-common/prebuilt/etc/param.dat:system/etc/param.dat \
     device/samsung/msm7x27a-common/prebuilt/etc/sensors.dat:system/etc/sensors.dat
 
-## Touchscreen
+## Touchscreen configuration
 PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/prebuilt/usr/idc/sec_touchscreen.idc:system/usr/idc/sec_touchscreen.idc
 
