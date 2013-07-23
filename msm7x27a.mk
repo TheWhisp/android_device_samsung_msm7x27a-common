@@ -35,6 +35,7 @@ PRODUCT_PACKAGES += \
 
 ## Bluetooth
 PRODUCT_PACKAGES += \
+    Bluetooth2 \
     bluetoothd \
     libbluetoothd \
     hcitool \
@@ -57,11 +58,11 @@ PRODUCT_PACKAGES += \
     gps.msm7x27a \
     power.msm7x27a
 
-## Additional packages
+## FM radio
 PRODUCT_PACKAGES += \
-    Email2 \
-    Exchange2 \
-    Provision
+    qcom.fmradio \
+    libqcomfm_jni \
+    FM2
 
 ## Permissions
 PRODUCT_COPY_FILES += \
@@ -84,6 +85,7 @@ PRODUCT_COPY_FILES += \
 ## Rootdir
 PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/rootdir/init.qcom.rc:root/init.qcom.rc \
+    device/samsung/msm7x27a-common/rootdir/init.qcom.bluez.rc:root/init.qcom.bluez.rc \
     device/samsung/msm7x27a-common/rootdir/init.qcom.usb.rc:root/init.qcom.usb.rc \
     device/samsung/msm7x27a-common/rootdir/ueventd.qcom.rc:root/ueventd.qcom.rc \
     device/samsung/msm7x27a-common/rootdir/fstab.qcom:root/fstab.qcom
@@ -102,8 +104,7 @@ PRODUCT_COPY_FILES += \
     system/bluetooth/data/input.conf:system/etc/bluetooth/input.conf \
     system/bluetooth/data/main.le.conf:system/etc/bluetooth/main.conf \
     system/bluetooth/data/network.conf:system/etc/bluetooth/network.conf \
-    system/bluetooth/data/stack.conf:system/etc/bluetooth/stack.conf \
-    device/samsung/msm7x27a-common/rootdir/init.qcom.bluez.rc:root/init.qcom.bluez.rc
+    system/bluetooth/data/stack.conf:system/etc/bluetooth/stack.conf
 
 ## FM
 PRODUCT_COPY_FILES += \
@@ -112,6 +113,7 @@ PRODUCT_COPY_FILES += \
 ## Network
 PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/prebuilt/etc/wifi/wpa_supplicant.conf:system/etc/wifi/wpa_supplicant.conf \
+    device/samsung/msm7x27a-common/prebuilt/etc/wifi/p2p_supplicant.conf:system/etc/wifi/p2p_supplicant.conf \
     device/samsung/msm7x27a-common/prebuilt/etc/wifi/hostapd.conf:system/etc/wifi/hostapd.conf \
     device/samsung/msm7x27a-common/prebuilt/bin/get_macaddrs:system/bin/get_macaddrs
 
@@ -139,38 +141,23 @@ PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/prebuilt/usr/keylayout/surf_keypad.kl:system/usr/keylayout/surf_keypad.kl \
     device/samsung/msm7x27a-common/prebuilt/usr/keylayout/sec_touchscreen.kl:system/usr/keylayout/sec_touchscreen.kl
 
-## Some calibration files
+## Sensor calibration files
 PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/prebuilt/etc/calib.dat:system/etc/calib.dat \
     device/samsung/msm7x27a-common/prebuilt/etc/param.dat:system/etc/param.dat \
     device/samsung/msm7x27a-common/prebuilt/etc/sensors.dat:system/etc/sensors.dat
 
-## Touchscreen
+## Touchscreen configuration
 PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/prebuilt/usr/idc/sec_touchscreen.idc:system/usr/idc/sec_touchscreen.idc
-
-## This is an MDPI device
-PRODUCT_AAPT_CONFIG := normal mdpi
-PRODUCT_AAPT_PREF_CONFIG := mdpi
 
 ## Other
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=2
 PRODUCT_TAGS += dalvik.gc.type-precise
-
-## Dalvik VM
-PRODUCT_PROPERTY_OVERRIDES += \
-    dalvik.vm.heapstartsize=5m \
-    dalvik.vm.heapgrowthlimit=32m \
-    dalvik.vm.heapsize=96m \
-    dalvik.vm.heaptargetutilization=0.75 \
-    dalvik.vm.heapminfree=512k \
-    dalvik.vm.heapmaxfree=2m
-
-## Bluetooth
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.qc.bluetooth.stack=bluez
+PRODUCT_AAPT_CONFIG := normal mdpi hdpi
+PRODUCT_AAPT_PREF_CONFIG := mdpi
 
 $(call inherit-product, build/target/product/full.mk)
 $(call inherit-product, vendor/samsung/msm7x27a-common/blobs.mk)
 $(call inherit-product, device/common/gps/gps_eu_supl.mk)
-$(call inherit-product, device/mdpi-common/mdpi.mk)
+$(call inherit-product, frameworks/native/build/phone-hdpi-512-dalvik-heap.mk)

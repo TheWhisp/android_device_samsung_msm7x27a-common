@@ -20,15 +20,10 @@ on boot
     chown bluetooth bluetooth /sys/devices/platform/msm_serial_hs.0/clock
     chmod 0660 /sys/devices/platform/msm_serial_hs.0/clock
 
-	# turn off bluetooth at startup
+   # turn off bluetooth at startup
     write /sys/class/rfkill/rfkill0/state 0
 
-service dbus /system/bin/dbus-daemon --system --nofork
-    class main
-    socket dbus stream 660 bluetooth bluetooth
-    user bluetooth
-    group bluetooth net_bt_admin net_bt_stack
-    disabled
+    setprop ro.bt.bdaddr_path "/data/.bt.info"
 
 on property:ro.qc.bluetooth.stack=bluez
     start dbus

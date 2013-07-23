@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 The Android Open Source Project
- * Copyright (c) 2012, Code Aurora Forum. All rights reserved.
+ * Copyright (c) 2012, The Linux Foundation. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,7 +69,7 @@ static int ap_set_device_connection_state(struct audio_policy *pol,
 {
     struct qcom_audio_policy *qap = to_qap(pol);
     return qap->apm->setDeviceConnectionState(
-                    device,
+                    (AudioSystem::audio_devices)device,
                     (AudioSystem::device_connection_state)state,
                     device_address);
 }
@@ -81,7 +81,7 @@ static audio_policy_dev_state_t ap_get_device_connection_state(
 {
     const struct qcom_audio_policy *qap = to_cqap(pol);
     return (audio_policy_dev_state_t)qap->apm->getDeviceConnectionState(
-                    device,
+                    (AudioSystem::audio_devices)device,
                     device_address);
 }
 
@@ -289,7 +289,7 @@ static int ap_get_stream_volume_index_for_device(const struct audio_policy *pol,
    const struct qcom_audio_policy *qap = to_cqap(pol);
    return qap->apm->getStreamVolumeIndex((AudioSystem::stream_type)stream,
                                           index,
-                                          AUDIO_DEVICE_OUT_DEFAULT);
+                                          device);
 }
 
 static audio_devices_t ap_get_devices_for_stream(const struct audio_policy *pol,
@@ -486,7 +486,7 @@ struct qcom_ap_module HAL_MODULE_INFO_SYM = {
             version_minor: 0,
             id: AUDIO_POLICY_HARDWARE_MODULE_ID,
             name: "QCOM Audio Policy HAL",
-            author: "Code Aurora Forum",
+            author: "The Linux Foundation",
             methods: &qcom_ap_module_methods,
             dso : NULL,
             reserved : {0},
