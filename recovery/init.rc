@@ -3,7 +3,7 @@ on early-init
 
 on init
     export PATH /sbin
-    export LD_LIBRARY_PATH /sbin
+    export LD_LIBRARY_PATH .:/sbin
     export ANDROID_ROOT /system
     export ANDROID_DATA /data
     export EXTERNAL_STORAGE /sdcard
@@ -24,7 +24,7 @@ on init
 	chown root shell /tmp
     chmod 0775 /tmp
 
-    write /sys/class/android_usb/android0/iSerial $ro.serialno
+    write /sys/class/android_usb/android0/iSerial ${ro.serialno}
 
 on early-fs
 
@@ -60,8 +60,8 @@ on boot
     domainname localdomain
 
     write /sys/class/android_usb/android0/iManufacturer Samsung
-    write /sys/class/android_usb/android0/iProduct $ro.product.model
-    write /sys/class/android_usb/f_mass_storage/inquiry_string $ro.product.manufacturer
+    write /sys/class/android_usb/android0/iProduct ${ro.product.model}
+    write /sys/class/android_usb/f_mass_storage/inquiry_string ${ro.product.manufacturer}
 
     class_start default
 
