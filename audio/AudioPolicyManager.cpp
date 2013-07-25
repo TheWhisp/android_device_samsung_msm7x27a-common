@@ -310,14 +310,14 @@ uint32_t AudioPolicyManager::checkDeviceMuteStrategies(AudioOutputDescriptor *ou
     uint32_t muteWaitMs = 0;
     audio_devices_t device = outputDesc->device();
 #ifdef QCOM_FM_ENABLED
-    bool shouldMute = (outputDesc->refCount() != 0) &&
+    bool shouldMute = outputDesc->isActive() &&
                     (AudioSystem::popCount(device) >= (device & AUDIO_DEVICE_OUT_FM ? 3 : 2));
 #else
-    bool shouldMute = (outputDesc->refCount() != 0);
+    bool shouldMute = outputDesc->isActive();
 #endif
     // temporary mute output if device selection changes to avoid volume bursts due to
     // different per device volumes
-    bool tempMute = (outputDesc->refCount() != 0) && (getDeviceForVolume(device) != getDeviceForVolume(prevDevice));
+    bool tempMute = outputDesc->isActive() && (getDeviceForVolume(device) != getDeviceForVolume(prevDevice));
 
     for (size_t i = 0; i < NUM_STRATEGIES; i++) {
         audio_devices_t curDevice = getDeviceForStrategy((routing_strategy)i, false /*fromCache*/);
@@ -341,7 +341,7 @@ uint32_t AudioPolicyManager::checkDeviceMuteStrategies(AudioOutputDescriptor *ou
                 ALOGVV("checkDeviceMuteStrategies() %s strategy %d (curDevice %04x) on output %d",
                       mute ? "muting" : "unmuting", i, curDevice, curOutput);
                 setStrategyMute((routing_strategy)i, mute, curOutput, mute ? 0 : delayMs * 4);
-                if (desc->strategyRefCount((routing_strategy)i) != 0) {
+                if (desc->isStrategyActive((routing_strategy)i)) {
                     if (tempMute) {
                         setStrategyMute((routing_strategy)i, true, curOutput);
                         setStrategyMute((routing_strategy)i, false, curOutput,
@@ -714,7 +714,7 @@ void AudioPolicyManager::setPhoneState(int state)
         for (size_t i = 0; i < mOutputs.size(); i++) {
             audio_io_handle_t curOutput = mOutputs.keyAt(i);
             AudioOutputDescriptor *desc = mOutputs.valueAt(i);
-            if (curOutput != mPrimaryOutput && desc->refCount() != 0) {
+            if (curOutput != mPrimaryOutput && desc->isActive()) {
                 setOutputDevice(curOutput,
                                getNewDevice(curOutput, false /*fromCache*/),
                                force, delayMs);
@@ -1322,7 +1322,7 @@ status_t AudioPolicyManager::startOutput(audio_io_handle_t output,
                 }
                 // wait for audio on other active outputs to be presented when starting
                 // a notification so that audio focus effect can propagate.
-                if (shouldWait && (desc->refCount() != 0) && (waitMs < desc->latency())) {
+                if (shouldWait && (desc->isActive()) && (waitMs < desc->latency())) {
                     waitMs = desc->latency();
                 }
             }
@@ -1401,7 +1401,7 @@ status_t AudioPolicyManager::stopOutput(audio_io_handle_t output,
                 audio_io_handle_t curOutput = mOutputs.keyAt(i);
                 AudioOutputDescriptor *desc = mOutputs.valueAt(i);
                 if (curOutput != output &&
-                        desc->refCount() != 0 &&
+                        desc->isActive() &&
                         outputDesc->sharesHwModuleWith(desc) &&
                         newDevice != desc->device()) {
                     setOutputDevice(curOutput,
