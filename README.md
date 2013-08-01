@@ -1,4 +1,4 @@
-CyanogenMod 10.1 common device configuration for Samsung MSM7x27A devices
+CyanogenMod 10.2 common device configuration for Samsung MSM7x27A devices
 
 Curently supports:
 

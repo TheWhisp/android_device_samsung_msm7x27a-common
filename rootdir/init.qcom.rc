@@ -117,6 +117,9 @@ on boot
 
     ## Don't disable dmesg access for apps
     write /proc/sys/kernel/dmesg_restrict 0
+	
+	## TelephonyManager.java requires this
+    chmod 0644 /proc/cmdline
 
 on post-fs-data
     ## Create log system
