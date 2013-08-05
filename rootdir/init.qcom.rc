@@ -1,5 +1,5 @@
 import init.${ro.hardware}.usb.rc
-import init.${ro.hardware}.bluez.rc
+#import init.${ro.hardware}.bluez.rc
 
 on early-init
     mount debugfs debugfs /sys/kernel/debug
@@ -118,7 +118,7 @@ on boot
     ## Don't disable dmesg access for apps
     write /proc/sys/kernel/dmesg_restrict 0
 	
-	## TelephonyManager.java requires this
+    ## TelephonyManager.java requires this
     chmod 0644 /proc/cmdline
 
 on post-fs-data

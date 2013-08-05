@@ -55,6 +55,7 @@
         <MediaCodec name="OMX.google.h264.encoder" type="video/avc" />
         <MediaCodec name="OMX.google.mpeg4.encoder" type="video/mp4v-es" />
         <MediaCodec name="OMX.google.h263.encoder" type="video/3gpp" />
+        <MediaCodec name="OMX.google.vpx.encoder" type="video/x-vnd.on2.vp8" />
     </Encoders>
     <Decoders>
         <!-- Audio Hardware  -->
@@ -88,6 +89,7 @@
         </MediaCodec>
         <!-- Audio Software  -->
         <MediaCodec name="OMX.google.vorbis.decoder" type="audio/vorbis" />
+        <MediaCodec name="OMX.google.gsm.decoder" type="audio/gsm" />
         <MediaCodec name="OMX.google.mp3.decoder" type="audio/mpeg" />
         <MediaCodec name="MP3Decoder" type="audio/mpeg" />
         <MediaCodec name="OMX.google.amrnb.decoder" type="audio/3gpp" />
