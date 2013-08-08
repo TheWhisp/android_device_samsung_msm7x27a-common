@@ -34,14 +34,14 @@ PRODUCT_PACKAGES += \
     com.android.future.usb.accessory
 
 ## Bluetooth
-#PRODUCT_PACKAGES += \
-#    Bluetooth2 \
-#    bluetoothd \
-#    libbluetoothd \
-#    hcitool \
-#    hciconfig \
-#    hciattach \
-#    javax.btobex
+PRODUCT_PACKAGES += \
+    Bluetooth2 \
+    bluetoothd \
+    libbluetoothd \
+    hcitool \
+    hciconfig \
+    hciattach \
+    javax.btobex
 
 ## Audio
 PRODUCT_PACKAGES += \
@@ -59,10 +59,10 @@ PRODUCT_PACKAGES += \
     power.msm7x27a
 
 ## FM radio
-#PRODUCT_PACKAGES += \
-#    qcom.fmradio \
-#    libqcomfm_jni \
-#    FM2
+PRODUCT_PACKAGES += \
+    qcom.fmradio \
+    libqcomfm_jni \
+    FM2
 
 ## Permissions
 PRODUCT_COPY_FILES += \
@@ -75,7 +75,8 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.touchscreen.multitouch.jazzhand.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.jazzhand.xml \
     frameworks/native/data/etc/android.software.sip.voip.xml:system/etc/permissions/android.software.sip.voip.xml \
     packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:system/etc/permissions/android.software.live_wallpaper.xml \
-    frameworks/native/data/etc/android.hardware.usb.accessory.xml:system/etc/permissions/android.hardware.usb.accessory.xml
+    frameworks/native/data/etc/android.hardware.usb.accessory.xml:system/etc/permissions/android.hardware.usb.accessory.xml \
+    frameworks/native/data/etc/android.hardware.usb.host.xml:system/etc/permissions/android.hardware.usb.host.xml
 
 ## Media
 PRODUCT_COPY_FILES += \
