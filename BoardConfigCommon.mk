@@ -59,7 +59,7 @@ TARGET_FORCE_CPU_UPLOAD := true
 ## Graphics, media
 USE_OPENGL_RENDERER := true
 TARGET_QCOM_DISPLAY_VARIANT := legacy
-TARGET_NO_HW_VSYNC := true
+TARGET_NO_HW_VSYNC := false
 BOARD_USES_QCOM_HARDWARE := true
 BOARD_ADRENO_DECIDE_TEXTURE_TARGET := true
 BOARD_EGL_CFG := device/samsung/msm7x27a-common/prebuilt/lib/egl/egl.cfg
@@ -77,35 +77,18 @@ BOARD_HAVE_BLUETOOTH_BLUEZ := true
 
 ## Wi-Fi
 BOARD_WLAN_DEVICE := ath6kl
-ifeq ($(BOARD_WLAN_DEVICE),ath6kl)
-	# This is unnecessary, and breaks WIFI_EXT_MODULE_*
-	BOARD_HAVE_SAMSUNG_WIFI := false
+WPA_SUPPLICANT_VERSION := VER_0_8_X
+BOARD_WPA_SUPPLICANT_DRIVER := NL80211
+BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_ath6kl
+BOARD_HOSTAPD_DRIVER := NL80211
+BOARD_HOSTAPD_PRIVATE_LIB := lib_driver_cmd_ath6kl
+WIFI_EXT_MODULE_NAME := cfg80211
+WIFI_EXT_MODULE_PATH := /system/lib/modules/cfg80211.ko
+WIFI_DRIVER_MODULE_NAME := ath6kl
+WIFI_DRIVER_MODULE_PATH := /system/lib/modules/ath6kl.ko
 
-	# ATH6KL uses NL80211 driver
-	BOARD_WPA_SUPPLICANT_DRIVER := NL80211
-	BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_ath6kl
-
-	# ATH6KL uses hostapd built from source
-	BOARD_HOSTAPD_DRIVER := NL80211
-	BOARD_HOSTAPD_PRIVATE_LIB := lib_driver_cmd_ath6kl
-
-	# Common module dependency
-	WIFI_EXT_MODULE_NAME := cfg80211
-	WIFI_EXT_MODULE_PATH := /system/lib/modules/cfg80211.ko
-
-	# AP mode
-	WIFI_AP_DRIVER_MODULE_ARG := "suspend_mode=3 wow_mode=2 ath6kl_p2p=1 recovery_enable=1"
-	WIFI_AP_DRIVER_MODULE_NAME := ath6kl
-	WIFI_AP_DRIVER_MODULE_PATH := /system/lib/modules/ath6kl.ko
-
-	# Station/client mode
-	WIFI_DRIVER_MODULE_ARG := "suspend_mode=3 wow_mode=2 ath6kl_p2p=1 recovery_enable=1"
-	WIFI_DRIVER_MODULE_NAME := ath6kl
-	WIFI_DRIVER_MODULE_PATH := /system/lib/modules/ath6kl.ko
-
-	# Build the ath6kl-compat modules
+## Build Wi-Fi module
 KERNEL_EXTERNAL_MODULES:
-	# wipe & prepare ath6kl-compat working directory
 	rm -rf $(OUT)/ath6kl-compat
 	cp -a hardware/atheros/ath6kl-compat $(OUT)/
 	# run build
@@ -115,7 +98,6 @@ KERNEL_EXTERNAL_MODULES:
 	$(TARGET_OBJCOPY) --strip-unneeded $(OUT)/ath6kl-compat/drivers/net/wireless/ath/ath6kl/ath6kl.ko $(KERNEL_MODULES_OUT)/ath6kl.ko
 	$(TARGET_OBJCOPY) --strip-unneeded $(OUT)/ath6kl-compat/net/wireless/cfg80211.ko $(KERNEL_MODULES_OUT)/cfg80211.ko
 TARGET_KERNEL_MODULES := KERNEL_EXTERNAL_MODULES
-endif
 
 ## RIL
 BOARD_USES_LEGACY_RIL := true
