@@ -55,13 +55,13 @@ TARGET_FORCE_CPU_UPLOAD := true
 ## Graphics, media
 USE_OPENGL_RENDERER := true
 TARGET_QCOM_DISPLAY_VARIANT := legacy
-TARGET_NO_HW_VSYNC := false
+TARGET_NO_HW_VSYNC := true
 BOARD_USES_QCOM_HARDWARE := true
 BOARD_ADRENO_DECIDE_TEXTURE_TARGET := true
 BOARD_EGL_CFG := device/samsung/msm7x27a-common/prebuilt/lib/egl/egl.cfg
 TARGET_ENABLE_QC_AV_ENHANCEMENTS := true
 COMMON_GLOBAL_CFLAGS += -DQCOM_NO_SECURE_PLAYBACK -DQCOM_LEGACY_OMX
-COMMON_GLOBAL_CFLAGS += -DQCOM_HARDWARE -DANCIENT_GL -DLEGACY_LPA
+COMMON_GLOBAL_CFLAGS += -DQCOM_HARDWARE -DANCIENT_GL
 
 ## GPS
 BOARD_USES_QCOM_LIBRPC := true
@@ -73,18 +73,42 @@ BOARD_VENDOR_QCOM_GPS_LOC_API_AMSS_VERSION := 50000
 BOARD_HAVE_BLUETOOTH_BLUEZ := true
 
 ## Wi-Fi
-BOARD_HAVE_SAMSUNG_WIFI := true
 WPA_SUPPLICANT_VERSION := VER_0_8_X
-BOARD_WLAN_DEVICE := ath6kl
-BOARD_WPA_SUPPLICANT_DRIVER := WEXT
-BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_ath6kl
-# STA
-WIFI_DRIVER_MODULE_PATH := /system/wifi/ar6000.ko
-WIFI_DRIVER_MODULE_NAME := ar6000
-# AP
-WIFI_AP_DRIVER_MODULE_PATH := /system/wifi/ar6000.ko
-WIFI_AP_DRIVER_MODULE_NAME := ar6000
-WIFI_DRIVER_MODULE_AP_ARG := "ifname=athap0 devmode=ap"
+BOARD_WLAN_DEVICE := ath6kl_compat
+
+# ATH6KL uses NL80211 driver
+BOARD_WPA_SUPPLICANT_DRIVER := NL80211
+BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_ath6kl_compat
+
+# ATH6KL uses hostapd built from source
+BOARD_HOSTAPD_DRIVER := NL80211
+BOARD_HOSTAPD_PRIVATE_LIB := lib_driver_cmd_ath6kl_compat
+
+# Common module dependency
+WIFI_EXT_MODULE_NAME := cfg80211
+WIFI_EXT_MODULE_PATH := /system/lib/modules/cfg80211.ko
+
+# AP mode
+WIFI_AP_DRIVER_MODULE_ARG := "ath6kl_p2p=1 recovery_enable=1"
+WIFI_AP_DRIVER_MODULE_NAME := ath6kl
+WIFI_AP_DRIVER_MODULE_PATH := /system/lib/modules/ath6kl.ko
+
+# Station/client mode
+WIFI_DRIVER_MODULE_ARG := "ath6kl_p2p=1 recovery_enable=1"
+WIFI_DRIVER_MODULE_NAME := ath6kl
+WIFI_DRIVER_MODULE_PATH := /system/lib/modules/ath6kl.ko
+
+## Build Wi-Fi module
+KERNEL_EXTERNAL_MODULES:
+	rm -rf $(OUT)/ath6kl-compat
+	cp -a hardware/atheros/ath6kl-compat $(OUT)/
+	# run build
+	$(MAKE) -C $(OUT)/ath6kl-compat KERNEL_DIR=$(KERNEL_OUT) KLIB=$(KERNEL_OUT) KLIB_BUILD=$(KERNEL_OUT) ARCH=$(TARGET_ARCH) $(ARM_CROSS_COMPILE)
+	# copy & strip modules (to economize space)
+	$(TARGET_OBJCOPY) --strip-unneeded $(OUT)/ath6kl-compat/compat/compat.ko $(KERNEL_MODULES_OUT)/compat.ko
+	$(TARGET_OBJCOPY) --strip-unneeded $(OUT)/ath6kl-compat/drivers/net/wireless/ath/ath6kl/ath6kl.ko $(KERNEL_MODULES_OUT)/ath6kl.ko
+	$(TARGET_OBJCOPY) --strip-unneeded $(OUT)/ath6kl-compat/net/wireless/cfg80211.ko $(KERNEL_MODULES_OUT)/cfg80211.ko
+TARGET_KERNEL_MODULES := KERNEL_EXTERNAL_MODULES
 
 ## RIL
 BOARD_USES_LEGACY_RIL := true

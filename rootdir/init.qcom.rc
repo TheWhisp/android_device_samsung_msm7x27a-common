@@ -1,5 +1,5 @@
 import init.${ro.hardware}.usb.rc
-#import init.${ro.hardware}.bluez.rc
+import init.${ro.hardware}.bluez.rc
 
 on early-init
     mount debugfs debugfs /sys/kernel/debug
@@ -11,15 +11,18 @@ on init
     export SECONDARY_STORAGE /storage/sdcard1
 
     ## Setup storage
-    mkdir /storage 0050 system sdcard_r
-    mkdir /storage/sdcard0 0000 system system
-    mkdir /storage/sdcard1 0000 system system
+    mkdir /storage 0775 system sdcard_r
+    mkdir /storage/sdcard0 0775 system system
+    mkdir /storage/sdcard1 0775 system system
+	mkdir /storage/usbdisk0 0775 system system
 
     ## Backwards compability
     symlink /storage/sdcard0 /mnt/sdcard
     symlink /storage/sdcard0 /sdcard
     symlink /storage/sdcard1 /external_sd
     symlink /storage/sdcard1 /mnt/external_sd
+	symlink /storage/usbdisk0 /mnt/usbdisk
+    symlink /storage/usbdisk0 /usbdisk
 
 on fs
     ## Mount partitions
@@ -32,6 +35,9 @@ on boot
     mkdir /data/misc/wifi/wpa_supplicant 0775 wifi wifi
     mkdir /data/misc/dhcp 0770 dhcp dhcp
     chown dhcp dhcp /data/misc/dhcp
+
+	## compat module needed for ath6kl
+    insmod /system/lib/modules/compat.ko
 
     ## Setup hostapd
     mkdir /data/misc/wifi/hostapd 0770 wifi wifi
@@ -162,7 +168,7 @@ service abtfilt /system/bin/abtfilt -d -z -n -v -s -a -q
     disabled
     oneshot 
 
-service wpa_supplicant /system/bin/logwrapper /system/bin/wpa_supplicant -Dwext -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf
+service wpa_supplicant /system/bin/wpa_supplicant -Dnl80211 -iwlan0 -dd -W -c/data/misc/wifi/wpa_supplicant.conf
     class main
     group wifi inet
     socket wpa_wlan0 dgram 660 wifi wifi
