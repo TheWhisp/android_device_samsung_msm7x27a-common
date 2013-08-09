@@ -63,7 +63,7 @@ TARGET_NO_HW_VSYNC := false
 BOARD_USES_QCOM_HARDWARE := true
 BOARD_ADRENO_DECIDE_TEXTURE_TARGET := true
 BOARD_EGL_CFG := device/samsung/msm7x27a-common/prebuilt/lib/egl/egl.cfg
-COMMON_GLOBAL_CFLAGS += -DQCOM_NO_SECURE_PLAYBACK -DQCOM_LEGACY_OMX
+COMMON_GLOBAL_CFLAGS += -DQCOM_LEGACY_OMX
 COMMON_GLOBAL_CFLAGS += -DQCOM_HARDWARE -DANCIENT_GL
 
 ## GPS
@@ -84,6 +84,10 @@ BOARD_HOSTAPD_DRIVER := NL80211
 BOARD_HOSTAPD_PRIVATE_LIB := lib_driver_cmd_ath6kl
 WIFI_EXT_MODULE_NAME := cfg80211
 WIFI_EXT_MODULE_PATH := /system/lib/modules/cfg80211.ko
+WIFI_AP_DRIVER_MODULE_ARG := "suspend_mode=3 wow_mode=2 ath6kl_p2p=1 recovery_enable=1"
+WIFI_AP_DRIVER_MODULE_NAME := ath6kl
+WIFI_AP_DRIVER_MODULE_PATH := /system/lib/modules/ath6kl.ko
+WIFI_DRIVER_MODULE_ARG := "suspend_mode=3 wow_mode=2 ath6kl_p2p=1 recovery_enable=1"
 WIFI_DRIVER_MODULE_NAME := ath6kl
 WIFI_DRIVER_MODULE_PATH := /system/lib/modules/ath6kl.ko
 
@@ -91,9 +95,9 @@ WIFI_DRIVER_MODULE_PATH := /system/lib/modules/ath6kl.ko
 KERNEL_EXTERNAL_MODULES:
 	rm -rf $(OUT)/ath6kl-compat
 	cp -a hardware/atheros/ath6kl-compat $(OUT)/
-	# run build
+        # run build
 	$(MAKE) -C $(OUT)/ath6kl-compat KERNEL_DIR=$(KERNEL_OUT) KLIB=$(KERNEL_OUT) KLIB_BUILD=$(KERNEL_OUT) ARCH=$(TARGET_ARCH) $(ARM_CROSS_COMPILE)
-	# copy & strip modules (to economize space)
+        # copy & strip modules (to economize space)
 	$(TARGET_OBJCOPY) --strip-unneeded $(OUT)/ath6kl-compat/compat/compat.ko $(KERNEL_MODULES_OUT)/compat.ko
 	$(TARGET_OBJCOPY) --strip-unneeded $(OUT)/ath6kl-compat/drivers/net/wireless/ath/ath6kl/ath6kl.ko $(KERNEL_MODULES_OUT)/ath6kl.ko
 	$(TARGET_OBJCOPY) --strip-unneeded $(OUT)/ath6kl-compat/net/wireless/cfg80211.ko $(KERNEL_MODULES_OUT)/cfg80211.ko
@@ -154,17 +158,3 @@ BOARD_BOOTIMAGE_PARTITION_SIZE := 12582912
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 12582912
 BOARD_SYSTEMIMAGE_PARTITION_SIZE := 524288000
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 979369984
-
-## TWRP
-DEVICE_RESOLUTION := 320x480
-RECOVERY_GRAPHICS_USE_LINELENGTH := true
-TARGET_RECOVERY_PIXEL_FORMAT := "RGB_565"
-TW_HAS_DOWNLOAD_MODE := true
-TW_NO_REBOOT_BOOTLOADER := true
-TW_NO_EXFAT := true
-TW_INCLUDE_FB2PNG := true
-TW_DEFAULT_EXTERNAL_STORAGE := false
-TW_INTERNAL_STORAGE_PATH := "/emmc"
-TW_INTERNAL_STORAGE_MOUNT_POINT := "emmc"
-TW_EXTERNAL_STORAGE_PATH := "/sdcard"
-TW_EXTERNAL_STORAGE_MOUNT_POINT := "sdcard"
