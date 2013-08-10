@@ -1,0 +1,600 @@
+From 8bd1289ec18d679eb88654c5b48a771ee3a8988c Mon Sep 17 00:00:00 2001
+From: Mingming Yin <mingming@codeaurora.org>
+Date: Thu, 27 Dec 2012 17:43:24 -0800
+Subject: [PATCH 17/18] qcom-fm: audio: add support for fm feature
+
+Change-Id: Id48a52ceb7359deb65d4a69e664b22ed80cf997c
+
+Conflicts:
+
+	core/java/android/content/Intent.java
+	policy/src/com/android/internal/policy/impl/PhoneWindowManager.java
+
+audio: fix for FM mute issue
+
+- Add STREAM_FM in mMuteAffectedStreams
+  so that FM stream can be muted
+- Add STREAM_FM in STREAM_NAMES
+
+Change-Id: I6c604e1a20a466a97ca4246260c0b1a7ad9112d2
+CRs-fixed: 441132
+---
+ core/java/android/content/Intent.java              |   25 ++++++++
+ core/java/android/provider/Settings.java           |   18 +++++-
+ core/java/android/view/VolumePanel.java            |   12 ++++
+ media/java/android/media/AudioManager.java         |   18 +++++-
+ media/java/android/media/AudioService.java         |   65 ++++++++++++++++++--
+ media/java/android/media/AudioSystem.java          |   19 +++++-
+ media/java/android/media/MediaRecorder.java        |    9 ++-
+ .../android/providers/settings/DatabaseHelper.java |    3 +
+ .../internal/policy/impl/PhoneWindowManager.java   |   19 +++++-
+ .../policy/impl/keyguard/KeyguardViewBase.java     |    9 +++
+ 10 files changed, 186 insertions(+), 11 deletions(-)
+
+diff --git a/core/java/android/content/Intent.java b/core/java/android/content/Intent.java
+index 519eb36..a0c42b7 100644
+--- a/core/java/android/content/Intent.java
++++ b/core/java/android/content/Intent.java
+@@ -1,6 +1,7 @@
+ /*
+  * Copyright (C) 2006 The Android Open Source Project
+  * This code has been modified.  Portions copyright (C) 2010, T-Mobile USA, Inc.
++ * Copyright (c) 2013, The Linux Foundation. All rights reserved.
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+@@ -2138,6 +2139,30 @@ public class Intent implements Parcelable, Cloneable {
+             "android.intent.action.HEADSET_PLUG";
+ 
+     /**
++     * Intents indicating the FM Rx switching on or off
++     * <p>The intent will have the following extra values:
++     * <ul>
++     *   <li><em>state</em> - 0 for switched off, 1 for switched on. </li>
++     * </ul>
++     * </ul>
++     * @hide
++     */
++    public static final String ACTION_FM =
++            "qualcomm.intent.action.FM";
++
++    /**
++     * Intents indicating the FM Tx switching on or off
++     * <p>The intent will have the following extra values:
++     * <ul>
++     *   <li><em>state</em> - 0 for switched off, 1 for switched on. </li>
++     * </ul>
++     * </ul>
++     * @hide
++     */
++    public static final String ACTION_FM_TX =
++            "qualcomm.intent.action.FMTX";
++
++    /**
+      * Broadcast Action: WiFi Display audio is enabled or disabled
+      *
+      * <p>The intent will have the following extra values:
+diff --git a/core/java/android/provider/Settings.java b/core/java/android/provider/Settings.java
+index fc66f14..51d25db 100644
+--- a/core/java/android/provider/Settings.java
++++ b/core/java/android/provider/Settings.java
+@@ -1,5 +1,6 @@
+ /*
+  * Copyright (C) 2006 The Android Open Source Project
++ * Copyright (c) 2013, The Linux Foundation. All rights reserved.
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+@@ -1858,6 +1859,18 @@ public final class Settings {
+         public static final String VOLUME_MUSIC = "volume_music";
+ 
+         /**
++         * FM volume (float in the range 0.0f to 1.0f).
++         * @hide
++         */
++        public static final String VOLUME_FM = "volume_fm";
++
++        /**
++         * Dummy string. Dummy string for padding
++         * @hide
++         */
++        public static final String DUMMY_STRING_FOR_PADDING = "";
++
++        /**
+          * Alarm volume. This is used internally, changing this
+          * value will not change the volume. See AudioManager.
+          */
+@@ -1949,7 +1962,9 @@ public final class Settings {
+          */
+         public static final String[] VOLUME_SETTINGS = {
+             VOLUME_VOICE, VOLUME_SYSTEM, VOLUME_RING, VOLUME_MUSIC,
+-            VOLUME_ALARM, VOLUME_NOTIFICATION, VOLUME_BLUETOOTH_SCO
++            VOLUME_ALARM, VOLUME_NOTIFICATION, VOLUME_BLUETOOTH_SCO,
++            DUMMY_STRING_FOR_PADDING,DUMMY_STRING_FOR_PADDING,
++            DUMMY_STRING_FOR_PADDING,VOLUME_FM
+         };
+ 
+         /**
+@@ -3216,6 +3231,7 @@ public final class Settings {
+             VOLUME_SYSTEM,
+             VOLUME_RING,
+             VOLUME_MUSIC,
++            VOLUME_FM,
+             VOLUME_ALARM,
+             VOLUME_NOTIFICATION,
+             VOLUME_BLUETOOTH_SCO,
+diff --git a/core/java/android/view/VolumePanel.java b/core/java/android/view/VolumePanel.java
+index 8a83fa5..3fbc7af 100644
+--- a/core/java/android/view/VolumePanel.java
++++ b/core/java/android/view/VolumePanel.java
+@@ -1,5 +1,6 @@
+ /*
+  * Copyright (C) 2007 The Android Open Source Project
++ * Copyright (c) 2013, The Linux Foundation. All rights reserved.
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+@@ -169,6 +170,11 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
+                 R.drawable.ic_audio_notification,
+                 R.drawable.ic_audio_notification_mute,
+                 true),
++        FMStream(AudioManager.STREAM_FM,
++                R.string.volume_icon_description_media,
++                R.drawable.ic_audio_vol,
++                R.drawable.ic_audio_vol_mute,
++                true),
+         // for now, use media resources for master volume
+         MasterStream(STREAM_MASTER,
+                 R.string.volume_icon_description_media, //FIXME should have its own description
+@@ -205,6 +211,7 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
+         StreamResources.MediaStream,
+         StreamResources.NotificationStream,
+         StreamResources.AlarmStream,
++        StreamResources.FMStream,
+         StreamResources.MasterStream,
+         StreamResources.RemoteStream
+     };
+@@ -739,6 +746,11 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
+                 break;
+             }
+ 
++            case AudioManager.STREAM_FM: {
++                setMusicIcon(R.drawable.ic_audio_vol, R.drawable.ic_audio_vol_mute);
++                break;
++            }
++
+             case AudioManager.STREAM_VOICE_CALL: {
+                 /*
+                  * For in-call voice call volume, there is no inaudible volume.
+diff --git a/media/java/android/media/AudioManager.java b/media/java/android/media/AudioManager.java
+index ac2588d..97c6b0b 100644
+--- a/media/java/android/media/AudioManager.java
++++ b/media/java/android/media/AudioManager.java
+@@ -1,5 +1,6 @@
+ /*
+  * Copyright (C) 2007 The Android Open Source Project
++ * Copyright (c) 2013, The Linux Foundation. All rights reserved.
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+@@ -220,6 +221,8 @@ public class AudioManager {
+     public static final int STREAM_DTMF = AudioSystem.STREAM_DTMF;
+     /** @hide The audio stream for text to speech (TTS) */
+     public static final int STREAM_TTS = AudioSystem.STREAM_TTS;
++    /** @hide The audio stream for FM Radio (FM) */
++    public static final int STREAM_FM = AudioSystem.STREAM_FM;
+     /** Number of audio streams */
+     /**
+      * @deprecated Use AudioSystem.getNumStreamTypes() instead
+@@ -238,7 +241,8 @@ public class AudioManager {
+         7,  // STREAM_BLUETOOTH_SCO
+         7,  // STREAM_SYSTEM_ENFORCED
+         11, // STREAM_DTMF
+-        11  // STREAM_TTS
++        11, // STREAM_TTS
++        11  // STREAM_FM
+     };
+ 
+     /**
+@@ -1555,6 +1559,16 @@ public class AudioManager {
+         return -1;
+     }
+ 
++     /**
++      * Checks whether FM stream is active.
++      *
++      * @return true if FM is active.
++      * @hide
++      */
++    public boolean isFMActive() {
++        return AudioSystem.isStreamActive(STREAM_FM, 0);
++    }
++
+     /**
+      * Checks whether any music is active.
+      *
+@@ -1581,7 +1595,7 @@ public class AudioManager {
+      * Note: only AudioManager.STREAM_MUSIC is supported at the moment
+      */
+     public void adjustLocalOrRemoteStreamVolume(int streamType, int direction) {
+-        if (streamType != STREAM_MUSIC) {
++        if (streamType != STREAM_MUSIC && streamType != STREAM_FM) {
+             Log.w(TAG, "adjustLocalOrRemoteStreamVolume() doesn't support stream " + streamType);
+         }
+         IAudioService service = getService();
+diff --git a/media/java/android/media/AudioService.java b/media/java/android/media/AudioService.java
+index e9bd455..fd906d7 100644
+--- a/media/java/android/media/AudioService.java
++++ b/media/java/android/media/AudioService.java
+@@ -1,5 +1,6 @@
+ /*
+  * Copyright (C) 2006 The Android Open Source Project
++ * Copyright (c) 2013, The Linux Foundation. All rights reserved.
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+@@ -237,7 +238,8 @@ public class AudioService extends IAudioService.Stub implements OnFinished {
+         15, // STREAM_BLUETOOTH_SCO
+         7,  // STREAM_SYSTEM_ENFORCED
+         15, // STREAM_DTMF
+-        15  // STREAM_TTS
++        15, // STREAM_TTS
++        15  // STREAM_FM
+     };
+     /* mStreamVolumeAlias[] indicates for each stream if it uses the volume settings
+      * of another stream: This avoids multiplying the volume settings for hidden
+@@ -257,7 +259,8 @@ public class AudioService extends IAudioService.Stub implements OnFinished {
+         AudioSystem.STREAM_BLUETOOTH_SCO,   // STREAM_BLUETOOTH_SCO
+         AudioSystem.STREAM_RING,            // STREAM_SYSTEM_ENFORCED
+         AudioSystem.STREAM_RING,            // STREAM_DTMF
+-        AudioSystem.STREAM_MUSIC            // STREAM_TTS
++        AudioSystem.STREAM_MUSIC,           // STREAM_TTS
++        AudioSystem.STREAM_FM
+     };
+     private final int[] STREAM_VOLUME_ALIAS_NON_VOICE = new int[] {
+         AudioSystem.STREAM_VOICE_CALL,      // STREAM_VOICE_CALL
+@@ -269,7 +272,8 @@ public class AudioService extends IAudioService.Stub implements OnFinished {
+         AudioSystem.STREAM_BLUETOOTH_SCO,   // STREAM_BLUETOOTH_SCO
+         AudioSystem.STREAM_MUSIC,           // STREAM_SYSTEM_ENFORCED
+         AudioSystem.STREAM_MUSIC,           // STREAM_DTMF
+-        AudioSystem.STREAM_MUSIC            // STREAM_TTS
++        AudioSystem.STREAM_MUSIC,           // STREAM_TTS
++        AudioSystem.STREAM_FM
+     };
+     private int[] mStreamVolumeAlias;
+ 
+@@ -284,7 +288,8 @@ public class AudioService extends IAudioService.Stub implements OnFinished {
+             "STREAM_BLUETOOTH_SCO",
+             "STREAM_SYSTEM_ENFORCED",
+             "STREAM_DTMF",
+-            "STREAM_TTS"
++            "STREAM_TTS",
++            "STREAM_FM"
+     };
+ 
+     private boolean mLinkNotificationWithVolume;
+@@ -528,6 +533,8 @@ public class AudioService extends IAudioService.Stub implements OnFinished {
+         }
+         intentFilter.addAction(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED);
+         intentFilter.addAction(Intent.ACTION_DOCK_EVENT);
++        intentFilter.addAction(Intent.ACTION_FM);
++        intentFilter.addAction(Intent.ACTION_FM_TX);
+         intentFilter.addAction(Intent.ACTION_USB_AUDIO_ACCESSORY_PLUG);
+         intentFilter.addAction(Intent.ACTION_USB_AUDIO_DEVICE_PLUG);
+         intentFilter.addAction(Intent.ACTION_BOOT_COMPLETED);
+@@ -794,6 +801,8 @@ public class AudioService extends IAudioService.Stub implements OnFinished {
+                  (1 << AudioSystem.STREAM_RING)|
+                  (1 << AudioSystem.STREAM_SYSTEM)),
+                  UserHandle.USER_CURRENT);
++        //Add STREAM_FM in mMuteAffectedStreams
++        mMuteAffectedStreams |= (1 << AudioSystem.STREAM_FM);
+ 
+         boolean masterMute = System.getIntForUser(cr, System.VOLUME_MASTER_MUTE,
+                                                   0, UserHandle.USER_CURRENT) == 1;
+@@ -834,6 +843,8 @@ public class AudioService extends IAudioService.Stub implements OnFinished {
+             adjustRemoteVolume(AudioSystem.STREAM_MUSIC, direction, 0);
+         } else if (AudioSystem.isStreamActive(AudioSystem.STREAM_MUSIC, 0)) {
+             adjustStreamVolume(AudioSystem.STREAM_MUSIC, direction, 0);
++        } else if (AudioSystem.isStreamActive(AudioSystem.STREAM_FM, 0)) {
++            adjustStreamVolume(AudioSystem.STREAM_FM, direction, 0);
+         }
+     }
+ 
+@@ -2561,6 +2572,10 @@ public class AudioService extends IAudioService.Stub implements OnFinished {
+                     if (DEBUG_VOL)
+                         Log.v(TAG, "getActiveStreamType: Forcing STREAM_MUSIC stream active");
+                     return AudioSystem.STREAM_MUSIC;
++                } else if (AudioSystem.isStreamActive(AudioSystem.STREAM_FM, 0)) {
++                    if (DEBUG_VOL)
++                        Log.v(TAG, "getActiveStreamType: Forcing STREAM_FM...");
++                    return AudioSystem.STREAM_FM;
+                 } else {
+                     if (mVolumeKeysControlRingStream) {
+                         if (DEBUG_VOL)
+@@ -2576,6 +2591,10 @@ public class AudioService extends IAudioService.Stub implements OnFinished {
+                 if (DEBUG_VOL)
+                     Log.v(TAG, "getActiveStreamType: Forcing STREAM_MUSIC stream active");
+                 return AudioSystem.STREAM_MUSIC;
++            } else if (AudioSystem.isStreamActive(AudioSystem.STREAM_FM, 0)) {
++                if (DEBUG_VOL)
++                    Log.v(TAG, "getActiveStreamType: Forcing STREAM_FM...");
++                return AudioSystem.STREAM_FM;
+             } else {
+                 if (DEBUG_VOL) Log.v(TAG, "getActiveStreamType: Returning suggested type "
+                         + suggestedStreamType);
+@@ -2680,6 +2699,10 @@ public class AudioService extends IAudioService.Stub implements OnFinished {
+             // selection if not the speaker.
+             if ((device & AudioSystem.DEVICE_OUT_SPEAKER) != 0) {
+                 device = AudioSystem.DEVICE_OUT_SPEAKER;
++            } else if ((device & AudioSystem.DEVICE_OUT_WIRED_HEADSET) != 0) {
++                device = AudioSystem.DEVICE_OUT_WIRED_HEADSET;
++            } else if ((device & AudioSystem.DEVICE_OUT_WIRED_HEADPHONE) != 0) {
++                device = AudioSystem.DEVICE_OUT_WIRED_HEADPHONE;
+             } else {
+                 device &= AudioSystem.DEVICE_OUT_ALL_A2DP;
+             }
+@@ -3064,7 +3087,10 @@ public class AudioService extends IAudioService.Stub implements OnFinished {
+                                 Iterator i = set.iterator();
+                                 while (i.hasNext()) {
+                                     Map.Entry entry = (Map.Entry)i.next();
+-                                    int device = ((Integer)entry.getKey()).intValue();
++                                    int streamTypeAlias = mStreamVolumeAlias[mStreamType];
++                                    int device = getDeviceForStream(streamTypeAlias);
++                                    setIndex(0, device, false /* lastAudible */);
++                                    device = ((Integer)entry.getKey()).intValue();
+                                     setIndex(0, device, false /* lastAudible */);
+                                 }
+                                 sendMsg(mAudioHandler,
+@@ -4087,6 +4113,35 @@ public class AudioService extends IAudioService.Stub implements OnFinished {
+                         removeMediaButtonReceiverForPackage(packageName);
+                     }
+                 }
++            } else if (action.equals(Intent.ACTION_FM)){
++               Log.v(TAG, "FM Intent received");
++               state = intent.getIntExtra("state", 0);
++               if(state == 1){
++                    AudioSystem.setDeviceConnectionState(AudioSystem.DEVICE_OUT_FM,
++                            AudioSystem.DEVICE_STATE_AVAILABLE,
++                            "");
++                    mConnectedDevices.put( new Integer(AudioSystem.DEVICE_OUT_FM), "");
++                }else if(state == 0){
++                    AudioSystem.setDeviceConnectionState(AudioSystem.DEVICE_OUT_FM,
++                            AudioSystem.DEVICE_STATE_UNAVAILABLE,
++                            "");
++                    mConnectedDevices.remove(AudioSystem.DEVICE_OUT_FM);
++                }
++            }else if (action.equals(Intent.ACTION_FM_TX)){
++               state = intent.getIntExtra("state", 0);
++               Log.v(TAG, "FM Tx Intent received "+state);
++               boolean isConnected = mConnectedDevices.containsKey(AudioSystem.DEVICE_OUT_FM_TX);
++               if(state == 1 && !isConnected){
++                    AudioSystem.setDeviceConnectionState(AudioSystem.DEVICE_OUT_FM_TX,
++                            AudioSystem.DEVICE_STATE_AVAILABLE,
++                            "");
++                    mConnectedDevices.put( new Integer(AudioSystem.DEVICE_OUT_FM_TX), "");
++                }else if(state == 0 && isConnected){
++                    AudioSystem.setDeviceConnectionState(AudioSystem.DEVICE_OUT_FM_TX,
++                            AudioSystem.DEVICE_STATE_UNAVAILABLE,
++                            "");
++                    mConnectedDevices.remove(AudioSystem.DEVICE_OUT_FM_TX);
++                }
+             } else if (action.equals(Intent.ACTION_SCREEN_ON)) {
+                 AudioSystem.setParameters("screen_state=on");
+             } else if (action.equals(Intent.ACTION_SCREEN_OFF)) {
+diff --git a/media/java/android/media/AudioSystem.java b/media/java/android/media/AudioSystem.java
+index 01e79e7..af85d8c 100644
+--- a/media/java/android/media/AudioSystem.java
++++ b/media/java/android/media/AudioSystem.java
+@@ -1,5 +1,6 @@
+ /*
+  * Copyright (C) 2006 The Android Open Source Project
++ * Copyright (c) 2013, The Linux Foundation. All rights reserved.
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+@@ -52,13 +53,15 @@ public class AudioSystem
+     public static final int STREAM_DTMF = 8;
+     /* @hide The audio stream for text to speech (TTS) */
+     public static final int STREAM_TTS = 9;
++    /* @hide The audio stream for FM */
++    public static final int STREAM_FM = 10;
+     /**
+      * @deprecated Use {@link #numStreamTypes() instead}
+      */
+     public static final int NUM_STREAMS = 5;
+ 
+     // Expose only the getter method publicly so we can change it in the future
+-    private static final int NUM_STREAM_TYPES = 10;
++    private static final int NUM_STREAM_TYPES = 11;
+     public static final int getNumStreamTypes() { return NUM_STREAM_TYPES; }
+ 
+     /*
+@@ -222,6 +225,8 @@ public class AudioSystem
+     public static final int DEVICE_OUT_ANC_HEADSET = 0x10000;
+     public static final int DEVICE_OUT_ANC_HEADPHONE = 0x20000;
+     public static final int DEVICE_OUT_PROXY = 0x40000;
++    public static final int DEVICE_OUT_FM = 0x80000;
++    public static final int DEVICE_OUT_FM_TX = 0x100000;
+     public static final int DEVICE_OUT_DEFAULT = DEVICE_BIT_DEFAULT;
+ 
+     public static final int DEVICE_OUT_ALL = (DEVICE_OUT_EARPIECE |
+@@ -243,6 +248,8 @@ public class AudioSystem
+                                               DEVICE_OUT_ANC_HEADSET |
+                                               DEVICE_OUT_ANC_HEADPHONE |
+                                               DEVICE_OUT_PROXY |
++                                              DEVICE_OUT_FM |
++                                              DEVICE_OUT_FM_TX |
+                                               DEVICE_OUT_DEFAULT);
+     public static final int DEVICE_OUT_ALL_A2DP = (DEVICE_OUT_BLUETOOTH_A2DP |
+                                                    DEVICE_OUT_BLUETOOTH_A2DP_HEADPHONES |
+@@ -269,6 +276,8 @@ public class AudioSystem
+     public static final int DEVICE_IN_USB_DEVICE = DEVICE_BIT_IN | 0x1000;
+     public static final int DEVICE_IN_ANC_HEADSET = DEVICE_BIT_IN | 0x2000;
+     public static final int DEVICE_IN_PROXY = DEVICE_BIT_IN | 0x4000;
++    public static final int DEVICE_IN_FM_RX = DEVICE_BIT_IN | 0x8000;
++    public static final int DEVICE_IN_FM_RX_A2DP = DEVICE_BIT_IN | 0x10000;
+     public static final int DEVICE_IN_DEFAULT = DEVICE_BIT_IN | DEVICE_BIT_DEFAULT;
+ 
+     public static final int DEVICE_IN_ALL = (DEVICE_IN_COMMUNICATION |
+@@ -286,6 +295,8 @@ public class AudioSystem
+                                              DEVICE_IN_USB_DEVICE |
+                                              DEVICE_IN_ANC_HEADSET |
+                                              DEVICE_IN_PROXY |
++                                             DEVICE_IN_FM_RX |
++                                             DEVICE_IN_FM_RX_A2DP |
+                                              DEVICE_IN_DEFAULT);
+     public static final int DEVICE_IN_ALL_SCO = DEVICE_IN_BLUETOOTH_SCO_HEADSET;
+ 
+@@ -313,6 +324,8 @@ public class AudioSystem
+     public static final String DEVICE_OUT_ANC_HEADSET_NAME = "anc_headset";
+     public static final String DEVICE_OUT_ANC_HEADPHONE_NAME = "anc_headphone";
+     public static final String DEVICE_OUT_PROXY_NAME = "proxy";
++    public static final String DEVICE_OUT_FM_NAME = "fm";
++    public static final String DEVICE_OUT_FM_TX_NAME = "fm_tx";
+ 
+     public static String getDeviceName(int device)
+     {
+@@ -355,6 +368,10 @@ public class AudioSystem
+             return DEVICE_OUT_ANC_HEADPHONE_NAME;
+         case DEVICE_OUT_PROXY:
+             return DEVICE_OUT_PROXY_NAME;
++        case DEVICE_OUT_FM:
++            return DEVICE_OUT_FM_NAME;
++        case DEVICE_OUT_FM_TX:
++            return DEVICE_OUT_FM_TX_NAME;
+         case DEVICE_OUT_DEFAULT:
+         default:
+             return "";
+diff --git a/media/java/android/media/MediaRecorder.java b/media/java/android/media/MediaRecorder.java
+index 544410f..ec0819b 100644
+--- a/media/java/android/media/MediaRecorder.java
++++ b/media/java/android/media/MediaRecorder.java
+@@ -1,5 +1,6 @@
+ /*
+  * Copyright (C) 2007 The Android Open Source Project
++ * Copyright (c) 2013, The Linux Foundation. All rights reserved.
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+@@ -183,6 +184,12 @@ public class MediaRecorder
+          * Audio source for remote submix.
+          */
+         public static final int REMOTE_SUBMIX_SOURCE = 8;
++
++        /** @hide */
++        public static final int FM_RX = 9;
++
++        /** @hide */
++        public static final int FM_RX_A2DP = 10;
+     }
+ 
+     /**
+@@ -313,7 +320,7 @@ public class MediaRecorder
+     public static final int getAudioSourceMax() {
+         // FIXME disable selection of the remote submxi source selection once test code
+         //       doesn't rely on it
+-        return AudioSource.REMOTE_SUBMIX_SOURCE;
++        return AudioSource.FM_RX_A2DP;
+         //return AudioSource.VOICE_COMMUNICATION;
+     }
+ 
+diff --git a/packages/SettingsProvider/src/com/android/providers/settings/DatabaseHelper.java b/packages/SettingsProvider/src/com/android/providers/settings/DatabaseHelper.java
+index 4d88959..df3b6db 100644
+--- a/packages/SettingsProvider/src/com/android/providers/settings/DatabaseHelper.java
++++ b/packages/SettingsProvider/src/com/android/providers/settings/DatabaseHelper.java
+@@ -1,5 +1,6 @@
+ /*
+  * Copyright (C) 2007 The Android Open Source Project
++ * Copyright (c) 2013, The Linux Foundation. All rights reserved.
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+@@ -1831,6 +1832,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
+ 
+             loadSetting(stmt, Settings.System.VOLUME_MUSIC,
+                     AudioManager.DEFAULT_STREAM_VOLUME[AudioManager.STREAM_MUSIC]);
++            loadSetting(stmt, Settings.System.VOLUME_FM,
++                    AudioManager.DEFAULT_STREAM_VOLUME[AudioManager.STREAM_FM]);
+             loadSetting(stmt, Settings.System.VOLUME_RING,
+                     AudioManager.DEFAULT_STREAM_VOLUME[AudioManager.STREAM_RING]);
+             loadSetting(stmt, Settings.System.VOLUME_SYSTEM,
+diff --git a/policy/src/com/android/internal/policy/impl/PhoneWindowManager.java b/policy/src/com/android/internal/policy/impl/PhoneWindowManager.java
+index 04ed585..7864633 100644
+--- a/policy/src/com/android/internal/policy/impl/PhoneWindowManager.java
++++ b/policy/src/com/android/internal/policy/impl/PhoneWindowManager.java
+@@ -1,6 +1,7 @@
+ /*
+  * Copyright (C) 2008 The Android Open Source Project
+  * Copyright (C) 2012-2013 The CyanogenMod Project
++ * Copyright (c) 2013, The Linux Foundation. All rights reserved.
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+@@ -3798,6 +3799,18 @@ public class PhoneWindowManager implements WindowManagerPolicy {
+     }
+ 
+     /**
++    * @return Whether FM is being played right now.
++    */
++    boolean isFMActive() {
++        final AudioManager am = (AudioManager)mContext.getSystemService(Context.AUDIO_SERVICE);
++        if (am == null) {
++            Log.w(TAG, "isFMActive: couldn't get AudioManager reference");
++            return false;
++        }
++        return am.isFMActive();
++    }
++
++    /**
+      * Tell the audio service to adjust the volume appropriate to the event.
+      * @param keycode
+      */
+@@ -4073,8 +4086,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
+                             Log.w(TAG, "ITelephony threw RemoteException", ex);
+                         }
+                     }
++
+                 }
+-                if (isMusicActive() && (result & ACTION_PASS_TO_USER) == 0) {
++                if (isFMActive() && (result & ACTION_PASS_TO_USER) == 0) {
++                    handleVolumeKey(AudioManager.STREAM_FM, keyCode);
++                    break;
++                } else if (isMusicActive() && (result & ACTION_PASS_TO_USER) == 0) {
+                     if (mVolBtnMusicControls && down && (keyCode != KeyEvent.KEYCODE_VOLUME_MUTE)) {
+                         mIsLongPress = false;
+                         int newKeyCode = event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP ?
+diff --git a/policy/src/com/android/internal/policy/impl/keyguard/KeyguardViewBase.java b/policy/src/com/android/internal/policy/impl/keyguard/KeyguardViewBase.java
+index cc88283..cb943bc 100644
+--- a/policy/src/com/android/internal/policy/impl/keyguard/KeyguardViewBase.java
++++ b/policy/src/com/android/internal/policy/impl/keyguard/KeyguardViewBase.java
+@@ -1,5 +1,6 @@
+ /*
+  * Copyright (C) 2007 The Android Open Source Project
++ * Copyright (c) 2013, The Linux Foundation. All rights reserved.
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+@@ -199,12 +200,20 @@ public abstract class KeyguardViewBase extends FrameLayout {
+                             }
+                         }
+                         // Volume buttons should only function for music (local or remote).
++                        if (mAudioManager.isMusicActive()) {
+                         // TODO: Actually handle MUTE.
+                         mAudioManager.adjustLocalOrRemoteStreamVolume(
+                                 AudioManager.STREAM_MUSIC,
+                                 keyCode == KeyEvent.KEYCODE_VOLUME_UP
+                                         ? AudioManager.ADJUST_RAISE
+                                         : AudioManager.ADJUST_LOWER);
++                        } else if (mAudioManager.isFMActive()) {
++                        mAudioManager.adjustLocalOrRemoteStreamVolume(
++                                 AudioManager.STREAM_FM,
++                                 keyCode == KeyEvent.KEYCODE_VOLUME_UP
++                                         ? AudioManager.ADJUST_RAISE
++                                         : AudioManager.ADJUST_LOWER);
++                        }
+                         // Don't execute default volume behavior
+                         return true;
+                     } else {
+-- 
+1.7.9.5
+
