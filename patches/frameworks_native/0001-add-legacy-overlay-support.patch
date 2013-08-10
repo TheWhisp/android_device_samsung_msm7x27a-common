@@ -131,7 +131,7 @@ index 5d5e082..4b16a2f 100644
  	Region.cpp \
 -	UiConfig.cpp
 +	UiConfig.cpp \
-+	Overlay.cpp
++	legacy/Overlay.cpp
  
  LOCAL_SHARED_LIBRARIES := \
  	libcutils \
