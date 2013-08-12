@@ -97,7 +97,7 @@
 /dev/ttyXTRA0             0660   system     system
 /dev/ttyCPLOG0            0660   radio      radio
 
-/dev/oncrpc/00000000:0    0660  system       qcom_oncrpc
+/dev/oncrpc/00000000:0        0660   system       qcom_oncrpc
 /dev/oncrpc/3000008c:00050000 0660   system       qcom_oncrpc
 
 # wifi
