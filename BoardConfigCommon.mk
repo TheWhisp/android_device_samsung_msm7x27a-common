@@ -91,17 +91,14 @@ WIFI_DRIVER_MODULE_ARG := "suspend_mode=3 wow_mode=2 ath6kl_p2p=1 recovery_enabl
 WIFI_DRIVER_MODULE_NAME := ath6kl
 WIFI_DRIVER_MODULE_PATH := /system/lib/modules/ath6kl.ko
 
-## Build Wi-Fi module
-KERNEL_EXTERNAL_MODULES:
-	rm -rf $(OUT)/ath6kl-compat
-	cp -a hardware/atheros/ath6kl-compat $(OUT)/
-        # run build
-	$(MAKE) -C $(OUT)/ath6kl-compat KERNEL_DIR=$(KERNEL_OUT) KLIB=$(KERNEL_OUT) KLIB_BUILD=$(KERNEL_OUT) ARCH=$(TARGET_ARCH) $(ARM_CROSS_COMPILE)
-        # copy & strip modules (to economize space)
-	$(TARGET_OBJCOPY) --strip-unneeded $(OUT)/ath6kl-compat/compat/compat.ko $(KERNEL_MODULES_OUT)/compat.ko
-	$(TARGET_OBJCOPY) --strip-unneeded $(OUT)/ath6kl-compat/drivers/net/wireless/ath/ath6kl/ath6kl.ko $(KERNEL_MODULES_OUT)/ath6kl.ko
-	$(TARGET_OBJCOPY) --strip-unneeded $(OUT)/ath6kl-compat/net/wireless/cfg80211.ko $(KERNEL_MODULES_OUT)/cfg80211.ko
-TARGET_KERNEL_MODULES := KERNEL_EXTERNAL_MODULES
+KERNEL_WIFI_MODULES:
+	$(MAKE) -C hardware/atheros/backports-wireless defconfig-ath6kl
+	export CROSS_COMPILE=$(ARM_EABI_TOOLCHAIN)/arm-eabi-; $(MAKE) -C hardware/atheros/backports-wireless KLIB=$(KERNEL_SRC) KLIB_BUILD=$(KERNEL_OUT) ARCH=$(TARGET_ARCH) $(ARM_CROSS_COMPILE)
+	cp `find hardware/atheros/backports-wireless -name *.ko` $(KERNEL_MODULES_OUT)/
+	arm-eabi-strip --strip-debug `find $(KERNEL_MODULES_OUT) -name *.ko`
+	$(MAKE) -C hardware/atheros/backports-wireless clean
+
+TARGET_KERNEL_MODULES := KERNEL_WIFI_MODULES
 
 ## RIL
 BOARD_USES_LEGACY_RIL := true
