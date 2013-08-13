@@ -17,3 +17,7 @@ cd packages/apps/Settings
 echo "Applying packages/apps/Settings patches..."
 git am $rootdirectory/device/samsung/msm7x27a-common/patches/packages_apps_settings/*.patch
 cd $rootdirectory
+cd system/core
+echo "Applying system/core patches..."
+git am $rootdirectory/device/samsung/msm7x27a-common/patches/system_core/*.patch
+cd $rootdirectory
