@@ -2,12 +2,12 @@
 # The filesystem that contains the filesystem checker binary (typically /system) cannot
 # specify MF_CHECK, and must come before any filesystems that do specify MF_CHECK
 
-#<src>                                   	<mnt_point>        <type>  <mnt_flags and options>                 			<fs_mgr_flags>
-/dev/block/mmcblk0p16                    	/system            ext4    ro,barrier=1                            			wait
-/dev/block/mmcblk0p17                    	/cache             ext4    nosuid,nodev,barrier=0                 		 	wait,check
-/dev/block/mmcblk0p18                    	/data              ext4    noatime,nosuid,nodev,noauto_da_alloc,barrier=1	wait,check,encryptable=footer
-/dev/block/mmcblk0p8                     	/boot              emmc    defaults                                			defaults
-/dev/block/mmcblk0p12                    	/recovery          emmc    defaults                                			defaults
-/devices/platform/msm_sdcc.3/mmc_host/mmc0  /storage/sdcard0   auto    defaults                                			voldmanaged=emmc:23,nonremovable
-/devices/platform/msm_sddc.1/mmc_host/mmc1  /storage/sdcard1   auto    defaults                                			voldmanaged=sdcard:auto
-/devices/platform/msm_hsusb_host.0/usb1  	/storage/usbdisk0  auto    defaults                                			voldmanaged=usbdisk:auto
+#<src>                                   	<mnt_point>        <type>  <mnt_flags and options>			<fs_mgr_flags>
+/dev/block/mmcblk0p16                    	/system            ext4    ro,barrier=1					wait
+/dev/block/mmcblk0p17                    	/cache             ext4    nosuid,nodev,barrier=0                 	wait,check
+/dev/block/mmcblk0p18                    	/data              ext4    nosuid,nodev,noauto_da_alloc,barrier=1 	wait,check,encryptable=footer
+/dev/block/mmcblk0p8                     	/boot              emmc    defaults                                	defaults
+/dev/block/mmcblk0p12                    	/recovery          emmc    defaults                                	defaults
+/devices/platform/msm_sdcc.3/mmc_host/mmc0  	/storage/sdcard0   vfat    defaults                                	voldmanaged=emmc:23,nonremovable
+/devices/platform/msm_sddc.1/mmc_host/mmc1  	/storage/sdcard1   vfat    defaults                                	voldmanaged=sdcard:auto
+/devices/platform/msm_hsusb_host.0/usb1  	/storage/usbdisk0  auto    defaults                                	voldmanaged=usbdisk:auto
