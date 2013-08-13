@@ -97,14 +97,14 @@ PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/recovery/postrecoveryboot.sh:recovery/system/bin/postrecoveryboot.sh
 
 ## Bluetooth
-#PRODUCT_COPY_FILES += \
-#    device/samsung/msm7x27a-common/prebuilt/etc/init.qcom.bt.sh:/system/etc/init.qcom.bt.sh \
-#    system/bluetooth/data/audio.conf:system/etc/bluetooth/audio.conf \
-#    system/bluetooth/data/auto_pairing.conf:system/etc/bluetooth/auto_pairing.conf \
-#    system/bluetooth/data/blacklist.conf:system/etc/bluetooth/blacklist.conf \
-#    system/bluetooth/data/input.conf:system/etc/bluetooth/input.conf \
-#    system/bluetooth/data/main.le.conf:system/etc/bluetooth/main.conf \
-#    system/bluetooth/data/network.conf:system/etc/bluetooth/network.conf \
+PRODUCT_COPY_FILES += \
+    device/samsung/msm7x27a-common/prebuilt/etc/init.qcom.bt.sh:/system/etc/init.qcom.bt.sh \
+    system/bluetooth/data/audio.conf:system/etc/bluetooth/audio.conf \
+    system/bluetooth/data/auto_pairing.conf:system/etc/bluetooth/auto_pairing.conf \
+    system/bluetooth/data/blacklist.conf:system/etc/bluetooth/blacklist.conf \
+    system/bluetooth/data/input.conf:system/etc/bluetooth/input.conf \
+    system/bluetooth/data/main.le.conf:system/etc/bluetooth/main.conf \
+    system/bluetooth/data/network.conf:system/etc/bluetooth/network.conf
 #    system/bluetooth/data/stack.conf:system/etc/bluetooth/stack.conf
 
 ## FM
@@ -115,7 +115,6 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/prebuilt/etc/wifi/wpa_supplicant.conf:system/etc/wifi/wpa_supplicant.conf \
     device/samsung/msm7x27a-common/prebuilt/etc/wifi/p2p_supplicant.conf:system/etc/wifi/p2p_supplicant.conf \
-    device/samsung/msm7x27a-common/prebuilt/etc/wifi/hostapd.conf:system/etc/wifi/hostapd.conf \
     device/samsung/msm7x27a-common/prebuilt/bin/get_macaddrs:system/bin/get_macaddrs
 
 ## Audio
