@@ -5,7 +5,7 @@ on early-init
     mount debugfs debugfs /sys/kernel/debug
 
 on init
-    write /proc/sys/kernel/randomize_va_space 1
+    #write /proc/sys/kernel/randomize_va_space 1
 
     export EXTERNAL_STORAGE /storage/sdcard0
     export SECONDARY_STORAGE /storage/sdcard1
