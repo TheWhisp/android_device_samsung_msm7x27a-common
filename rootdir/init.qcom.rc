@@ -179,10 +179,10 @@ service p2p_supplicant /system/bin/wpa_supplicant -iwlan0 -c/data/misc/wifi/p2p_
 
 service hostapd /system/bin/hostapd -dddd /data/misc/wifi/hostapd.conf
     class main
-    user root
-    group root
-    oneshot
+    group wifi inet
+    socket hostapd_wlan0 dgram 660 wifi wifi
     disabled
+    oneshot
 
 service fm_dl /system/bin/sh /system/etc/init.qcom.fm.sh
     class main
