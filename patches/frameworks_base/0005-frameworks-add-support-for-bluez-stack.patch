@@ -1,7 +1,7 @@
-From c8468281a09b36a7130f6c55a93d802da53693aa Mon Sep 17 00:00:00 2001
+From 8be12c2f9c9aad20b21c2406145e0f49b0fbbe94 Mon Sep 17 00:00:00 2001
 From: Ram Mohan Korukonda <rkorukon@codeaurora.org>
 Date: Fri, 4 Jan 2013 01:53:22 +0530
-Subject: [PATCH 18/18] frameworks: add support for bluez stack
+Subject: [PATCH 18/21] frameworks: add support for bluez stack
 
 This is a combination of 18 commits.
 
@@ -339,7 +339,7 @@ Change-Id: I3e2d54b0f5f8e0c005742adfc2ffc6f0ac33a33f
  create mode 100644 bluetoothmsm/java/android/bluetooth/IBluetoothThermometerCallBack.aidl
  create mode 100644 bluetoothmsm/java/android/bluetooth/IBluetoothThermometerServices.aidl
  create mode 100644 bluetoothmsm/java/android/bluetooth/package.html
- create mode 100755 bluetoothmsm/java/android/server/BluetoothA2dpService.java
+ create mode 100644 bluetoothmsm/java/android/server/BluetoothA2dpService.java
  create mode 100644 bluetoothmsm/java/android/server/BluetoothAdapterProperties.java
  create mode 100644 bluetoothmsm/java/android/server/BluetoothAdapterStateMachine.java
  create mode 100644 bluetoothmsm/java/android/server/BluetoothBondState.java
@@ -4497,7 +4497,7 @@ index 0000000..9453787
 +}
 diff --git a/bluetoothmsm/java/android/bluetooth/BluetoothDUN.java b/bluetoothmsm/java/android/bluetooth/BluetoothDUN.java
 new file mode 100644
-index 0000000..2dd9fc0
+index 0000000..2fc4687
 --- /dev/null
 +++ b/bluetoothmsm/java/android/bluetooth/BluetoothDUN.java
 @@ -0,0 +1,121 @@
@@ -4512,7 +4512,7 @@ index 0000000..2dd9fc0
 +*        * Redistributions in binary form must reproduce the above copyright
 +*            notice, this list of conditions and the following disclaimer in the
 +*            documentation and/or other materials provided with the distribution.
-+*        * Neither the name of Code Aurora nor
++*        * Neither the name of The Linux Foundation nor
 +*            the names of its contributors may be used to endorse or promote
 +*            products derived from this software without specific prior written
 +*            permission.
@@ -7685,7 +7685,7 @@ index 0000000..5f20627
 +}
 diff --git a/bluetoothmsm/java/android/bluetooth/BluetoothGatt.java b/bluetoothmsm/java/android/bluetooth/BluetoothGatt.java
 new file mode 100644
-index 0000000..432996e
+index 0000000..f143e80
 --- /dev/null
 +++ b/bluetoothmsm/java/android/bluetooth/BluetoothGatt.java
 @@ -0,0 +1,635 @@
@@ -7699,7 +7699,7 @@ index 0000000..432996e
 + *        * Redistributions in binary form must reproduce the above copyright
 + *          notice, this list of conditions and the following disclaimer in the
 + *          documentation and/or other materials provided with the distribution.
-+ *        * Neither the name of Code Aurora nor
++ *        * Neither the name of The Linux Foundation nor
 + *          the names of its contributors may be used to endorse or promote
 + *          products derived from this software without specific prior written
 + *          permission.
@@ -8326,7 +8326,7 @@ index 0000000..432996e
 +}
 diff --git a/bluetoothmsm/java/android/bluetooth/BluetoothGattAppConfiguration.aidl b/bluetoothmsm/java/android/bluetooth/BluetoothGattAppConfiguration.aidl
 new file mode 100644
-index 0000000..af24b2b
+index 0000000..0345669
 --- /dev/null
 +++ b/bluetoothmsm/java/android/bluetooth/BluetoothGattAppConfiguration.aidl
 @@ -0,0 +1,31 @@
@@ -8340,7 +8340,7 @@ index 0000000..af24b2b
 + *        * Redistributions in binary form must reproduce the above copyright
 + *          notice, this list of conditions and the following disclaimer in the
 + *          documentation and/or other materials provided with the distribution.
-+ *        * Neither the name of Code Aurora nor
++ *        * Neither the name of The Linux Foundation nor
 + *          the names of its contributors may be used to endorse or promote
 + *          products derived from this software without specific prior written
 + *          permission.
@@ -8363,7 +8363,7 @@ index 0000000..af24b2b
 +parcelable BluetoothGattAppConfiguration;
 diff --git a/bluetoothmsm/java/android/bluetooth/BluetoothGattAppConfiguration.java b/bluetoothmsm/java/android/bluetooth/BluetoothGattAppConfiguration.java
 new file mode 100644
-index 0000000..b476762
+index 0000000..ccc2584
 --- /dev/null
 +++ b/bluetoothmsm/java/android/bluetooth/BluetoothGattAppConfiguration.java
 @@ -0,0 +1,138 @@
@@ -8377,7 +8377,7 @@ index 0000000..b476762
 + *        * Redistributions in binary form must reproduce the above copyright
 + *          notice, this list of conditions and the following disclaimer in the
 + *          documentation and/or other materials provided with the distribution.
-+ *        * Neither the name of Code Aurora nor
++ *        * Neither the name of The Linux Foundation nor
 + *          the names of its contributors may be used to endorse or promote
 + *          products derived from this software without specific prior written
 + *          permission.
@@ -8507,7 +8507,7 @@ index 0000000..b476762
 +}
 diff --git a/bluetoothmsm/java/android/bluetooth/BluetoothGattCallback.java b/bluetoothmsm/java/android/bluetooth/BluetoothGattCallback.java
 new file mode 100644
-index 0000000..cc60805
+index 0000000..42b2da8
 --- /dev/null
 +++ b/bluetoothmsm/java/android/bluetooth/BluetoothGattCallback.java
 @@ -0,0 +1,134 @@
@@ -8521,7 +8521,7 @@ index 0000000..cc60805
 + *        * Redistributions in binary form must reproduce the above copyright
 + *          notice, this list of conditions and the following disclaimer in the
 + *          documentation and/or other materials provided with the distribution.
-+ *        * Neither the name of Code Aurora nor
++ *        * Neither the name of The Linux Foundation nor
 + *          the names of its contributors may be used to endorse or promote
 + *          products derived from this software without specific prior written
 + *          permission.
@@ -12561,7 +12561,7 @@ index 0000000..b0c0a0b
 +}
 diff --git a/bluetoothmsm/java/android/bluetooth/BluetoothSap.java b/bluetoothmsm/java/android/bluetooth/BluetoothSap.java
 new file mode 100644
-index 0000000..0178c1f
+index 0000000..247e9df
 --- /dev/null
 +++ b/bluetoothmsm/java/android/bluetooth/BluetoothSap.java
 @@ -0,0 +1,102 @@
@@ -12575,7 +12575,7 @@ index 0000000..0178c1f
 +*        * Redistributions in binary form must reproduce the above copyright
 +*            notice, this list of conditions and the following disclaimer in the
 +*            documentation and/or other materials provided with the distribution.
-+*        * Neither the name of Code Aurora nor
++*        * Neither the name of The Linux Foundation nor
 +*            the names of its contributors may be used to endorse or promote
 +*            products derived from this software without specific prior written
 +*            permission.
@@ -14539,7 +14539,7 @@ index 0000000..01c90cb
 +}
 diff --git a/bluetoothmsm/java/android/bluetooth/IBluetoothGattCallback.aidl b/bluetoothmsm/java/android/bluetooth/IBluetoothGattCallback.aidl
 new file mode 100644
-index 0000000..8c17095
+index 0000000..ea2013a
 --- /dev/null
 +++ b/bluetoothmsm/java/android/bluetooth/IBluetoothGattCallback.aidl
 @@ -0,0 +1,62 @@
@@ -14553,7 +14553,7 @@ index 0000000..8c17095
 + *        * Redistributions in binary form must reproduce the above copyright
 + *          notice, this list of conditions and the following disclaimer in the
 + *          documentation and/or other materials provided with the distribution.
-+ *        * Neither the name of Code Aurora nor
++ *        * Neither the name of The Linux Foundation nor
 + *          the names of its contributors may be used to endorse or promote
 + *          products derived from this software without specific prior written
 + *          permission.
@@ -14882,7 +14882,7 @@ index 0000000..4c18d0b
 +}
 diff --git a/bluetoothmsm/java/android/bluetooth/IBluetoothLEProximityServices.aidl b/bluetoothmsm/java/android/bluetooth/IBluetoothLEProximityServices.aidl
 new file mode 100644
-index 0000000..237c0f1
+index 0000000..e66dae8
 --- /dev/null
 +++ b/bluetoothmsm/java/android/bluetooth/IBluetoothLEProximityServices.aidl
 @@ -0,0 +1,53 @@
@@ -14896,7 +14896,7 @@ index 0000000..237c0f1
 + *        * Redistributions in binary form must reproduce the above copyright
 + *          notice, this list of conditions and the following disclaimer in the
 + *          documentation and/or other materials provided with the distribution.
-+ *        * Neither the name of Code Aurora nor
++ *        * Neither the name of The Linux Foundation nor
 + *          the names of its contributors may be used to endorse or promote
 + *          products derived from this software without specific prior written
 + *          permission.
@@ -15019,7 +15019,7 @@ index 0000000..7cc77d1
 +}
 diff --git a/bluetoothmsm/java/android/bluetooth/IBluetoothPreferredDeviceListCallback.aidl b/bluetoothmsm/java/android/bluetooth/IBluetoothPreferredDeviceListCallback.aidl
 new file mode 100644
-index 0000000..dce4fba
+index 0000000..b752378
 --- /dev/null
 +++ b/bluetoothmsm/java/android/bluetooth/IBluetoothPreferredDeviceListCallback.aidl
 @@ -0,0 +1,44 @@
@@ -15033,7 +15033,7 @@ index 0000000..dce4fba
 + *        * Redistributions in binary form must reproduce the above copyright
 + *          notice, this list of conditions and the following disclaimer in the
 + *          documentation and/or other materials provided with the distribution.
-+ *        * Neither the name of Code Aurora nor
++ *        * Neither the name of The Linux Foundation nor
 + *          the names of its contributors may be used to endorse or promote
 + *          products derived from this software without specific prior written
 + *          permission.
@@ -15102,7 +15102,7 @@ index 0000000..feccdce
 +}
 diff --git a/bluetoothmsm/java/android/bluetooth/IBluetoothThermometerCallBack.aidl b/bluetoothmsm/java/android/bluetooth/IBluetoothThermometerCallBack.aidl
 new file mode 100644
-index 0000000..c04c0c5
+index 0000000..479568b
 --- /dev/null
 +++ b/bluetoothmsm/java/android/bluetooth/IBluetoothThermometerCallBack.aidl
 @@ -0,0 +1,50 @@
@@ -15116,7 +15116,7 @@ index 0000000..c04c0c5
 + *        * Redistributions in binary form must reproduce the above copyright
 + *          notice, this list of conditions and the following disclaimer in the
 + *          documentation and/or other materials provided with the distribution.
-+ *        * Neither the name of Code Aurora nor
++ *        * Neither the name of The Linux Foundation nor
 + *          the names of its contributors may be used to endorse or promote
 + *          products derived from this software without specific prior written
 + *          permission.
@@ -15158,7 +15158,7 @@ index 0000000..c04c0c5
 +}
 diff --git a/bluetoothmsm/java/android/bluetooth/IBluetoothThermometerServices.aidl b/bluetoothmsm/java/android/bluetooth/IBluetoothThermometerServices.aidl
 new file mode 100644
-index 0000000..7b340f3
+index 0000000..c566684
 --- /dev/null
 +++ b/bluetoothmsm/java/android/bluetooth/IBluetoothThermometerServices.aidl
 @@ -0,0 +1,49 @@
@@ -15172,7 +15172,7 @@ index 0000000..7b340f3
 + *        * Redistributions in binary form must reproduce the above copyright
 + *          notice, this list of conditions and the following disclaimer in the
 + *          documentation and/or other materials provided with the distribution.
-+ *        * Neither the name of Code Aurora nor
++ *        * Neither the name of The Linux Foundation nor
 + *          the names of its contributors may be used to endorse or promote
 + *          products derived from this software without specific prior written
 + *          permission.
@@ -15249,7 +15249,7 @@ index 0000000..ba75034
 +</BODY>
 +</HTML>
 diff --git a/bluetoothmsm/java/android/server/BluetoothA2dpService.java b/bluetoothmsm/java/android/server/BluetoothA2dpService.java
-new file mode 100755
+new file mode 100644
 index 0000000..949b19d
 --- /dev/null
 +++ b/bluetoothmsm/java/android/server/BluetoothA2dpService.java
@@ -20042,7 +20042,7 @@ index 0000000..b4e75e1
 +}
 diff --git a/bluetoothmsm/java/android/server/BluetoothGattProfileHandler.java b/bluetoothmsm/java/android/server/BluetoothGattProfileHandler.java
 new file mode 100644
-index 0000000..01eaad2
+index 0000000..c0c6267
 --- /dev/null
 +++ b/bluetoothmsm/java/android/server/BluetoothGattProfileHandler.java
 @@ -0,0 +1,1082 @@
@@ -20056,7 +20056,7 @@ index 0000000..01eaad2
 + *        * Redistributions in binary form must reproduce the above copyright
 + *          notice, this list of conditions and the following disclaimer in the
 + *          documentation and/or other materials provided with the distribution.
-+ *        * Neither the name of Code Aurora nor
++ *        * Neither the name of The Linux Foundation nor
 + *          the names of its contributors may be used to endorse or promote
 + *          products derived from this software without specific prior written
 + *          permission.
@@ -28653,12 +28653,12 @@ index 0000000..35fff98
 +}
 diff --git a/btobex/javax/btobex/ClientOperation.java b/btobex/javax/btobex/ClientOperation.java
 new file mode 100644
-index 0000000..7cde776
+index 0000000..dc4ad9d
 --- /dev/null
 +++ b/btobex/javax/btobex/ClientOperation.java
 @@ -0,0 +1,831 @@
 +/*
-+ * Copyright (c) 2011, Code Aurora Forum. All rights reserved.
++ * Copyright (c) 2011, The Linux Foundation. All rights reserved.
 + * Copyright (c) 2008-2009, Motorola, Inc.
 + *
 + * All rights reserved.
@@ -29490,12 +29490,12 @@ index 0000000..7cde776
 +}
 diff --git a/btobex/javax/btobex/ClientSession.java b/btobex/javax/btobex/ClientSession.java
 new file mode 100644
-index 0000000..dad3c2b
+index 0000000..5af5373
 --- /dev/null
 +++ b/btobex/javax/btobex/ClientSession.java
 @@ -0,0 +1,748 @@
 +/*
-+ * Copyright (c) 2011-2012, Code Aurora Forum. All rights reserved.
++ * Copyright (c) 2011-2012, The Linux Foundation. All rights reserved.
 + * Copyright (c) 2008-2009, Motorola, Inc.
 + *
 + * All rights reserved.
@@ -30991,12 +30991,12 @@ index 0000000..162e5da
 +}
 diff --git a/btobex/javax/btobex/ObexHelper.java b/btobex/javax/btobex/ObexHelper.java
 new file mode 100644
-index 0000000..3855ce5
+index 0000000..36d2016
 --- /dev/null
 +++ b/btobex/javax/btobex/ObexHelper.java
 @@ -0,0 +1,1223 @@
 +/*
-+ * Copyright (c) 2011, Code Aurora Forum. All rights reserved.
++ * Copyright (c) 2011, The Linux Foundation. All rights reserved.
 + * Copyright (c) 2008-2009, Motorola, Inc.
 + *
 + * All rights reserved.
@@ -33497,12 +33497,12 @@ index 0000000..0afab1f
 +}
 diff --git a/btobex/javax/btobex/ServerOperation.java b/btobex/javax/btobex/ServerOperation.java
 new file mode 100644
-index 0000000..1e47ce6
+index 0000000..3602edd
 --- /dev/null
 +++ b/btobex/javax/btobex/ServerOperation.java
 @@ -0,0 +1,847 @@
 +/*
-+ * Copyright (c) 2011, Code Aurora Forum. All rights reserved.
++ * Copyright (c) 2011, The Linux Foundation. All rights reserved.
 + * Copyright (c) 2008-2009, Motorola, Inc.
 + *
 + * All rights reserved.
@@ -34704,12 +34704,12 @@ index 0000000..8ea01c4
 +}
 diff --git a/btobex/javax/btobex/ServerSession.java b/btobex/javax/btobex/ServerSession.java
 new file mode 100644
-index 0000000..49879cc
+index 0000000..2d3270b
 --- /dev/null
 +++ b/btobex/javax/btobex/ServerSession.java
 @@ -0,0 +1,830 @@
 +/*
-+ * Copyright (c) 2011, Code Aurora Forum. All rights reserved.
++ * Copyright (c) 2011, The Linux Foundation. All rights reserved.
 + * Copyright (c) 2008-2009, Motorola, Inc.
 + *
 + * All rights reserved.
@@ -35673,7 +35673,7 @@ index 0000000..95d10dc
 +    ObexSession acceptAndOpen(ServerRequestHandler handler, Authenticator auth) throws IOException;
 +}
 diff --git a/core/jni/Android.mk b/core/jni/Android.mk
-index c86f949..90bbc87 100644
+index 4ec9f33..841bf0f 100644
 --- a/core/jni/Android.mk
 +++ b/core/jni/Android.mk
 @@ -157,6 +157,18 @@ ifeq ($(BOARD_USES_QCOM_HARDWARE),true)
@@ -35695,7 +35695,7 @@ index c86f949..90bbc87 100644
  LOCAL_C_INCLUDES += \
  	$(JNI_H_INCLUDE) \
  	$(LOCAL_PATH)/android/graphics \
-@@ -219,6 +231,14 @@ LOCAL_SHARED_LIBRARIES := \
+@@ -221,6 +233,14 @@ LOCAL_SHARED_LIBRARIES := \
  	libharfbuzz \
  	libz
  
@@ -46122,7 +46122,7 @@ index 20b1a56..6219268 100644
           re-validation -->
      <bool name="config_bluetooth_address_validation">false</bool>
 diff --git a/core/res/res/values/symbols.xml b/core/res/res/values/symbols.xml
-index e9aa1e4..4b522b0 100644
+index ef66ddd..e139503 100644
 --- a/core/res/res/values/symbols.xml
 +++ b/core/res/res/values/symbols.xml
 @@ -247,6 +247,7 @@

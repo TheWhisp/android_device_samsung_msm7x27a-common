@@ -1,7 +1,7 @@
-From 890d5b1f06a099e99cb5ba96809e548557d53e7b Mon Sep 17 00:00:00 2001
+From b9155194d0be3f1690eba59ef88dd64548308ac5 Mon Sep 17 00:00:00 2001
 From: Grigori Goronzy <greg@blackbox>
 Date: Mon, 28 Jan 2013 06:43:09 +0100
-Subject: [PATCH 08/18] Use RGB565 surface for wallpaper
+Subject: [PATCH 08/21] Use RGB565 surface for wallpaper
 
 The framebuffer only uses 16bpp on most legacy devices anyway, so this
 does not result in worse quality. It saves a lot of GPU fillrate and

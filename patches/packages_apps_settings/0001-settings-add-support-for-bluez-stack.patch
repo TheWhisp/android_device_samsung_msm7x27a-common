@@ -1,4 +1,4 @@
-From 9afa855f7109c548b19c8432a181d007ac31fe31 Mon Sep 17 00:00:00 2001
+From faf510d742a3d7a794525a0e127df107b3d24bed Mon Sep 17 00:00:00 2001
 From: Bhasker Neti <bneti@codeaurora.org>
 Date: Mon, 3 Dec 2012 17:18:47 +0530
 Subject: [PATCH 10/10] settings: add support for bluez stack

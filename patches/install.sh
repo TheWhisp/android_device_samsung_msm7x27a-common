@@ -21,3 +21,11 @@ cd system/core
 echo "Applying system/core patches..."
 git am $rootdirectory/device/samsung/msm7x27a-common/patches/system_core/*.patch
 cd $rootdirectory
+
+## Cherry-picks
+cd frameworks/base
+git fetch http://review.cyanogenmod.org/CyanogenMod/android_frameworks_base refs/changes/88/47288/1 && git cherry-pick FETCH_HEAD
+cd $rootdirectory
+cd dalvik
+git fetch http://review.cyanogenmod.org/CyanogenMod/android_dalvik refs/changes/57/47757/1 && git cherry-pick FETCH_HEAD
+cd $rootdirectory

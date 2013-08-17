@@ -1,7 +1,7 @@
-From 8bd1289ec18d679eb88654c5b48a771ee3a8988c Mon Sep 17 00:00:00 2001
+From c945f6ee6059f745f7d74ee92f7831761129bfd5 Mon Sep 17 00:00:00 2001
 From: Mingming Yin <mingming@codeaurora.org>
 Date: Thu, 27 Dec 2012 17:43:24 -0800
-Subject: [PATCH 17/18] qcom-fm: audio: add support for fm feature
+Subject: [PATCH 17/21] qcom-fm: audio: add support for fm feature
 
 Change-Id: Id48a52ceb7359deb65d4a69e664b22ed80cf997c
 
@@ -32,7 +32,7 @@ CRs-fixed: 441132
  10 files changed, 186 insertions(+), 11 deletions(-)
 
 diff --git a/core/java/android/content/Intent.java b/core/java/android/content/Intent.java
-index 519eb36..a0c42b7 100644
+index da254fd..c03a1fb 100644
 --- a/core/java/android/content/Intent.java
 +++ b/core/java/android/content/Intent.java
 @@ -1,6 +1,7 @@
@@ -75,7 +75,7 @@ index 519eb36..a0c42b7 100644
       *
       * <p>The intent will have the following extra values:
 diff --git a/core/java/android/provider/Settings.java b/core/java/android/provider/Settings.java
-index fc66f14..51d25db 100644
+index f9e08ca..b7dbb1f 100644
 --- a/core/java/android/provider/Settings.java
 +++ b/core/java/android/provider/Settings.java
 @@ -1,5 +1,6 @@
@@ -104,7 +104,7 @@ index fc66f14..51d25db 100644
           * Alarm volume. This is used internally, changing this
           * value will not change the volume. See AudioManager.
           */
-@@ -1949,7 +1962,9 @@ public final class Settings {
+@@ -1955,7 +1968,9 @@ public final class Settings {
           */
          public static final String[] VOLUME_SETTINGS = {
              VOLUME_VOICE, VOLUME_SYSTEM, VOLUME_RING, VOLUME_MUSIC,
@@ -115,7 +115,7 @@ index fc66f14..51d25db 100644
          };
  
          /**
-@@ -3216,6 +3231,7 @@ public final class Settings {
+@@ -3242,6 +3257,7 @@ public final class Settings {
              VOLUME_SYSTEM,
              VOLUME_RING,
              VOLUME_MUSIC,
@@ -519,7 +519,7 @@ index 4d88959..df3b6db 100644
                      AudioManager.DEFAULT_STREAM_VOLUME[AudioManager.STREAM_RING]);
              loadSetting(stmt, Settings.System.VOLUME_SYSTEM,
 diff --git a/policy/src/com/android/internal/policy/impl/PhoneWindowManager.java b/policy/src/com/android/internal/policy/impl/PhoneWindowManager.java
-index 04ed585..7864633 100644
+index 9a97eae..b660902 100644
 --- a/policy/src/com/android/internal/policy/impl/PhoneWindowManager.java
 +++ b/policy/src/com/android/internal/policy/impl/PhoneWindowManager.java
 @@ -1,6 +1,7 @@
