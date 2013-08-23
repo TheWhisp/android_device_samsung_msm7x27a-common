@@ -29,7 +29,7 @@
 #define SCALING_GOVERNOR_PATH "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"
 #define BOOSTPULSE_ONDEMAND "/sys/devices/system/cpu/cpufreq/ondemand/boostpulse"
 #define BOOSTPULSE_INTERACTIVE "/sys/devices/system/cpu/cpufreq/interactive/boostpulse"
-#define SAMPLING_RATE_SCREEN_ON "50000"
+#define SAMPLING_RATE_SCREEN_ON "75000"
 #define SAMPLING_RATE_SCREEN_OFF "500000"
 #define TIMER_RATE_SCREEN_ON "30000"
 #define TIMER_RATE_SCREEN_OFF "500000"
@@ -126,13 +126,14 @@ static void configure_governor()
 
     if (strncmp(governor, "ondemand", 8) == 0) {
         sysfs_write("/sys/devices/system/cpu/cpufreq/ondemand/up_threshold", "90");
-        sysfs_write("/sys/devices/system/cpu/cpufreq/ondemand/io_is_busy", "1");
+        sysfs_write("/sys/devices/system/cpu/cpufreq/ondemand/io_is_busy", "0");
         sysfs_write("/sys/devices/system/cpu/cpufreq/ondemand/sampling_down_factor", "4");
         sysfs_write("/sys/devices/system/cpu/cpufreq/ondemand/down_differential", "10");
 
     } else if (strncmp(governor, "interactive", 11) == 0) {
         sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/min_sample_time", "90000");
-        sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/hispeed_freq", "1134000");
+        sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/io_is_busy", "0");
+        sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/hispeed_freq", "1008000");
         sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/above_hispeed_delay", "30000");
     }
 }
