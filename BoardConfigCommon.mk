@@ -87,10 +87,8 @@ BOARD_HOSTAPD_DRIVER := NL80211
 BOARD_HOSTAPD_PRIVATE_LIB := lib_driver_cmd_ath6kl
 WIFI_EXT_MODULE_NAME := cfg80211
 WIFI_EXT_MODULE_PATH := /system/lib/modules/cfg80211.ko
-WIFI_AP_DRIVER_MODULE_ARG := "suspend_mode=3 wow_mode=2 ath6kl_p2p=1 recovery_enable=1"
 WIFI_AP_DRIVER_MODULE_NAME := ath6kl
 WIFI_AP_DRIVER_MODULE_PATH := /system/lib/modules/ath6kl.ko
-WIFI_DRIVER_MODULE_ARG := "suspend_mode=3 wow_mode=2 ath6kl_p2p=1 recovery_enable=1"
 WIFI_DRIVER_MODULE_NAME := ath6kl
 WIFI_DRIVER_MODULE_PATH := /system/lib/modules/ath6kl.ko
 
