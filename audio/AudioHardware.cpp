@@ -40,6 +40,9 @@ extern "C" {
 #endif
 //#include <media/AudioRecord.h>
 
+#ifdef WITH_QCOM_VOIP_OVER_MVS
+#include <linux/msm_audio_mvs.h>
+#endif
 
 #define COMBO_DEVICE_SUPPORTED // Headset speaker combo device not supported on this target
 #define DUALMIC_KEY "dualmic_enabled"
@@ -419,7 +422,7 @@ AudioStreamIn* AudioHardware::openInputStream(
 
     mLock.lock();
 #ifdef QCOM_VOIP_ENABLED
-    if(devices == AudioSystem::DEVICE_IN_COMMUNICATION) {
+    if ((devices == AudioSystem::DEVICE_IN_COMMUNICATION) && (*sampleRate == 8000)) {
         ALOGV("Create Audio stream Voip \n");
         AudioStreamInVoip* inVoip = new AudioStreamInVoip();
         status_t lStatus = NO_ERROR;
@@ -443,17 +446,6 @@ AudioStreamIn* AudioHardware::openInputStream(
     } else
 #endif /*QCOM_VOIP_ENABLED*/
     {
-       if ( (mMode == AudioSystem::MODE_IN_CALL) &&
-            (getInputSampleRate(*sampleRate) > AUDIO_HW_IN_SAMPLERATE) &&
-            (*format == AUDIO_HW_IN_FORMAT) )
-        {
-              ALOGE("PCM recording, in a voice call, with sample rate more than 8K not supported \
-                   re-configure with 8K and try software re-sampler ");
-              *status = -EINVAL;
-              *sampleRate = AUDIO_HW_IN_SAMPLERATE;
-              mLock.unlock();
-              return 0;
-        }
         AudioStreamInMSM72xx* in = new AudioStreamInMSM72xx();
         status_t lStatus = in->set(this, devices, format, channels, sampleRate, acoustic_flags);
         if (status) {
@@ -1902,7 +1894,7 @@ status_t AudioHardware::doRouting(AudioStreamInMSM72xx *input, int outputDevice)
             ALOGI("Routing audio to Wired Headset\n");
             new_snd_device = SND_DEVICE_HEADSET;
             new_post_proc_feature_mask = (ADRC_ENABLE | EQ_ENABLE | RX_IIR_ENABLE | MBADRC_ENABLE);
-	} else if (outputDevices & AudioSystem::DEVICE_OUT_WIRED_HEADPHONE) {
+        } else if (outputDevices & AudioSystem::DEVICE_OUT_WIRED_HEADPHONE) {
             ALOGI("Routing audio to Wired Headphone\n");
             new_snd_device = SND_DEVICE_HEADSET;
             new_post_proc_feature_mask = (ADRC_ENABLE | EQ_ENABLE | RX_IIR_ENABLE | MBADRC_ENABLE);
