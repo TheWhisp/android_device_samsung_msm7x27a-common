@@ -1,0 +1,4 @@
+<resources>
+	<bool name="def_screen_brightness_automatic_mode">false</bool>
+	<integer name="def_wifi_sleep_policy">2</integer>
+</resources>
