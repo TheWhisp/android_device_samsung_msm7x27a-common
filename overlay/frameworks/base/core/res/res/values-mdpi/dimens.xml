@@ -11,7 +11,7 @@
     <dimen name="navigation_bar_height_landscape">32dp</dimen>
 
     <!-- Height of the sliding KeyguardSecurityContainer (includes 2x keyguard_security_view_margin) -->
-    <dimen name="keyguard_security_height">320dp</dimen>
+    <dimen name="keyguard_security_height">330dp</dimen>
 
     <!-- Size of the region along the edge of the screen that will accept
          swipes to scroll the widget area. -->
