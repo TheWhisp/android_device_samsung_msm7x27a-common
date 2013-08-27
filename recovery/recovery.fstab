@@ -1,4 +1,4 @@
-# mount point	fstype      device    	[parameters]
+# mount point	fstype      device    		 [parameters]
 
 /boot           emmc        /dev/block/mmcblk0p8
 /recovery       emmc        /dev/block/mmcblk0p12	
