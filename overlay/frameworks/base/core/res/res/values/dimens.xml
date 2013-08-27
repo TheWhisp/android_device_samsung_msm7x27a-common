@@ -1,4 +1,0 @@
-<resources>
-    <dimen name="keyguard_lockscreen_outerring_diameter">210.0dip</dimen>
-	<dimen name="glowpadview_target_placement_radius">105.0dip</dimen>
-</resources>

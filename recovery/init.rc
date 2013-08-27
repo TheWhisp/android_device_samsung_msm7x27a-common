@@ -3,7 +3,7 @@ on early-init
 
 on init
     export PATH /sbin
-    export LD_LIBRARY_PATH /sbin
+    export LD_LIBRARY_PATH .:/sbin
     export ANDROID_ROOT /system
     export ANDROID_DATA /data
     export EXTERNAL_STORAGE /sdcard
@@ -21,22 +21,19 @@ on init
     mkdir /efs
     mount /tmp /tmp tmpfs
 
-	chown root shell /tmp
+    chown root shell /tmp
     chmod 0775 /tmp
 
-    write /sys/class/android_usb/android0/iSerial $ro.serialno
+    write /sys/class/android_usb/android0/iSerial ${ro.serialno}
 
 on early-fs
-
     mount tmpfs tmpfs /tmp mode=0755 
    
     wait /dev/block/mmcblk0p19
     mount ext4 /dev/block/mmcblk0p19 /efs nosuid nodev barrier=1
-    
-    #wait /dev/block/mmcblk0p16
     mount ext4 /dev/block/mmcblk0p16 /system wait
    
-# verfiy filesystem (UMS)
+    # verfiy filesystem (UMS)
     exec apply_system_policy /dev/block/mmcblk0p23 vfat
 
 on fs
@@ -60,8 +57,8 @@ on boot
     domainname localdomain
 
     write /sys/class/android_usb/android0/iManufacturer Samsung
-    write /sys/class/android_usb/android0/iProduct $ro.product.model
-    write /sys/class/android_usb/f_mass_storage/inquiry_string $ro.product.manufacturer
+    write /sys/class/android_usb/android0/iProduct ${ro.product.model}
+    write /sys/class/android_usb/f_mass_storage/inquiry_string ${ro.product.manufacturer}
 
     class_start default
 

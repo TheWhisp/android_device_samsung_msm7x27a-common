@@ -69,7 +69,7 @@ using android::Condition;
 #define MBADRC_DISABLE 0xFFEF
 #define SRS_ENABLE 0x0020
 #define SRS_DISABLE 0xFFDF
-#define LPA_BUFFER_SIZE 512*1024
+#define LPA_BUFFER_SIZE 480*1024
 #define BUFFER_COUNT 2
 
 #define AGC_ENABLE     0x0001
@@ -238,7 +238,7 @@ public:
 #endif
 protected:
     virtual status_t    dump(int fd, const Vector<String16>& args);
-    uint32_t getMvsMode(int format);
+    uint32_t getMvsMode(int format, int rate);
     uint32_t getMvsRateType(uint32_t MvsMode, uint32_t *rateType);
     status_t setupDeviceforVoipCall(bool value);
 
@@ -559,10 +559,10 @@ private:
                                 uint32_t *pChannels,
                                 uint32_t *pRate,
                                 AudioSystem::audio_in_acoustics acoustics);
-        virtual size_t      bufferSize() const { return 320; }
+        virtual size_t      bufferSize() const { return mBufferSize; }
         virtual uint32_t    channels() const {ALOGD(" AudioStreamInVoip: channels %d \n",mChannels); return mChannels; }
         virtual int         format() const { return AUDIO_HW_IN_FORMAT; }
-        virtual uint32_t    sampleRate() const { return 8000; }
+        virtual uint32_t    sampleRate() const { return mSampleRate; }
         virtual status_t    setGain(float gain) { return INVALID_OPERATION; }
         virtual ssize_t     read(void* buffer, ssize_t bytes);
         virtual status_t    dump(int fd, const Vector<String16>& args);
@@ -572,6 +572,7 @@ private:
         virtual unsigned int  getInputFramesLost() const { return 0; }
                 uint32_t    devices() { return mDevices; }
                 int         state() const { return mState; }
+                bool        mSetupDevice;
 
     private:
                 AudioHardware* mHardware;
@@ -613,9 +614,6 @@ private:
             msm_snd_endpoint *mSndEndpoints;
             int mNumSndEndpoints;
 
-//            msm_cad_endpoint *mCadEndpoints;
-//            int mNumCadEndpoints;
-
             int mCurSndDevice;
             int m7xsnddriverfd;
             bool        mDualMicEnabled;
@@ -625,6 +623,7 @@ private:
             bool mVoipInActive;
             bool mVoipOutActive;
             Mutex       mVoipLock;
+            int         mDirectOutrefCnt;
 #endif /*QCOM_VOIP_ENABLED*/
      friend class AudioStreamInMSM72xx;
             Mutex       mLock;

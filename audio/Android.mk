@@ -7,16 +7,9 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES := \
+    AudioHardware.cpp \
     audio_hw_hal.cpp \
     HardwarePinSwitching.c
-
-ifeq ($(strip $(TARGET_HAS_QACT)),true)
-LOCAL_SRC_FILES += \
-    AudioHardware_cad.cpp
-else
-LOCAL_SRC_FILES += \
-    AudioHardware.cpp
-endif
 
 ifeq ($(BOARD_HAVE_BLUETOOTH),true)
   LOCAL_CFLAGS += -DWITH_A2DP
@@ -36,7 +29,7 @@ LOCAL_CFLAGS += -DSRS_PROCESSING
 endif
 
 LOCAL_CFLAGS += -DQCOM_VOIP_ENABLED
-#LOCAL_CFLAGS += -DQCOM_TUNNEL_LPA_ENABLED
+LOCAL_CFLAGS += -DQCOM_TUNNEL_LPA_ENABLED
 
 LOCAL_SHARED_LIBRARIES := \
     libcutils       \
@@ -45,10 +38,6 @@ LOCAL_SHARED_LIBRARIES := \
 
 ifneq ($(TARGET_SIMULATOR),true)
 LOCAL_SHARED_LIBRARIES += libdl
-endif
-
-ifeq ($(strip $(TARGET_HAS_QACT)),true)
-LOCAL_SHARED_LIBRARIES += libaudcal
 endif
 
 LOCAL_STATIC_LIBRARIES := \
@@ -68,8 +57,8 @@ LOCAL_C_INCLUDES += hardware/libhardware_legacy/include
 LOCAL_C_INCLUDES += frameworks/base/include
 LOCAL_C_INCLUDES += system/core/include
 
-#LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
-#LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
+LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
+LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
 
 include $(BUILD_SHARED_LIBRARY)
 
@@ -100,16 +89,7 @@ endif
 
 LOCAL_C_INCLUDES := hardware/libhardware_legacy/audio
 
-#LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
-#LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
+LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
+LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
 
 include $(BUILD_SHARED_LIBRARY)
-
-# Load audio_policy.conf to system/etc/
-include $(CLEAR_VARS)
-LOCAL_MODULE       := audio_policy.conf
-LOCAL_MODULE_TAGS  := optional
-LOCAL_MODULE_CLASS := ETC
-LOCAL_MODULE_PATH  := $(TARGET_OUT_ETC)
-LOCAL_SRC_FILES    := audio_policy.conf
-include $(BUILD_PREBUILT)

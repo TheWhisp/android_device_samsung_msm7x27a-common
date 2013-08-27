@@ -214,28 +214,27 @@ static void wrap_data_callback_timestamp(nsecs_t timestamp, int32_t msg_type, co
 }
 
 void CameraHAL_FixupParams(android::CameraParameters &camParams) {
-    const char *video_sizes            = "640x480,384x288,352x288,320x240,240x160,176x144";
-    const char *preferred_size         = "640x480";
-    const char *preview_frame_rates    = "30,24,15";
+    const char *video_sizes = "640x480,384x288,352x288,320x240,240x160,176x144";
+    const char *preferred_video_size = "640x480";
+    const char *preferred_preview_size = "640x480";
+
+#ifdef ENABLE_FLASH_AND_AUTOFOCUS
+    const char *focus_mode_values = "auto,infinity,touch";
+    const char *flash_mode_values = "auto,on,off,torch";
+
+    camParams.set(CameraParameters::KEY_SUPPORTED_FOCUS_MODES, focus_mode_values);
+    camParams.set(CameraParameters::KEY_SUPPORTED_FLASH_MODES, flash_mode_values);
+#endif
 
     camParams.set(CameraParameters::KEY_VIDEO_FRAME_FORMAT, CameraParameters::PIXEL_FORMAT_YUV420SP);
-
-    camParams.set(CameraParameters::KEY_PREFERRED_PREVIEW_SIZE_FOR_VIDEO,  preferred_size);
-
-    camParams.set(CameraParameters::KEY_SUPPORTED_PREVIEW_FRAME_RATES, preview_frame_rates);
+    camParams.set(CameraParameters::KEY_VIDEO_SIZE, preferred_video_size);
+    camParams.set(CameraParameters::KEY_PREVIEW_SIZE, preferred_preview_size);
 
     if (!camParams.get(CameraParameters::KEY_SUPPORTED_VIDEO_SIZES)) {
-         camParams.set(CameraParameters::KEY_SUPPORTED_VIDEO_SIZES, video_sizes);
-    }
+         camParams.set(CameraParameters::KEY_SUPPORTED_VIDEO_SIZES, video_sizes); }
 
     if (!camParams.get(CameraParameters::KEY_MAX_NUM_FOCUS_AREAS)) {
-        camParams.set(CameraParameters::KEY_MAX_NUM_FOCUS_AREAS, 1);
-    }
-
-    if (!camParams.get(CameraParameters::KEY_VIDEO_SIZE)) {
-         camParams.set(CameraParameters::KEY_VIDEO_SIZE, preferred_size);
-    }
-    camParams.set("orientation", "landscape");
+        camParams.set(CameraParameters::KEY_MAX_NUM_FOCUS_AREAS, 1); }
 }
 
 int camera_set_preview_window(struct camera_device * device, struct preview_stream_ops *window) {
@@ -449,7 +448,7 @@ void sighandle(int s) {
 }
 
 int camera_device_open(const hw_module_t* module, const char* name, hw_device_t** device) {
-    ALOGI("CameraHAL v0.3");
+    ALOGI("CameraHAL v0.3.2");
     int rv = 0;
     int cameraid;
     int num_cameras = 0;

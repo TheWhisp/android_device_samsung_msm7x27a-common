@@ -1,0 +1,71 @@
+From 494d45175a28094fbbfaa7a2fefe35ccc12164ac Mon Sep 17 00:00:00 2001
+From: Anantha Krishnan <ananthk@codeaurora.org>
+Date: Wed, 11 Jul 2012 09:22:12 +0530
+Subject: [PATCH] system-fm: Provide permission for FM to set/get property
+ variable
+
+Allow FM Process to set and get the system property variables
+specific for FM operation.
+
+Change-Id: Iebfad8e2df91852956e72d8c903011b5c8637445
+
+Conflicts:
+
+	init/property_service.c
+	rootdir/ueventd.rc
+---
+ include/private/android_filesystem_config.h |    6 ++++++
+ init/property_service.c                     |    6 ++++++
+ 2 files changed, 12 insertions(+)
+
+diff --git a/include/private/android_filesystem_config.h b/include/private/android_filesystem_config.h
+index 7dbfc37..facffa6 100644
+--- a/include/private/android_filesystem_config.h
++++ b/include/private/android_filesystem_config.h
+@@ -62,6 +62,9 @@
+ #define AID_DRMRPC        1026  /* group for drm rpc */
+ #define AID_NFC           1027  /* nfc subsystem */
+ #define AID_SDCARD_R      1028  /* external storage read access */
++#ifdef QCOM_FM_ENABLED
++#define AID_FM_RADIO      1029  /* FM radio */
++#endif
+ 
+ #define AID_SHELL         2000  /* adb and debug shell user */
+ #define AID_CACHE         2001  /* cache access */
+@@ -168,6 +171,9 @@ static const struct android_id_info android_ids[] = {
+     { "mot_dlna",  AID_MOT_DLNA, },
+ #endif
+     { "misc",      AID_MISC, },
++#ifdef QCOM_FM_ENABLED
++    { "fm_radio",  AID_FM_RADIO, },
++#endif
+     { "nobody",    AID_NOBODY, },
+ };
+ 
+diff --git a/init/property_service.c b/init/property_service.c
+index 3f4da7a..0ed1a4b 100644
+--- a/init/property_service.c
++++ b/init/property_service.c
+@@ -93,6 +93,9 @@ struct {
+     { "persist.security.",AID_SYSTEM,   0 },
+     { "net.pdp",          AID_RADIO,    AID_RADIO },
+     { "service.bootanim.exit", AID_GRAPHICS, 0 },
++#ifdef QCOM_FM_ENABLED
++    { "hw.fm.",           AID_FM_RADIO,  0 },
++#endif
+ #ifdef PROPERTY_PERMS_APPEND
+ PROPERTY_PERMS_APPEND
+ #endif
+@@ -113,6 +116,9 @@ struct {
+ } control_perms[] = {
+     { "dumpstate",AID_SHELL, AID_LOG },
+     { "ril-daemon",AID_RADIO, AID_RADIO },
++#ifdef QCOM_FM_ENABLED
++    { "fm_dl", AID_FM_RADIO, AID_FM_RADIO},
++#endif
+ #ifdef CONTROL_PERMS_APPEND
+ CONTROL_PERMS_APPEND
+ #endif
+-- 
+1.7.9.5
+
