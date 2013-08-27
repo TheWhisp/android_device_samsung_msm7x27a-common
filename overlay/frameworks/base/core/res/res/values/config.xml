@@ -26,20 +26,32 @@
          be empty.  An example would be "usb.*" -->
     <string-array translatable="false" name="config_tether_usb_regexs">
         <item>"rndis\\d"</item>
-		<item>"usb\\d"</item>
+	<item>"usb\\d"</item>
     </string-array>
 
     <!-- List of regexpressions describing the interface (if any) that represent tetherable
          Wifi interfaces.  If the device doesn't want to support tethering over Wifi this
          should be empty.  An example would be "softap.*" -->
     <string-array translatable="false" name="config_tether_wifi_regexs">
-		<item>"wlan\\d"</item>
+	<item>"wlan\\d"</item>
     </string-array>
 
-	<!-- Boolean indicating whether Softap requires reloading AP firmware -->
-	<bool name="config_wifiApFirmwareReload">false</bool>
+    <!-- Boolean indicating whether Softap requires reloading AP firmware -->
+    <bool name="config_wifiApFirmwareReload">false</bool>
 
-	<!-- Boolean indicating if current platform supports quick switch-on/off of Bluetooth Module -->
+	<!-- Boolean indicating whether the wifi chipset has dual frequency band support -->
+    <bool translatable="false" name="config_wifi_dual_band_support">true</bool>
+
+    <!-- Boolean indicating whether the wifi chipset has p2p support -->
+    <bool translatable="false" name="config_wifi_p2p_support">true</bool>
+
+    <!-- Boolean indicating whether the wifi chipset supports background scanning mechanism.
+         This mechanism allows the host to remain in suspend state and the dongle to actively
+         scan and wake the host when a configured SSID is detected by the dongle. This chipset
+         capability can provide power savings when wifi needs to be always kept on. -->
+    <bool translatable="false" name="config_wifi_background_scan_support">true</bool>
+
+    <!-- Boolean indicating if current platform supports quick switch-on/off of Bluetooth Module -->
     <bool name="config_bluetooth_adapter_quick_switch">false</bool>
 
     <!-- List of regexpressions describing the interface (if any) that represent tetherable
@@ -47,6 +59,7 @@
          should be empty. -->
     <string-array translatable="false" name="config_tether_bluetooth_regexs">
         <item>"bnep\\d"</item>
+	<item>"bt-pan"</item>
     </string-array>
 
     <!-- Array of ConnectivityManager.TYPE_xxxx values allowable for tethering -->
@@ -72,27 +85,27 @@
 
     <bool name="config_animateScreenLights">false</bool>
 
-	<!-- Indicate whether the SD card is accessible without removing the battery. -->
+    <!-- Indicate whether the SD card is accessible without removing the battery. -->
     <bool name="config_batterySdCardAccessibility">true</bool>
 
-	<!-- Is the battery LED intrusive? Used to decide if there should be a disable option -->
+   <!-- Is the battery LED intrusive? Used to decide if there should be a disable option -->
     <bool name="config_intrusiveNotificationLed">false</bool>
 
-	<!-- Display low battery warning when battery level dips to this value.
+    <!-- Display low battery warning when battery level dips to this value.
          Also, the battery stats are flushed to disk when we hit this level.  -->
     <integer name="config_criticalBatteryWarningLevel">5</integer>
 
     <!-- Display low battery warning when battery level dips to this value -1 -->
     <integer name="config_lowBatteryWarningLevel">15</integer>
 
-	<string-array name="config_locationProviderPackageNames" translatable="false">
+   <string-array name="config_locationProviderPackageNames" translatable="false">
         <!-- The standard AOSP fused location provider -->
         <item>com.android.location.fused</item>
         <!-- The Google Network Location Services location provider -->
         <item>com.google.android.location</item>
     </string-array>
 
-	<!-- Hardware 'face' keys present on the device, stored as a bit field.
+    <!-- Hardware 'face' keys present on the device, stored as a bit field.
          This integer should equal the sum of the corresponding value for each
          of the following keys present:
              1 - Home
@@ -107,7 +120,7 @@
     <!-- Boolean to enable stk functionality on Samsung phones -->
     <bool name="config_samsung_stk">true</bool>
 
-	<!-- Minimum screen brightness setting allowed by the power manager.
+    <!-- Minimum screen brightness setting allowed by the power manager.
          The user is forbidden from setting the brightness below this level. -->
     <integer name="config_screenBrightnessSettingMinimum">20</integer>
 

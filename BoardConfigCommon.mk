@@ -25,11 +25,12 @@ TARGET_KERNEL_SOURCE := kernel/samsung/msm7x27a
 ## Platform
 TARGET_ARCH := arm
 TARGET_ARCH_VARIANT := armv7-a-neon
-TARGET_ARCH_VARIANT_CPU := cortex-a5
+TARGET_ARCH_LOWMEM := true
 TARGET_BOARD_PLATFORM := msm7x27a
 TARGET_BOARD_PLATFORM_GPU := qcom-adreno200
 TARGET_CPU_ABI := armeabi-v7a
 TARGET_CPU_ABI2 := armeabi
+TARGET_ARCH_VARIANT_CPU := cortex-a5
 TARGET_SPECIFIC_HEADER_PATH := device/samsung/msm7x27a-common/include
 
 TARGET_GLOBAL_CFLAGS += -mtune=cortex-a5 -mfpu=neon -mfloat-abi=softfp
@@ -56,9 +57,6 @@ COMMON_GLOBAL_CFLAGS += -DQCOM_FM_ENABLED
 ENABLE_WEBGL := true
 TARGET_FORCE_CPU_UPLOAD := true
 
-## Dalvik
-TARGET_ARCH_LOWMEM := true
-
 ## Graphics, media
 USE_OPENGL_RENDERER := true
 TARGET_QCOM_DISPLAY_VARIANT := legacy
@@ -79,7 +77,7 @@ BOARD_VENDOR_QCOM_GPS_LOC_API_AMSS_VERSION := 50000
 BOARD_HAVE_BLUETOOTH_BLUEZ := true
 
 ## Wi-Fi
-BOARD_WLAN_DEVICE := ath6kl
+BOARD_WLAN_DEVICE := ath6kl_compat
 WPA_SUPPLICANT_VERSION := VER_0_8_X
 BOARD_WPA_SUPPLICANT_DRIVER := NL80211
 BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_ath6kl
@@ -87,10 +85,10 @@ BOARD_HOSTAPD_DRIVER := NL80211
 BOARD_HOSTAPD_PRIVATE_LIB := lib_driver_cmd_ath6kl
 WIFI_EXT_MODULE_NAME := cfg80211
 WIFI_EXT_MODULE_PATH := /system/lib/modules/cfg80211.ko
-WIFI_AP_DRIVER_MODULE_ARG := "suspend_mode=3 wow_mode=2 ath6kl_p2p=1 recovery_enable=1"
+WIFI_AP_DRIVER_MODULE_ARG := "suspend_mode=3 wow_mode=2 ath6kl_p2p=1 recovery_enable=1 debug_mask=0xffffffff"
 WIFI_AP_DRIVER_MODULE_NAME := ath6kl
 WIFI_AP_DRIVER_MODULE_PATH := /system/lib/modules/ath6kl.ko
-WIFI_DRIVER_MODULE_ARG := "suspend_mode=3 wow_mode=2 ath6kl_p2p=1 recovery_enable=1"
+WIFI_DRIVER_MODULE_ARG := "suspend_mode=3 wow_mode=2 ath6kl_p2p=1 recovery_enable=1 debug_mask=0xffffffff"
 WIFI_DRIVER_MODULE_NAME := ath6kl
 WIFI_DRIVER_MODULE_PATH := /system/lib/modules/ath6kl.ko
 

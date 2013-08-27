@@ -89,6 +89,7 @@ PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/rootdir/init.qcom.bluez.rc:root/init.qcom.bluez.rc \
     device/samsung/msm7x27a-common/rootdir/init.qcom.usb.rc:root/init.qcom.usb.rc \
     device/samsung/msm7x27a-common/rootdir/ueventd.qcom.rc:root/ueventd.qcom.rc \
+    device/samsung/msm7x27a-common/rootdir/lpm.rc:root/lpm.rc \
     device/samsung/msm7x27a-common/rootdir/fstab.qcom:root/fstab.qcom
 
 ## Recovery
@@ -114,7 +115,6 @@ PRODUCT_COPY_FILES += \
 ## Network
 PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/prebuilt/etc/wifi/wpa_supplicant.conf:system/etc/wifi/wpa_supplicant.conf \
-    device/samsung/msm7x27a-common/prebuilt/etc/wifi/p2p_supplicant.conf:system/etc/wifi/p2p_supplicant.conf \
     device/samsung/msm7x27a-common/prebuilt/bin/get_macaddrs:system/bin/get_macaddrs
 
 ## Vold config
