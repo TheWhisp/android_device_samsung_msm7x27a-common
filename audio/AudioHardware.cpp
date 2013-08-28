@@ -40,7 +40,6 @@ extern "C" {
 #endif
 //#include <media/AudioRecord.h>
 
-
 #define COMBO_DEVICE_SUPPORTED // Headset speaker combo device not supported on this target
 #define DUALMIC_KEY "dualmic_enabled"
 #define TTY_MODE_KEY "tty_mode"
@@ -418,7 +417,7 @@ AudioStreamIn* AudioHardware::openInputStream(
 
     mLock.lock();
 #ifdef QCOM_VOIP_ENABLED
-    if(devices == AudioSystem::DEVICE_IN_COMMUNICATION) {
+    if ((devices == AudioSystem::DEVICE_IN_COMMUNICATION) && (*sampleRate == 8000)) {
         ALOGV("Create Audio stream Voip \n");
         AudioStreamInVoip* inVoip = new AudioStreamInVoip();
         status_t lStatus = NO_ERROR;
