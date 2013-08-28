@@ -211,7 +211,6 @@ public:
     // create I/O streams
     virtual AudioStreamOut* openOutputStream(
                                 uint32_t devices,
-                                //audio_output_flags_t flags,
                                 int *format=0,
                                 uint32_t *channels=0,
                                 uint32_t *sampleRate=0,
@@ -325,8 +324,8 @@ private:
         virtual uint32_t    sampleRate() const { ALOGD(" AudioStreamOutDirect: sampleRate\n"); return 8000; }
         // must be 32-bit aligned - driver only seems to like 4800
         virtual size_t      bufferSize() const { ALOGD(" AudioStreamOutDirect: bufferSize\n"); return 320; }
-        virtual uint32_t    channels() const {ALOGD(" AudioStreamOutDirect: channels\n"); return mChannels; }
-        virtual int         format() const {ALOGD(" AudioStreamOutDirect: format\n"); return AudioSystem::PCM_16_BIT; }
+        virtual uint32_t    channels() const { ALOGD(" AudioStreamOutDirect: channels\n"); return mChannels; }
+        virtual int         format() const { ALOGD(" AudioStreamOutDirect: format\n"); return AudioSystem::PCM_16_BIT; }
         virtual uint32_t    latency() const { return (1000*AUDIO_HW_NUM_OUT_BUF*(bufferSize()/frameSize()))/sampleRate()+AUDIO_HW_OUT_LATENCY_MS; }
         virtual status_t    setVolume(float left, float right) { return INVALID_OPERATION; }
         virtual ssize_t     write(const void* buffer, size_t bytes);
