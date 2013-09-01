@@ -1,4 +1,4 @@
-From c945f6ee6059f745f7d74ee92f7831761129bfd5 Mon Sep 17 00:00:00 2001
+From e7e02d7b8d2f72985f3202db3ded50090f855c10 Mon Sep 17 00:00:00 2001
 From: Mingming Yin <mingming@codeaurora.org>
 Date: Thu, 27 Dec 2012 17:43:24 -0800
 Subject: [PATCH 17/21] qcom-fm: audio: add support for fm feature

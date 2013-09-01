@@ -1,9 +1,9 @@
-From 8be12c2f9c9aad20b21c2406145e0f49b0fbbe94 Mon Sep 17 00:00:00 2001
+From 79cf89a59164e2d42937158fb3885edb87251012 Mon Sep 17 00:00:00 2001
 From: Ram Mohan Korukonda <rkorukon@codeaurora.org>
 Date: Fri, 4 Jan 2013 01:53:22 +0530
 Subject: [PATCH 18/21] frameworks: add support for bluez stack
 
-This is a combination of 18 commits.
+This is a combination of 19 commits.
 
 bluetooth: Add frameworks support for bluetooth bluez stack
 
@@ -178,6 +178,15 @@ Fix to avoid compilation errors after enabling JNI verbose logs.
 
 CRs-Fixed: 475950
 Change-Id: I3e2d54b0f5f8e0c005742adfc2ffc6f0ac33a33f
+
+Bluetooth: Create A2DP handler with looper
+
+Found an exception due to A2dpHandler whenever Skype tries to load the
+MediaPlayer to play Incomming Notification. Associated A2dp handler with
+looper.
+
+CRs-fixed: 452283
+Change-Id: I73d3a5ff7728383e89da7252ea8db383014feab8
 ---
  Android.mk                                         |  138 +-
  .../java/android/bluetooth/AtCommandHandler.java   |   94 +
@@ -281,10 +290,10 @@ Change-Id: I3e2d54b0f5f8e0c005742adfc2ffc6f0ac33a33f
  core/res/res/values/config.xml                     |    4 +
  core/res/res/values/symbols.xml                    |    1 +
  data/etc/platform.xml                              |    3 +-
- media/java/android/media/MediaPlayer.java          |  173 +-
+ media/java/android/media/MediaPlayer.java          |  189 +-
  media/jni/android_media_MediaPlayer.cpp            |    2 +-
  services/java/Android.mk                           |    6 +
- 105 files changed, 45190 insertions(+), 22 deletions(-)
+ 105 files changed, 45206 insertions(+), 22 deletions(-)
  create mode 100644 bluetoothmsm/java/android/bluetooth/AtCommandHandler.java
  create mode 100644 bluetoothmsm/java/android/bluetooth/AtCommandResult.java
  create mode 100644 bluetoothmsm/java/android/bluetooth/AtParser.java
@@ -381,7 +390,6 @@ Change-Id: I3e2d54b0f5f8e0c005742adfc2ffc6f0ac33a33f
  create mode 100644 core/jni/bluetoothmsm/android_server_BluetoothA2dpService.cpp
  create mode 100644 core/jni/bluetoothmsm/android_server_BluetoothEventLoop.cpp
  create mode 100644 core/jni/bluetoothmsm/android_server_BluetoothService.cpp
- mode change 100644 => 100755 media/java/android/media/MediaPlayer.java
 
 diff --git a/Android.mk b/Android.mk
 index d1e7d90..37eeca8 100644
@@ -46146,9 +46154,7 @@ index b0ef834..1aa7a32 100644
 +            file="/system/framework/javax.btobex.jar"/>
  </permissions>
 diff --git a/media/java/android/media/MediaPlayer.java b/media/java/android/media/MediaPlayer.java
-old mode 100644
-new mode 100755
-index 684ff2c..0ff3f55
+index 684ff2c..5405b29 100644
 --- a/media/java/android/media/MediaPlayer.java
 +++ b/media/java/android/media/MediaPlayer.java
 @@ -18,6 +18,7 @@ package android.media;
@@ -46159,7 +46165,7 @@ index 684ff2c..0ff3f55
  import android.content.res.AssetFileDescriptor;
  import android.net.Uri;
  import android.os.Handler;
-@@ -537,6 +538,40 @@ public class MediaPlayer
+@@ -537,6 +538,46 @@ public class MediaPlayer
       */
      public static final boolean APPLY_METADATA_FILTER = true;
  
@@ -46197,10 +46203,38 @@ index 684ff2c..0ff3f55
 +     */
 +    private static final int PLAYSTATUS_REWIND = 0x4;
 +
++   /**
++      Constant to introduce delay in posting message to A2dp Handler.
++      {@hide}
++    */
++    private static final int A2DP_HANDLER_TIMEOUT = 10;
++
      /**
         Constant to disable the metadata filter during retrieval.
         // FIXME: unhide.
-@@ -589,6 +624,11 @@ public class MediaPlayer
+@@ -561,6 +602,7 @@ public class MediaPlayer
+     private int mListenerContext; // accessed by native methods
+     private SurfaceHolder mSurfaceHolder;
+     private EventHandler mEventHandler;
++    private A2dpHandler mA2dpHandler;
+     private PowerManager.WakeLock mWakeLock = null;
+     private boolean mScreenOnWhilePlaying;
+     private boolean mStayAwake;
+@@ -577,10 +619,13 @@ public class MediaPlayer
+         Looper looper;
+         if ((looper = Looper.myLooper()) != null) {
+             mEventHandler = new EventHandler(this, looper);
++            mA2dpHandler = new A2dpHandler(this, looper);
+         } else if ((looper = Looper.getMainLooper()) != null) {
+             mEventHandler = new EventHandler(this, looper);
++            mA2dpHandler = new A2dpHandler(this, looper);
+         } else {
+             mEventHandler = null;
++            mA2dpHandler = null;
+         }
+ 
+         /* Native setup requires a weak reference to our object.
+@@ -589,6 +634,11 @@ public class MediaPlayer
          native_setup(new WeakReference<MediaPlayer>(this));
      }
  
@@ -46212,7 +46246,7 @@ index 684ff2c..0ff3f55
      /*
       * Update the MediaPlayer SurfaceTexture.
       * Call after setting a new display surface.
-@@ -784,7 +824,7 @@ public class MediaPlayer
+@@ -784,7 +834,7 @@ public class MediaPlayer
      public static MediaPlayer create(Context context, Uri uri, SurfaceHolder holder) {
  
          try {
@@ -46221,7 +46255,7 @@ index 684ff2c..0ff3f55
              mp.setDataSource(context, uri);
              if (holder != null) {
                  mp.setDisplay(holder);
-@@ -824,7 +864,7 @@ public class MediaPlayer
+@@ -824,7 +874,7 @@ public class MediaPlayer
              AssetFileDescriptor afd = context.getResources().openRawResourceFd(resid);
              if (afd == null) return null;
  
@@ -46230,7 +46264,7 @@ index 684ff2c..0ff3f55
              mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
              afd.close();
              mp.prepare();
-@@ -866,6 +906,9 @@ public class MediaPlayer
+@@ -866,6 +916,9 @@ public class MediaPlayer
          throws IOException, IllegalArgumentException, SecurityException, IllegalStateException {
  
          String scheme = uri.getScheme();
@@ -46240,52 +46274,58 @@ index 684ff2c..0ff3f55
          if(scheme == null || scheme.equals("file")) {
              setDataSource(uri.getPath());
              return;
-@@ -1022,6 +1065,9 @@ public class MediaPlayer
+@@ -1022,6 +1075,10 @@ public class MediaPlayer
       */
      public  void start() throws IllegalStateException {
          stayAwake(true);
-+
-+       mA2dpHandler.obtainMessage(PLAYER_PLAY).sendToTarget();
-+
++        if (mA2dpHandler != null) {
++            Message msg = Message.obtain(mA2dpHandler, PLAYER_PLAY);
++            mA2dpHandler.sendMessageDelayed(msg, A2DP_HANDLER_TIMEOUT);
++        }
          _start();
      }
  
-@@ -1036,6 +1082,9 @@ public class MediaPlayer
+@@ -1036,6 +1093,10 @@ public class MediaPlayer
      public void stop() throws IllegalStateException {
          stayAwake(false);
          _stop();
-+
-+       mA2dpHandler.obtainMessage(PLAYER_STOP).sendToTarget();
-+
++        if (mA2dpHandler != null) {
++            Message msg = Message.obtain(mA2dpHandler, PLAYER_STOP);
++            mA2dpHandler.sendMessageDelayed(msg, A2DP_HANDLER_TIMEOUT);
++        }
      }
  
      private native void _stop() throws IllegalStateException;
-@@ -1049,6 +1098,9 @@ public class MediaPlayer
+@@ -1049,6 +1110,10 @@ public class MediaPlayer
      public void pause() throws IllegalStateException {
          stayAwake(false);
          _pause();
-+
-+       mA2dpHandler.obtainMessage(PLAYER_PAUSE).sendToTarget();
-+
++        if (mA2dpHandler != null) {
++            Message msg = Message.obtain(mA2dpHandler, PLAYER_PAUSE);
++            mA2dpHandler.sendMessageDelayed(msg, A2DP_HANDLER_TIMEOUT);
++        }
      }
  
      private native void _pause() throws IllegalStateException;
-@@ -1164,8 +1216,13 @@ public class MediaPlayer
+@@ -1164,8 +1229,16 @@ public class MediaPlayer
       * @throws IllegalStateException if the internal player engine has not been
       * initialized
       */
 -    public native void seekTo(int msec) throws IllegalStateException;
 +    public void seekTo(int msec) throws IllegalStateException {
-+       mA2dpHandler.obtainMessage(PLAYER_SEEK_TO, msec, getCurrentPosition()).sendToTarget();
- 
++        if (mA2dpHandler != null) {
++            Message msg = Message.obtain(mA2dpHandler, PLAYER_SEEK_TO,
++                                         msec, getCurrentPosition());
++            mA2dpHandler.sendMessageDelayed(msg, A2DP_HANDLER_TIMEOUT);
++        }
 +        _seekTo(msec);
 +    }
-+
+ 
 +    private native void _seekTo(int msec) throws IllegalStateException;
      /**
       * Gets the current playback position.
       *
-@@ -1302,6 +1359,10 @@ public class MediaPlayer
+@@ -1302,6 +1375,10 @@ public class MediaPlayer
       */
      public void release() {
          stayAwake(false);
@@ -46296,25 +46336,15 @@ index 684ff2c..0ff3f55
          mOnPreparedListener = null;
          mOnBufferingUpdateListener = null;
          mOnCompletionListener = null;
-@@ -1323,6 +1384,17 @@ public class MediaPlayer
-     public void reset() {
-         stayAwake(false);
+@@ -1325,6 +1402,7 @@ public class MediaPlayer
          _reset();
-+        if (mContext != null) {
-+            Intent intent = new Intent(ACTION_METADATA_CHANGED);
-+            intent.putExtra("duration", 0);
-+            intent.putExtra("time", System.currentTimeMillis());
-+            intent.putExtra("position", 0);
-+            Log.d(TAG, "reset() mUri is " + mUri);
-+            intent.putExtra("uripath", mUri);
-+            intent.putExtra("playstate", PLAYSTATUS_STOPPED);
-+            mContext.sendBroadcast(intent);
-+        }
-+
          // make sure none of the listeners get called anymore
          mEventHandler.removeCallbacksAndMessages(null);
++        mA2dpHandler.removeCallbacksAndMessages(null);
      }
-@@ -1940,6 +2012,93 @@ public class MediaPlayer
+ 
+     private native void _reset();
+@@ -1940,6 +2018,101 @@ public class MediaPlayer
      @Override
      protected void finalize() { native_finalize(); }
  
@@ -46324,9 +46354,17 @@ index 684ff2c..0ff3f55
 +    private static final int PLAYER_STOP = 4;
 +    private static final int PLAYER_SEEK_TO = 5;
 +
-+    private Handler mA2dpHandler = new Handler()
++
++    private class A2dpHandler extends Handler
 +    {
-+        @Override
++        private MediaPlayer mMediaPlayer;
++
++        public A2dpHandler(MediaPlayer mp, Looper looper) {
++           super(looper);
++           mMediaPlayer = mp;
++        }
++
++      @Override
 +        public void handleMessage(Message msg) {
 +        switch (msg.what) {
 +             case PLAYER_SEEK_COMPLETE:
@@ -46408,17 +46446,19 @@ index 684ff2c..0ff3f55
      /* Do not change these values without updating their counterparts
       * in include/media/mediaplayer.h!
       */
-@@ -1986,8 +2145,12 @@ public class MediaPlayer
+@@ -1986,8 +2159,14 @@ public class MediaPlayer
                  return;
  
              case MEDIA_SEEK_COMPLETE:
 -              if (mOnSeekCompleteListener != null)
 -                  mOnSeekCompleteListener.onSeekComplete(mMediaPlayer);
 +              {
-+                mA2dpHandler.obtainMessage(PLAYER_SEEK_COMPLETE).sendToTarget();
-+
-+                  if (mOnSeekCompleteListener != null)
-+                      mOnSeekCompleteListener.onSeekComplete(mMediaPlayer);
++                if (mA2dpHandler != null) {
++                    Message msgA2dp = Message.obtain(mA2dpHandler, PLAYER_SEEK_COMPLETE);
++                    mA2dpHandler.sendMessageDelayed(msgA2dp, A2DP_HANDLER_TIMEOUT);
++                }
++                if (mOnSeekCompleteListener != null)
++                    mOnSeekCompleteListener.onSeekComplete(mMediaPlayer);
 +              }
                return;
  

@@ -25,7 +25,7 @@
         <value>480000</value>
         <value>600000</value>
         <value>800000</value>
-	<value>1008000</value>
+		<value>1008000</value>
     </array>
     <item name="cpu.idle">1.0</item>
     <item name="cpu.awake">20</item>
