@@ -21,6 +21,10 @@ cd system/core
 echo "Applying system/core patches..."
 git am $rootdirectory/device/samsung/msm7x27a-common/patches/system_core/*.patch
 cd $rootdirectory
+cd hardware/libhardware_legacy
+echo "Applying hardware/libhardware_legacy patches..."
+git am $rootdirectory/device/samsung/msm7x27a-common/patches/libhardware_legacy/*.patch
+cd $rootdirectory
 
 ## Cherry-picks
 cd dalvik

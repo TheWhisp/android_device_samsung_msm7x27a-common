@@ -1,0 +1,35 @@
+From 3068c767b742540f1d196bd07e8702cdef9d97a1 Mon Sep 17 00:00:00 2001
+From: TheWhisp <daavis.90@gmail.com>
+Date: Wed, 11 Sep 2013 16:44:22 +0300
+Subject: [PATCH] Fix for audio routing speaker though BT is connected
+
+Change-Id: Ic742d264ed32c67e960e3db36daa67d5e32f9a8d
+---
+ audio/AudioPolicyManagerBase.cpp | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/audio/AudioPolicyManagerBase.cpp b/audio/AudioPolicyManagerBase.cpp
+index 9c48d35..e2300d5 100644
+--- a/audio/AudioPolicyManagerBase.cpp
++++ b/audio/AudioPolicyManagerBase.cpp
+@@ -1980,7 +1980,7 @@ void AudioPolicyManagerBase::checkA2dpSuspend()
+     if (mA2dpSuspended) {
+         if (((mScoDeviceAddress == "") ||
+              ((mForceUse[AudioSystem::FOR_COMMUNICATION] != AudioSystem::FORCE_BT_SCO) &&
+-              (mForceUse[AudioSystem::FOR_RECORD] != AudioSystem::FORCE_BT_SCO))) &&
++              (mForceUse[AudioSystem::FOR_RECORD] != AudioSystem::FORCE_BT_SCO))) ||
+              ((mPhoneState != AudioSystem::MODE_IN_CALL) &&
+               (mPhoneState != AudioSystem::MODE_RINGTONE))) {
+ 
+@@ -1990,7 +1990,7 @@ void AudioPolicyManagerBase::checkA2dpSuspend()
+     } else {
+         if (((mScoDeviceAddress != "") &&
+              ((mForceUse[AudioSystem::FOR_COMMUNICATION] == AudioSystem::FORCE_BT_SCO) ||
+-              (mForceUse[AudioSystem::FOR_RECORD] == AudioSystem::FORCE_BT_SCO))) ||
++              (mForceUse[AudioSystem::FOR_RECORD] == AudioSystem::FORCE_BT_SCO))) &&
+              ((mPhoneState == AudioSystem::MODE_IN_CALL) ||
+               (mPhoneState == AudioSystem::MODE_RINGTONE))) {
+ 
+-- 
+1.8.1.2
+
