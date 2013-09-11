@@ -12,11 +12,11 @@
 ## <sysfs_path> - List of sysfs paths to source devices
 ######################
 
-#internal
+## Internal (fake) sdcard
 dev_mount sdcard /storage/sdcard0 23 /devices/platform/msm_sdcc.3/mmc_host/mmc0
 
-#external
-dev_mount ext_card /storage/sdcard1 auto /devices/platform/msm_sdcc.1/mmc_host/mmc1
+## External (real) sdcard
+dev_mount external_sd /storage/sdcard1 auto /devices/platform/msm_sdcc.1/mmc_host/mmc1
 
-#usbdisk
+## USB disk
 dev_mount usbdisk /storage/usbdisk0 auto /devices/platform/msm_hsusb_host.0/usb1
