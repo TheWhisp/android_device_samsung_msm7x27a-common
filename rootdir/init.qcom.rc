@@ -11,7 +11,7 @@ on init
     export SECONDARY_STORAGE /storage/sdcard1
 
     ## Setup storage
-    mkdir /storage 0775 system sdcard_r
+    mkdir /storage 0050 system sdcard_r
     mkdir /storage/sdcard0 0000 system system
     mkdir /storage/sdcard1 0000 system system
     mkdir /storage/usbdisk0 0000 system system
@@ -29,6 +29,24 @@ on fs
     mount_all /fstab.qcom
 
 on boot
+	## Setup Bluetooth
+	chown bluetooth bluetooth /sys/module/bluetooth_power/parameters/power
+    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/type
+    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/state
+    chown bluetooth bluetooth /proc/bluetooth/sleep/proto
+    chown bluetooth bluetooth /proc/bcm/sleep/proto
+    chown system system /sys/module/sco/parameters/disable_esco
+    chown bluetooth bluetooth /sys/module/hci_smd/parameters/hcismd_set
+    chmod 0660 /sys/module/bluetooth_power/parameters/power
+    chmod 0660 /sys/module/hci_smd/parameters/hcismd_set
+    chmod 0660 /sys/class/rfkill/rfkill0/state
+    chmod 0660 /proc/bluetooth/sleep/proto
+    chmod 0660 /proc/bcm/sleep/proto
+    chown bluetooth bluetooth /dev/ttyHS0
+    chmod 0660 /dev/ttyHS0
+    chown bluetooth bluetooth /sys/devices/platform/msm_serial_hs.0/clock
+    chmod 0660 /sys/devices/platform/msm_serial_hs.0/clock	
+
     ## Setup Wi-Fi
     mkdir /data/misc/wifi 0770 wifi wifi
     mkdir /data/misc/wifi/sockets 0770 wifi wifi
@@ -78,6 +96,8 @@ on boot
     chmod 0644 /proc/cmdline
 
 on post-fs-data
+	mkdir /data/misc/bluetooth 0770 bluetooth bluetooth
+
     ## Create log system
     mkdir /data/log 0775 system log
 
@@ -92,24 +112,6 @@ service rmt_storage /system/bin/rmt_storage /dev/block/mmcblk0p10 /dev/block/mmc
 
 on property:ro.boot.emmc=true
     start rmt_storage
-
-on property:init.svc.bluetoothd=running
-    start abtfilt
-    write /sys/class/bluetooth/hci0/idle_timeout 7000
-
-on property:init.svc.bluetoothd=stopped
-    stop abtfilt
-
-service config_bluetooth /system/bin/sh /system/etc/init.qcom.bt.sh "onboot"
-    class main
-    user root
-    oneshot
-
-service hciattach /system/bin/sh /system/etc/init.qcom.bt.sh
-    class main
-    group qcom_oncrpc bluetooth net_bt_admin net_bt_stack
-    disabled
-    oneshot
 
 service abtfilt /system/bin/abtfilt -d -z -n -v -s -a -q
     class main
