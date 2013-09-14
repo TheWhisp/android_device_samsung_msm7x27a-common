@@ -1,5 +1,4 @@
 import init.${ro.hardware}.usb.rc
-import init.${ro.hardware}.bluez.rc
 
 on early-init
     mount debugfs debugfs /sys/kernel/debug
@@ -29,8 +28,8 @@ on fs
     mount_all /fstab.qcom
 
 on boot
-	## Setup Bluetooth
-	chown bluetooth bluetooth /sys/module/bluetooth_power/parameters/power
+    ## Setup Bluetooth
+    chown bluetooth bluetooth /sys/module/bluetooth_power/parameters/power
     chown bluetooth bluetooth /sys/class/rfkill/rfkill0/type
     chown bluetooth bluetooth /sys/class/rfkill/rfkill0/state
     chown bluetooth bluetooth /proc/bluetooth/sleep/proto
@@ -96,7 +95,7 @@ on boot
     chmod 0644 /proc/cmdline
 
 on post-fs-data
-	mkdir /data/misc/bluetooth 0770 bluetooth bluetooth
+    mkdir /data/misc/bluetooth 0770 bluetooth bluetooth
 
     ## Create log system
     mkdir /data/log 0775 system log
