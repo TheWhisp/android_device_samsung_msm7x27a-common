@@ -36,17 +36,15 @@
 		<item>"wlan\\d"</item>
     </string-array>
 
-	<!-- Boolean indicating whether Softap requires reloading AP firmware -->
-	<bool name="config_wifiApFirmwareReload">false</bool>
+    <!-- Boolean indicating whether Softap requires reloading AP firmware -->
+    <bool name="config_wifiApFirmwareReload">false</bool>
 
-	<!-- Boolean indicating if current platform supports quick switch-on/off of Bluetooth Module 
-    <bool name="config_bluetooth_adapter_quick_switch">false</bool>-->
 
     <!-- List of regexpressions describing the interface (if any) that represent tetherable
          bluetooth interfaces.  If the device doesn't want to support tethering over bluetooth this
          should be empty. -->
     <string-array translatable="false" name="config_tether_bluetooth_regexs">
-        <item>"bnep\\d"</item>
+        <item>"bt-pan"</item>
     </string-array>
 
     <!-- Array of ConnectivityManager.TYPE_xxxx values allowable for tethering -->
@@ -72,27 +70,27 @@
 
     <bool name="config_animateScreenLights">false</bool>
 
-	<!-- Indicate whether the SD card is accessible without removing the battery. -->
+    <!-- Indicate whether the SD card is accessible without removing the battery. -->
     <bool name="config_batterySdCardAccessibility">true</bool>
 
-	<!-- Is the battery LED intrusive? Used to decide if there should be a disable option -->
+   <!-- Is the battery LED intrusive? Used to decide if there should be a disable option -->
     <bool name="config_intrusiveNotificationLed">false</bool>
 
-	<!-- Display low battery warning when battery level dips to this value.
+    <!-- Display low battery warning when battery level dips to this value.
          Also, the battery stats are flushed to disk when we hit this level.  -->
     <integer name="config_criticalBatteryWarningLevel">5</integer>
 
     <!-- Display low battery warning when battery level dips to this value -1 -->
     <integer name="config_lowBatteryWarningLevel">15</integer>
 
-	<string-array name="config_locationProviderPackageNames" translatable="false">
+   <string-array name="config_locationProviderPackageNames" translatable="false">
         <!-- The standard AOSP fused location provider -->
         <item>com.android.location.fused</item>
         <!-- The Google Network Location Services location provider -->
         <item>com.google.android.location</item>
     </string-array>
 
-	<!-- Hardware 'face' keys present on the device, stored as a bit field.
+    <!-- Hardware 'face' keys present on the device, stored as a bit field.
          This integer should equal the sum of the corresponding value for each
          of the following keys present:
              1 - Home
@@ -107,7 +105,7 @@
     <!-- Boolean to enable stk functionality on Samsung phones -->
     <bool name="config_samsung_stk">true</bool>
 
-	<!-- Minimum screen brightness setting allowed by the power manager.
+    <!-- Minimum screen brightness setting allowed by the power manager.
          The user is forbidden from setting the brightness below this level. -->
     <integer name="config_screenBrightnessSettingMinimum">20</integer>
 

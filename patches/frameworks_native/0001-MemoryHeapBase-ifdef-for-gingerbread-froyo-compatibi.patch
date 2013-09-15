@@ -1,15 +1,26 @@
-From f3b9f11c68a58a65e2a2e09c5c822b41a6c54703 Mon Sep 17 00:00:00 2001
-From: TheWhisp <daavis.90@gmail.com>
-Date: Tue, 13 Aug 2013 18:30:07 +0300
-Subject: [PATCH] add binder compatibility
+From e3b5f77b3197e7e815d7fafea90760d9be1d88e6 Mon Sep 17 00:00:00 2001
+From: Tanguy Pruvot <tanguy.pruvot@gmail.com>
+Date: Mon, 3 Dec 2012 16:24:24 +0400
+Subject: [PATCH] MemoryHeapBase: ifdef for gingerbread/froyo compatibility
 
-Change-Id: Ic5ab7713cb9d64a10d3b908180a29362e9042d7f
+This change is required to use overlay based proprietary camera libs
+coming from gingerbread and froyo builds.
+
+This change also requires a global cflag named BINDER_COMPAT
+because a lot of modules use the MemoryHeap includes
+
+Add this in your BoardConfig.mk :
+COMMON_GLOBAL_CFLAGS += -DBINDER_COMPAT
+
+Backported from /#/c/13317/
+
+Change-Id: I919a2a89d5efa0eab5ef286979fcd823b62a363c
 ---
  include/binder/IMemory.h        |  2 ++
  include/binder/MemoryHeapBase.h |  8 +++++---
- libs/binder/IMemory.cpp         | 24 +++++++++++++++++++++---
- libs/binder/MemoryHeapBase.cpp  | 24 ++++++++++++++++++++----
- 4 files changed, 48 insertions(+), 10 deletions(-)
+ libs/binder/IMemory.cpp         | 25 ++++++++++++++++++++++---
+ libs/binder/MemoryHeapBase.cpp  | 28 ++++++++++++++++++++++------
+ 4 files changed, 51 insertions(+), 12 deletions(-)
 
 diff --git a/include/binder/IMemory.h b/include/binder/IMemory.h
 index 62ac9e3..3adb9bc 100644
@@ -54,7 +65,7 @@ index ea9b66c..135f012 100644
  
  // ---------------------------------------------------------------------------
 diff --git a/libs/binder/IMemory.cpp b/libs/binder/IMemory.cpp
-index 54cc735..f0cfff7 100644
+index 54cc735..e8d96cd 100644
 --- a/libs/binder/IMemory.cpp
 +++ b/libs/binder/IMemory.cpp
 @@ -85,8 +85,9 @@ public:
@@ -78,7 +89,7 @@ index 54cc735..f0cfff7 100644
      mutable bool        mRealHeap;
      mutable Mutex       mLock;
  };
-@@ -235,7 +238,11 @@ status_t BnMemory::onTransact(
+@@ -235,8 +238,13 @@ status_t BnMemory::onTransact(
  
  BpMemoryHeap::BpMemoryHeap(const sp<IBinder>& impl)
      : BpInterface<IMemoryHeap>(impl),
@@ -89,9 +100,11 @@ index 54cc735..f0cfff7 100644
 +#endif
 +	mRealHeap(false)
  {
++//HERE!
  }
  
-@@ -274,7 +281,9 @@ void BpMemoryHeap::assertMapped() const
+ BpMemoryHeap::~BpMemoryHeap() {
+@@ -274,7 +282,9 @@ void BpMemoryHeap::assertMapped() const
              if (mHeapId == -1) {
                  mBase   = heap->mBase;
                  mSize   = heap->mSize;
@@ -101,7 +114,7 @@ index 54cc735..f0cfff7 100644
                  android_atomic_write( dup( heap->mHeapId ), &mHeapId );
              }
          } else {
-@@ -298,7 +307,11 @@ void BpMemoryHeap::assertReallyMapped() const
+@@ -298,7 +308,11 @@ void BpMemoryHeap::assertReallyMapped() const
          int parcel_fd = reply.readFileDescriptor();
          ssize_t size = reply.readInt32();
          uint32_t flags = reply.readInt32();
@@ -113,7 +126,7 @@ index 54cc735..f0cfff7 100644
  
          ALOGE_IF(err, "binder=%p transaction failed fd=%d, size=%ld, err=%d (%s)",
                  asBinder().get(), parcel_fd, size, err, strerror(-err));
-@@ -340,7 +353,9 @@ void BpMemoryHeap::assertReallyMapped() const
+@@ -340,7 +354,9 @@ void BpMemoryHeap::assertReallyMapped() const
              } else {
                  mSize = size;
                  mFlags = flags;
@@ -123,7 +136,7 @@ index 54cc735..f0cfff7 100644
                  android_atomic_write(fd, &mHeapId);
              }
          }
-@@ -372,11 +387,12 @@ uint32_t BpMemoryHeap::getFlags() const {
+@@ -372,11 +388,12 @@ uint32_t BpMemoryHeap::getFlags() const {
      assertMapped();
      return mFlags;
  }
@@ -137,7 +150,7 @@ index 54cc735..f0cfff7 100644
  
  // ---------------------------------------------------------------------------
  
-@@ -397,7 +413,9 @@ status_t BnMemoryHeap::onTransact(
+@@ -397,7 +414,9 @@ status_t BnMemoryHeap::onTransact(
              reply->writeFileDescriptor(getHeapID());
              reply->writeInt32(getSize());
              reply->writeInt32(getFlags());
@@ -148,7 +161,7 @@ index 54cc735..f0cfff7 100644
          } break;
          default:
 diff --git a/libs/binder/MemoryHeapBase.cpp b/libs/binder/MemoryHeapBase.cpp
-index d1cbf1c..7529319 100644
+index d1cbf1c..5af9f63 100644
 --- a/libs/binder/MemoryHeapBase.cpp
 +++ b/libs/binder/MemoryHeapBase.cpp
 @@ -42,13 +42,19 @@ namespace android {
@@ -197,6 +210,15 @@ index d1cbf1c..7529319 100644
  {
      const size_t pagesize = getpagesize();
      size = ((size + pagesize-1) & ~(pagesize-1));
+@@ -132,7 +144,7 @@ status_t MemoryHeapBase::mapfd(int fd, size_t size, uint32_t offset)
+             close(fd);
+             return -errno;
+         }
+-        //ALOGD("mmap(fd=%d, base=%p, size=%lu)", fd, base, size);
++        //LOGD("mmap(fd=%d, base=%p, size=%lu)", fd, base, size);
+         mBase = base;
+         mNeedUnmap = true;
+     } else  {
 @@ -141,7 +153,9 @@ status_t MemoryHeapBase::mapfd(int fd, size_t size, uint32_t offset)
      }
      mFD = fd;
@@ -207,6 +229,15 @@ index d1cbf1c..7529319 100644
      return NO_ERROR;
  }
  
+@@ -155,7 +169,7 @@ void MemoryHeapBase::dispose()
+     int fd = android_atomic_or(-1, &mFD);
+     if (fd >= 0) {
+         if (mNeedUnmap) {
+-            //ALOGD("munmap(fd=%d, base=%p, size=%lu)", fd, mBase, mSize);
++            //LOGD("munmap(fd=%d, base=%p, size=%lu)", fd, mBase, mSize);
+             munmap(mBase, mSize);
+         }
+         mBase = 0;
 @@ -184,9 +198,11 @@ const char* MemoryHeapBase::getDevice() const {
      return mDevice;
  }

@@ -216,24 +216,23 @@ static void wrap_data_callback_timestamp(nsecs_t timestamp, int32_t msg_type, co
 void CameraHAL_FixupParams(android::CameraParameters &camParams) {
     const char *video_sizes = "640x480,384x288,352x288,320x240,240x160,176x144";
     const char *preferred_video_size = "640x480";
+
 #ifdef ENABLE_FLASH_AND_AUTOFOCUS
-	const char *focus_mode_values = "auto,infinity,touch";
-	const char *flash_mode_values = "auto,on,off";
+    const char *focus_mode_values = "auto,infinity,touch";
+    const char *flash_mode_values = "auto,on,off,torch";
+
+    camParams.set(CameraParameters::KEY_SUPPORTED_FOCUS_MODES, focus_mode_values);
+    camParams.set(CameraParameters::KEY_SUPPORTED_FLASH_MODES, flash_mode_values);
 #endif
+
     camParams.set(CameraParameters::KEY_VIDEO_FRAME_FORMAT, CameraParameters::PIXEL_FORMAT_YUV420SP);
-#ifdef ENABLE_FLASH_AND_AUTOFOCUS
-	camParams.set(CameraParameters::KEY_SUPPORTED_FOCUS_MODES, focus_mode_values);
-	camParams.set(CameraParameters::KEY_SUPPORTED_FLASH_MODES, flash_mode_values);
-#endif
+    camParams.set(CameraParameters::KEY_VIDEO_SIZE, preferred_video_size);
+
     if (!camParams.get(CameraParameters::KEY_SUPPORTED_VIDEO_SIZES)) {
-         camParams.set(CameraParameters::KEY_SUPPORTED_VIDEO_SIZES, video_sizes);
-    }
+         camParams.set(CameraParameters::KEY_SUPPORTED_VIDEO_SIZES, video_sizes); }
+
     if (!camParams.get(CameraParameters::KEY_MAX_NUM_FOCUS_AREAS)) {
-        camParams.set(CameraParameters::KEY_MAX_NUM_FOCUS_AREAS, 1);
-    }
-    if (!camParams.get(CameraParameters::KEY_VIDEO_SIZE)) {
-         camParams.set(CameraParameters::KEY_VIDEO_SIZE, preferred_video_size);
-    }
+        camParams.set(CameraParameters::KEY_MAX_NUM_FOCUS_AREAS, 1); }
 }
 
 int camera_set_preview_window(struct camera_device * device, struct preview_stream_ops *window) {

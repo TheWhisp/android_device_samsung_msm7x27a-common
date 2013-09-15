@@ -1,4 +1,4 @@
-From f6c79331d5a11efdee8339dc91ed5297801bac32 Mon Sep 17 00:00:00 2001
+From 2528124d203effc2b45bba828c2f97dede783c43 Mon Sep 17 00:00:00 2001
 From: Pavel Kirpichyov <pavel.kirpichyov@gmail.com>
 Date: Thu, 20 Dec 2012 23:29:02 +0400
 Subject: [PATCH] Add overlay support for camera
@@ -12,11 +12,11 @@ Change-Id: I4089f2ba9d4a23af6ce53e9d1ece08260511502d
  create mode 100644 include/ui/Overlay.h
  create mode 100644 libs/ui/Overlay.cpp
 
-diff --git a/include/ui/legacy/Overlay.h b/include/ui/legacy/Overlay.h
+diff --git a/include/ui/Overlay.h b/include/ui/Overlay.h
 new file mode 100644
-index 0000000..6647e92
+index 0000000..511f0ce
 --- /dev/null
-+++ b/include/ui/legacy/Overlay.h
++++ b/include/ui/Overlay.h
 @@ -0,0 +1,103 @@
 +/*
 + * Copyright (C) 2007 The Android Open Source Project
@@ -71,7 +71,7 @@ index 0000000..6647e92
 +
 +    /* destroys this overlay */
 +    void destroy();
-+    
++
 +    /* get the HAL handle for this overlay */
 +    void* getHandleRef() const;
 +
@@ -103,7 +103,7 @@ index 0000000..6647e92
 +    int32_t getHeightStride() const;
 +    int32_t getBufferCount() const;
 +    status_t getStatus() const;
-+    
++
 +private:
 +    virtual ~Overlay();
 +
@@ -129,15 +129,15 @@ index bde0e2f..0b9acdd 100644
  	GraphicBufferMapper.cpp \
  	PixelFormat.cpp \
  	Rect.cpp \
-+   legacy/Overlay.cpp \
++        Overlay.cpp \
  	Region.cpp \
  	UiConfig.cpp
  
-diff --git a/libs/ui/legacy/Overlay.cpp b/libs/ui/legacy/Overlay.cpp
+diff --git a/libs/ui/Overlay.cpp b/libs/ui/Overlay.cpp
 new file mode 100644
-index 0000000..f6653b4
+index 0000000..83ef53f
 --- /dev/null
-+++ b/libs/ui/legacy/Overlay.cpp
++++ b/libs/ui/Overlay.cpp
 @@ -0,0 +1,128 @@
 +/*
 + * Copyright (C) 2007 The Android Open Source Project
@@ -162,7 +162,7 @@ index 0000000..f6653b4
 +#include <utils/Errors.h>
 +#include <binder/MemoryHeapBase.h>
 +
-+#include <ui/legacy/Overlay.h>
++#include <ui/Overlay.h>
 +
 +namespace android {
 +
@@ -233,7 +233,7 @@ index 0000000..f6653b4
 +    return 0;
 +}
 +
-+void Overlay::destroy() {  
++void Overlay::destroy() {
 +}
 +
 +status_t Overlay::getStatus() const {
@@ -268,4 +268,5 @@ index 0000000..f6653b4
 +
 +}; // namespace android
 -- 
-1.8.1.6
+1.8.1.2
+

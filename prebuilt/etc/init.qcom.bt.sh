@@ -26,14 +26,9 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-#Read the arguments passed to the script
-config="$1"
-
 BLUETOOTH_SLEEP_PATH=/proc/bluetooth/sleep/proto
 LOG_TAG="qcom-bluetooth"
 LOG_NAME="${0}:"
-
-hciattach_pid=""
 
 loge ()
 {
@@ -51,81 +46,7 @@ failed ()
   exit $2
 }
 
-config_bt ()
-{
-  setprop ro.qualcomm.bluetooth.opp true
-  setprop ro.qualcomm.bluetooth.hfp true
-  setprop ro.qualcomm.bluetooth.hsp true
-  setprop ro.qualcomm.bluetooth.pbap true
-  setprop ro.qualcomm.bluetooth.ftp true
-  setprop ro.qualcomm.bluetooth.map true
-  setprop ro.qualcomm.bluetooth.nap true
-  setprop ro.qualcomm.bluetooth.sap true
-  setprop ro.qualcomm.bluetooth.dun true
-
-  logi "Bluetooth stack is bluez"
-  setprop ro.qc.bluetooth.stack bluez
-
-  reason=`getprop vold.decrypt`
-  case "$reason" in
-      "trigger_restart_framework")
-          start dbus
-          ;;
-  esac
-}
-
-start_hciattach ()
-{
-  /system/bin/hciattach -n $BTS_DEVICE $BTS_TYPE $BTS_BAUD &
-  hciattach_pid=$!
-  logi "start_hciattach: pid = $hciattach_pid"
-  echo 1 > $BLUETOOTH_SLEEP_PATH
-}
-
-kill_hciattach ()
-{
-  echo 0 > $BLUETOOTH_SLEEP_PATH
-  logi "kill_hciattach: pid = $hciattach_pid"
-  ## careful not to kill zero or null!
-  kill -TERM $hciattach_pid
-  # this shell doesn't exit now -- wait returns for normal exit
-}
-
-logi "init.qcom.bt.sh config = $config"
-case "$config" in
-    "onboot")
-        config_bt
-        exit 0
-        ;;
-    *)
-        ;;
-esac
-
-# mimic hciattach options parsing -- maybe a waste of effort
-USAGE="hciattach [-n] [-p] [-b] [-t timeout] [-s initial_speed] <tty> <type | id> [speed] [flow|noflow] [bdaddr]"
-
-while getopts "blnpt:s:" f
-do
-  case $f in
-  b | l | n | p)  opt_flags="$opt_flags -$f" ;;
-  t)      timeout=$OPTARG;;
-  s)      initial_speed=$OPTARG;;
-  \?)     echo $USAGE; exit 1;;
-  esac
-done
-shift $(($OPTIND-1))
-
-# Note that "hci_qcomm_init -e" prints expressions to set the shell variables
-# BTS_DEVICE, BTS_TYPE, BTS_BAUD, and BTS_ADDRESS.
-
-#Selectively Disable sleep
-BOARD=`getprop ro.board.platform`
-
-POWER_CLASS=`getprop qcom.bt.dev_power_class`
-
-#find the transport type
-TRANSPORT=`getprop ro.qualcomm.bt.hci_transport`
-logi "Transport : $TRANSPORT"
+setprop bluetooth.status off
 
 case $POWER_CLASS in
   1) PWR_CLASS="-p 0" ;
@@ -146,20 +67,8 @@ case $exit_code_hci_qcomm_init in
   *) failed "Bluetooth QSoC firmware download failed" $exit_code_hci_qcomm_init;;
 esac
 
-# init does SIGTERM on ctl.stop for service
-trap "kill_hciattach" TERM INT
+setprop bluetooth.status on
 
-case $TRANSPORT in
-    "smd")
-        echo 1 > /sys/module/hci_smd/parameters/hcismd_set
-     ;;
-     *)
-        logi "start hciattach"
-        start_hciattach
-
-        wait $hciattach_pid
-        logi "Bluetooth stopped"
-     ;;
-esac
+logi "start bluetooth transport"
 
 exit 0
