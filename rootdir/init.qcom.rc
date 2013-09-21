@@ -126,9 +126,7 @@ service wpa_supplicant /system/bin/wpa_supplicant -Dnl80211 -iwlan0 -W -c/data/m
     disabled
     oneshot
 
-service p2p_supplicant /system/bin/wpa_supplicant \
-		-iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf \
-		-ip2p0 -Dnl80211 -c/data/misc/wifi/p2p_supplicant.conf
+service p2p_supplicant /system/bin/wpa_supplicant -iwlan0 -Dnl80211 -W -c/data/misc/wifi/wpa_supplicant.conf
     class main
     group wifi inet
     socket wpa_wlan0 dgram 660 wifi wifi
@@ -149,7 +147,12 @@ service fm_dl /system/bin/sh /system/etc/init.qcom.fm.sh
     disabled
     oneshot
 
-service dhcpcd_bnep0 /system/bin/dhcpcd -BKLG
+service dhcpcd_bt-pan /system/bin/dhcpcd -BKLG
+    class main
+    disabled
+    oneshot
+
+service iprenew_bt-pan /system/bin/dhcpcd -n
     class main
     disabled
     oneshot
