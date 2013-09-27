@@ -9,14 +9,14 @@ Change-Id: I4089f2ba9d4a23af6ce53e9d1ece08260511502d
  libs/ui/Android.mk   |   1 +
  libs/ui/Overlay.cpp  | 128 +++++++++++++++++++++++++++++++++++++++++++++++++++
  3 files changed, 232 insertions(+)
- create mode 100644 include/ui/Overlay.h
- create mode 100644 libs/ui/Overlay.cpp
+ create mode 100644 include/ui/legacy/Overlay.h
+ create mode 100644 libs/ui/legacy/Overlay.cpp
 
 diff --git a/include/ui/Overlay.h b/include/ui/Overlay.h
 new file mode 100644
 index 0000000..511f0ce
 --- /dev/null
-+++ b/include/ui/Overlay.h
++++ b/include/ui/legacy/Overlay.h
 @@ -0,0 +1,103 @@
 +/*
 + * Copyright (C) 2007 The Android Open Source Project
@@ -129,15 +129,15 @@ index bde0e2f..0b9acdd 100644
  	GraphicBufferMapper.cpp \
  	PixelFormat.cpp \
  	Rect.cpp \
-+        Overlay.cpp \
++   legacy/Overlay.cpp \
  	Region.cpp \
  	UiConfig.cpp
  
-diff --git a/libs/ui/Overlay.cpp b/libs/ui/Overlay.cpp
+diff --git a/libs/ui/legacy/Overlay.cpp b/libs/ui/legacy/Overlay.cpp
 new file mode 100644
 index 0000000..83ef53f
 --- /dev/null
-+++ b/libs/ui/Overlay.cpp
++++ b/libs/ui/legacy/Overlay.cpp
 @@ -0,0 +1,128 @@
 +/*
 + * Copyright (C) 2007 The Android Open Source Project
@@ -162,7 +162,7 @@ index 0000000..83ef53f
 +#include <utils/Errors.h>
 +#include <binder/MemoryHeapBase.h>
 +
-+#include <ui/Overlay.h>
++#include <ui/legacy/Overlay.h>
 +
 +namespace android {
 +
@@ -269,4 +269,3 @@ index 0000000..83ef53f
 +}; // namespace android
 -- 
 1.8.1.2
-

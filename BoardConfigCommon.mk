@@ -93,6 +93,7 @@ KERNEL_EXTERNAL_MODULES:
 	rm -rf $(OUT)/ath6kl-compat
 	cp -a hardware/atheros/ath6kl-compat $(OUT)/
 	## Run build
+	$(MAKE) -C $(OUT)/ath6kl-compat KERNEL_DIR=$(KERNEL_OUT) KLIB=$(KERNEL_OUT) KLIB_BUILD=$(KERNEL_OUT) ARCH=$(TARGET_ARCH) $(ARM_CROSS_COMPILE) defconfig-ath6kl
 	$(MAKE) -C $(OUT)/ath6kl-compat KERNEL_DIR=$(KERNEL_OUT) KLIB=$(KERNEL_OUT) KLIB_BUILD=$(KERNEL_OUT) ARCH=$(TARGET_ARCH) $(ARM_CROSS_COMPILE)
 	## Copy & strip modules (to economize space)
 	$(TARGET_OBJCOPY) --strip-unneeded $(OUT)/ath6kl-compat/compat/compat.ko $(KERNEL_MODULES_OUT)/compat.ko
