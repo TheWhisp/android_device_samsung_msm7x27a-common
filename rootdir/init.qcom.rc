@@ -6,14 +6,14 @@ on early-init
 on init
     write /proc/sys/kernel/randomize_va_space 1
 
-    export EXTERNAL_STORAGE /storage/sdcard0
-    export SECONDARY_STORAGE /storage/sdcard1
-
     ## Setup storage
     mkdir /storage 0775 system sdcard_r
     mkdir /storage/sdcard0 0775 system system
     mkdir /storage/sdcard1 0775 system system
     mkdir /storage/usbdisk0 0775 system system
+
+	export EXTERNAL_STORAGE /storage/sdcard0
+    export SECONDARY_STORAGE /storage/sdcard1
 
     ## Backwards compability
     symlink /storage/sdcard0 /mnt/sdcard
