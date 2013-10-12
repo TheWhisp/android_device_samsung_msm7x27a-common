@@ -5,14 +5,14 @@ Subject: [PATCH] Add overlay support for camera
 
 Change-Id: I4089f2ba9d4a23af6ce53e9d1ece08260511502d
 ---
- include/ui/Overlay.h | 103 +++++++++++++++++++++++++++++++++++++++++
+ include/ui/legacy/Overlay.h | 103 +++++++++++++++++++++++++++++++++++++++++
  libs/ui/Android.mk   |   1 +
- libs/ui/Overlay.cpp  | 128 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ libs/ui/legacy/Overlay.cpp  | 128 +++++++++++++++++++++++++++++++++++++++++++++++++++
  3 files changed, 232 insertions(+)
  create mode 100644 include/ui/legacy/Overlay.h
  create mode 100644 libs/ui/legacy/Overlay.cpp
 
-diff --git a/include/ui/Overlay.h b/include/ui/Overlay.h
+diff --git a/include/ui/legacy/Overlay.h b/include/ui/legacy/Overlay.h
 new file mode 100644
 index 0000000..511f0ce
 --- /dev/null

@@ -10,7 +10,10 @@ on init
     symlink /system/etc /etc
 
     mkdir /boot
+    mkdir /recovery
     mkdir /sdcard
+    mkdir /internal_sd
+    mkdir /external_sd
     mkdir /sd-ext
     mkdir /datadata
     mkdir /emmc
@@ -23,41 +26,39 @@ on init
     chown root shell /tmp
     chmod 0775 /tmp
 
+    mkdir /mnt 0775 root system
+    mkdir /storage 0050 root sdcard_r
+    mount tmpfs tmpfs /storage mode=0050,uid=0,gid=1028
+
+    # See storage config details at http://source.android.com/tech/storage/
+    mkdir /mnt/shell 0700 shell shell
+
+    # Directory for putting things only root should see.
+    mkdir /mnt/secure 0700 root root
+
+    # Create private mountpoint so we can MS_MOVE from staging
+    mount tmpfs tmpfs /mnt/secure mode=0700,uid=0,gid=0
+
+    # Directory for staging bindmounts
+    mkdir /mnt/secure/staging 0700 root root
+
+    # Fuse public mount points.
+    mkdir /mnt/fuse 0700 root system
+    mount tmpfs tmpfs /mnt/fuse mode=0775,gid=1000
+
+    write /sys/class/android_usb/android0/enable 0
+    write /sys/class/android_usb/android0/idVendor 04e8
+    write /sys/class/android_usb/android0/idProduct 6860
+    write /sys/class/android_usb/android0/functions mass_storage,adb
+    write /sys/class/android_usb/android0/iManufacturer ${ro.product.manufacturer}
+    write /sys/class/android_usb/android0/iProduct ${ro.product.model}
     write /sys/class/android_usb/android0/iSerial ${ro.serialno}
 
-on early-fs
-    mount tmpfs tmpfs /tmp mode=0755 
-   
-    wait /dev/block/mmcblk0p19
-    mount ext4 /dev/block/mmcblk0p19 /efs nosuid nodev barrier=1
-    mount ext4 /dev/block/mmcblk0p16 /system wait
-   
-    # verfiy filesystem (UMS)
-    exec apply_system_policy /dev/block/mmcblk0p23 vfat
-
-on fs
-    mount tmpfs tmpfs /tmp
-
-on post-fs
-
-    write /proc/sys/kernel/panic_on_oops 1
-    write /proc/sys/kernel/hung_task_timeout_secs 0
-    write /proc/cpu/alignment 4
-    write /proc/sys/kernel/sched_latency_ns 10000000
-    write /proc/sys/kernel/sched_wakeup_granularity_ns 2000000
-    write /proc/sys/kernel/sched_compat_yield 1
-    write /proc/sys/kernel/sched_child_runs_first 0
-
 on boot
-    mount debugfs /sys/kernel/debug /sys/kernel/debug
 
     ifup lo
     hostname localhost
     domainname localdomain
-
-    write /sys/class/android_usb/android0/iManufacturer Samsung
-    write /sys/class/android_usb/android0/iProduct ${ro.product.model}
-    write /sys/class/android_usb/f_mass_storage/inquiry_string ${ro.product.manufacturer}
 
     class_start default
 
@@ -66,29 +67,18 @@ service ueventd /sbin/ueventd
 
 service recovery /sbin/recovery
 
-# adbd is controlled by the persist.service.adb.enable system property
+service setup_adbd /sbin/setup_adbd
+	oneshot
+
 service adbd /sbin/adbd
     disabled
 
-# Always start adbd on userdebug and eng builds
-# In recovery, always run adbd as root.
-on property:ro.debuggable=1
-    write /sys/class/android_usb/android0/enable 0
-    write /sys/class/android_usb/android0/idVendor 04e8
-    write /sys/class/android_usb/android0/idProduct 685e
-    write /sys/class/android_usb/android0/functions mass_storage,adb
-    write /sys/class/android_usb/android0/enable 1
-    start adbd
-    setprop sys.usb.state mass_storage,adb
-    setprop sys.usb.config mass_storage,adb
-    setprop service.adb.root 1
+service vold /sbin/minivold
+    socket vold stream 0660 root mount
+    ioprio be 2
 
-# Restart adbd so it can run as root
+# setup_adbd will start adb once it has checked the keys
 on property:service.adb.root=1
+    write /sys/class/android_usb/android0/enable 0
     restart adbd
-
-on property:persist.service.adb.enable=1
-    start adbd
-
-on property:persist.service.adb.enable=0
-    stop adbd
+    write /sys/class/android_usb/android0/enable 1
