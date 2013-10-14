@@ -24,12 +24,12 @@ until [ $(expr length "$BTMAC") == 12 ]; do
 done
 
 # Set WiFi MAC address
-echo $WIFIMAC >/data/.mac.info
+echo $WIFIMAC > /etc/firmware/ath6k/AR6003/hw2.1.1/softmac
 
 # Convert BT MAC address to proper format
 echo $BTMAC | sed 's!^M$!!;s!\-!!g;s!\.!!g;s!\(..\)!\1:!g;s!:$!!' > /data/misc/bluedroid/bdaddr
 
 chmod 666 /data/misc/bluedroid/bdaddr
-chmod 666 /data/.mac.info
+chmod 666 /etc/firmware/ath6k/AR6003/hw2.1.1/softmac
 
 exit
