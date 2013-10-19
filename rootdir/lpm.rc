@@ -5,76 +5,14 @@ on init
 
 sysclktz 0
 
-loglevel 3
-
-    ## Setup the global environment
-    export PATH /sbin:/vendor/bin:/system/sbin:/system/bin:/system/xbin
-    export LD_LIBRARY_PATH /vendor/lib:/system/lib
-    export ANDROID_BOOTLOGO 1
-    export ANDROID_ROOT /system
-    export ANDROID_ASSETS /system/app
-    export LOOP_MOUNTPOINT /mnt/obb
-    export BOOTCLASSPATH /system/framework/core.jar:/system/framework/core-junit.jar:/system/framework/bouncycastle.jar:/system/framework/ext.jar:/system/framework/framework.jar:/system/framework/telephony-common.jar:/system/framework/mms-common.jar:/system/framework/android.policy.jar:/system/framework/services.jar:/system/framework/apache-xml.jar
-
-    mkdir /system
-    mkdir /data 0771 system system
-    mkdir /persist 0771 system system
-    mkdir /cache 0770 system cache
-    mkdir /config 0500 root root
-    mkdir /persist 0771 system system
-
-on fs
-    # mount mmc partitions
-    wait /dev/block/mmcblk0p16
-    mount ext4 /dev/block/mmcblk0p16 /system barrier=1
-
-on fs
-    # mount mtd partitions
-    # Mount /system rw first to give the filesystem a chance to save a checkpoint
-    mount yaffs2 mtd@system /system
-    mount yaffs2 mtd@system /system ro remount
-    
 on boot
-    ifup lo
-    hostname localhost
-    domainname localdomain
+    # set cpu governor to powersave while in charging mode
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor powersave
+
     class_start default
 
-    chmod 666 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-    chmod 666 /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor powersave
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 122880
-
-
+## Daemon processes to be run by init.
 service ueventd /sbin/ueventd
     critical
 
-service console /system/bin/sh
-    console
-    user shell
-    group log
-
-# adbd is controlled by the persist.service.adb.enable system property
-service adbd /sbin/adbd
-    disabled
-
-# adbd on at boot in emulator
-on property:ro.kernel.qemu=1
-    start adbd
-
-service playlpm /system/bin/playlpm
-    class charger
-    user root
-    oneshot
-
-service lpmkey /system/bin/charging_mode
-    class charger
-    user root
-    oneshot
-
-on property:persist.service.adb.enable=1
-    start adbd
-
-on property:persist.service.adb.enable=0
-    stop adbd
-
+service battery_charger /charger

@@ -115,13 +115,6 @@ service rmt_storage /system/bin/rmt_storage /dev/block/mmcblk0p10 /dev/block/mmc
 on property:ro.boot.emmc=true
     start rmt_storage
 
-service abtfilt /system/bin/abtfilt -d -z -n -v -s -a -q
-    class main
-    user bluetooth
-    group system bluetooth net_bt_admin inet net_raw
-    disabled
-    oneshot 
-
 service wpa_supplicant /system/bin/wpa_supplicant -Dnl80211 -iwlan0 -W -c/data/misc/wifi/wpa_supplicant.conf
     class main
     group wifi inet
