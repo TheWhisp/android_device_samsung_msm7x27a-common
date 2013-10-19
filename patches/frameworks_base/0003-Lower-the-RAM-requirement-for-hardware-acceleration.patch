@@ -1,0 +1,36 @@
+From 4123b28ed91dddd38275229bc7af42606e04939d Mon Sep 17 00:00:00 2001
+From: Vladislav Koldobskiy <admin@nevergone.ru>
+Date: Mon, 7 Oct 2013 01:36:06 +0400
+Subject: [PATCH] Lower the RAM requirement for hardware acceleration
+
+There are legacy devices with about 365 MBytes of RAM
+available to the kernel (HDPI with 512 MB RAM onboard).
+Lowering the requirement value for available RAM allows
+these devices to also use hardware acceleration, thus
+making the UI a lot more responsive and fixing bugs like
+this: https://dl.dropboxusercontent.com/u/16268774/Screenshots/Phone/Screenshot_2013-10-07-01-27-45.png
+(notice the "shadow" is missing)
+
+Change-Id: I0343ddbb3c7f95bed674b5852772ab819065ea69
+---
+ core/java/android/app/ActivityManager.java | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/core/java/android/app/ActivityManager.java b/core/java/android/app/ActivityManager.java
+index a29c839..33ff839 100644
+--- a/core/java/android/app/ActivityManager.java
++++ b/core/java/android/app/ActivityManager.java
+@@ -384,8 +384,8 @@ public class ActivityManager {
+     static public boolean isHighEndGfx() {
+         MemInfoReader reader = new MemInfoReader();
+         reader.readMemInfo();
+-        if (reader.getTotalSize() >= (512*1024*1024)) {
+-            // If the device has at least 512MB RAM available to the kernel,
++        if (reader.getTotalSize() >= (256*1024*1024)) {
++            // If the device has at least 256MB RAM available to the kernel,
+             // we can afford the overhead of graphics acceleration.
+             return true;
+         }
+-- 
+1.8.1.2
+
