@@ -1,35 +1,39 @@
 #!/system/bin/sh
 # get_macaddrs (CyanogenMod)
-# by subpsyke
+# by psyke83
 #
 # This script will read the MAC addresses from Samsung's RIL.
 
-unset WIFIMAC
-unset BTMAC
+FW_PATH="/system/etc/firmware/ath6k/AR6003/hw2.1.1"
 
-# Skip processing if MAC addresses are already written
-if [ -f /data/.mac.info -a -f /data/misc/bluedroid/bdaddr ]; then
-	echo "MAC addresses already found."
+# Check if MAC addresses are already written
+if [ -f /data/.nvmac.info -a -f /data/misc/bluedroid/bdaddr ]; then
+	echo "MAC addresses already found..."
+fi
+
+# Create symlink for ath6kl softmac support
+if [ -d $FW_PATH -a ! -f $FW_PATH/softmac ]; then
+	echo "Creating softmac symlink for ath6kl..."
+	mount -t ext4 -o remount,rw /system
+	ln -s /data/.nvmac.info $FW_PATH/softmac
+	mount -t ext4 -o remount,ro /system
 fi
 
 # Wait until Samsung's RIL announces MAC addresses
-until [ $(expr length "$WIFIMAC") == 17 ]; do
+until [ $(expr length "$WIFIMAC") == 17 ]; do 
 	WIFIMAC=`getprop ril.wifi_macaddr`
 	sleep 1
 done
 
-until [ $(expr length "$BTMAC") == 12 ]; do
+until [ $(expr length "$BTMAC") == 12 ]; do 
 	BTMAC=`getprop ril.bt_macaddr`
 	sleep 1
 done
 
 # Set WiFi MAC address
-echo $WIFIMAC > /etc/firmware/ath6k/AR6003/hw2.1.1/softmac
+echo $WIFIMAC > /data/.nvmac.info
 
 # Convert BT MAC address to proper format
 echo $BTMAC | sed 's!^M$!!;s!\-!!g;s!\.!!g;s!\(..\)!\1:!g;s!:$!!' > /data/misc/bluedroid/bdaddr
-
-chmod 666 /data/misc/bluedroid/bdaddr
-chmod 666 /etc/firmware/ath6k/AR6003/hw2.1.1/softmac
 
 exit
