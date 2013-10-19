@@ -12,4 +12,4 @@
 # vold managed volumes
 /devices/platform/msm_sdcc.3/mmc_host   /storage/sdcard0     auto     nosuid,nodev     wait,voldmanaged=sdcard0:23,nonremovable
 /devices/platform/msm_sdcc.1/mmc_host   /storage/sdcard1     auto     nosuid,nodev     wait,voldmanaged=sdcard1:auto
-/devices/platform/msm_hsusb_host.0/usb1 /storage/usbdisk0    auto     defaults         wait,voldmanaged=usbdisk0:auto
+/devices/platform/msm_hsusb_host.0 	/storage/usbdisk     auto     defaults         wait,voldmanaged=usbdisk:auto
