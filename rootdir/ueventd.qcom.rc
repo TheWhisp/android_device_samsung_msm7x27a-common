@@ -46,13 +46,14 @@
 /dev/sdioctl8             0640   radio      radio
 /dev/rmnet_ctrl           0640   radio      radio
 /dev/qemu_trace           0666   system     system
-/dev/gemini0              0660   system     system
 /dev/mdm                  0660   system     system
 /dev/ttyHSL1              0660   system     system
 /dev/tty_sdio_00          0660   system     system
 /dev/block/mmcblk0p18     0660   system     system
 /dev/block/mmcblk0p20     0660   system     system
-/dev/video*               0660   system     system
+/dev/video*               0660   system     camera
+/dev/msm_camera/*         0660   system     camera
+/dev/gemini0              0660   system     camera
 
 # CDMA radio interface MUX
 /dev/tun                  0660   vpn        vpn
