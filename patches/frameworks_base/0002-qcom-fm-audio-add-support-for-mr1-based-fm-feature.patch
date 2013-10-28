@@ -1,20 +1,20 @@
-From e1e4b701f7448f0e50ecb3440eeb1fa087c17996 Mon Sep 17 00:00:00 2001
-From: Mingming Yin <mingming@codeaurora.org>
-Date: Thu, 27 Dec 2012 17:43:24 -0800
-Subject: [PATCH 12/12] qcom-fm: audio: add support for mr1 based fm feature
+From c6f095ba7ff80d831e4eabc1f216cf159c23f150 Mon Sep 17 00:00:00 2001
+From: TheWhisp <daavis.90@gmail.com>
+Date: Sun, 27 Oct 2013 21:25:46 +0200
+Subject: [PATCH] qcom-fm-audio-add-support-for-mr1-based-fm-feature
 
-Change-Id: Id48a52ceb7359deb65d4a69e664b22ed80cf997c
+Change-Id: I170d7932bf7762e1314edda074665f06375ae41b
 ---
- core/java/android/content/Intent.java              |   25 ++++++++
- core/java/android/provider/Settings.java           |   18 +++++-
- core/java/android/view/VolumePanel.java            |   12 ++++
- media/java/android/media/AudioManager.java         |   18 +++++-
- media/java/android/media/AudioService.java         |   64 ++++++++++++++++++--
- media/java/android/media/AudioSystem.java          |    5 +-
- .../android/providers/settings/DatabaseHelper.java |    3 +
- .../internal/policy/impl/PhoneWindowManager.java   |   19 +++++-
- .../policy/impl/keyguard/KeyguardViewBase.java     |    9 +++
- 9 files changed, 164 insertions(+), 9 deletions(-)
+ core/java/android/content/Intent.java              | 25 +++++++++
+ core/java/android/provider/Settings.java           | 17 +++++-
+ core/java/android/view/VolumePanel.java            | 12 ++++
+ media/java/android/media/AudioManager.java         | 18 +++++-
+ media/java/android/media/AudioService.java         | 64 ++++++++++++++++++++--
+ media/java/android/media/AudioSystem.java          |  5 +-
+ .../android/providers/settings/DatabaseHelper.java |  2 +
+ .../internal/policy/impl/PhoneWindowManager.java   | 19 ++++++-
+ .../policy/impl/keyguard/KeyguardViewBase.java     |  9 +++
+ 9 files changed, 162 insertions(+), 9 deletions(-)
 
 diff --git a/core/java/android/content/Intent.java b/core/java/android/content/Intent.java
 index 99e899a..5836d66 100644
@@ -60,17 +60,10 @@ index 99e899a..5836d66 100644
       *
       * <p>The intent will have the following extra values:
 diff --git a/core/java/android/provider/Settings.java b/core/java/android/provider/Settings.java
-index cb2328c..38e0a1e 100644
+index 099593b..40fc380 100644
 --- a/core/java/android/provider/Settings.java
 +++ b/core/java/android/provider/Settings.java
-@@ -1,5 +1,6 @@
- /*
-  * Copyright (C) 2006 The Android Open Source Project
-+ * Copyright (c) 2013, The Linux Foundation. All rights reserved.
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-@@ -1927,6 +1928,18 @@ public final class Settings {
+@@ -1930,6 +1930,18 @@ public final class Settings {
          public static final String VOLUME_MUSIC = "volume_music";
  
          /**
@@ -89,7 +82,7 @@ index cb2328c..38e0a1e 100644
           * Alarm volume. This is used internally, changing this
           * value will not change the volume. See AudioManager.
           */
-@@ -2067,7 +2080,9 @@ public final class Settings {
+@@ -2070,7 +2082,9 @@ public final class Settings {
           */
          public static final String[] VOLUME_SETTINGS = {
              VOLUME_VOICE, VOLUME_SYSTEM, VOLUME_RING, VOLUME_MUSIC,
@@ -100,7 +93,7 @@ index cb2328c..38e0a1e 100644
          };
  
          /**
-@@ -3358,6 +3373,7 @@ public final class Settings {
+@@ -3330,6 +3344,7 @@ public final class Settings {
              VOLUME_SYSTEM,
              VOLUME_RING,
              VOLUME_MUSIC,
@@ -152,17 +145,18 @@ index 063f4d5..b66e5f9 100644
                  /*
                   * For in-call voice call volume, there is no inaudible volume.
 diff --git a/media/java/android/media/AudioManager.java b/media/java/android/media/AudioManager.java
-index ca9471c..b146afa 100644
+index 4213af1..bf48d3c 100644
 --- a/media/java/android/media/AudioManager.java
 +++ b/media/java/android/media/AudioManager.java
-@@ -1,5 +1,6 @@
- /*
+@@ -3,6 +3,7 @@
+  * Not a Contribution.
+  *
   * Copyright (C) 2007 The Android Open Source Project
 + * Copyright (c) 2013, The Linux Foundation. All rights reserved.
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
-@@ -221,6 +222,8 @@ public class AudioManager {
+@@ -224,6 +225,8 @@ public class AudioManager {
      public static final int STREAM_TTS = AudioSystem.STREAM_TTS;
      /** @hide The audio stream for incall music delivery */
      public static final int STREAM_INCALL_MUSIC = AudioSystem.STREAM_INCALL_MUSIC;
@@ -171,7 +165,7 @@ index ca9471c..b146afa 100644
      /** Number of audio streams */
      /**
       * @deprecated Use AudioSystem.getNumStreamTypes() instead
-@@ -240,7 +243,8 @@ public class AudioManager {
+@@ -243,7 +246,8 @@ public class AudioManager {
          7,  // STREAM_SYSTEM_ENFORCED
          11, // STREAM_DTMF
          11, // STREAM_TTS
@@ -181,7 +175,7 @@ index ca9471c..b146afa 100644
      };
  
      /**
-@@ -1549,6 +1553,16 @@ public class AudioManager {
+@@ -1607,6 +1611,16 @@ public class AudioManager {
          return -1;
      }
  
@@ -198,7 +192,7 @@ index ca9471c..b146afa 100644
      /**
       * Checks whether any music is active.
       *
-@@ -1585,7 +1599,7 @@ public class AudioManager {
+@@ -1643,7 +1657,7 @@ public class AudioManager {
       * Note: only AudioManager.STREAM_MUSIC is supported at the moment
       */
      public void adjustLocalOrRemoteStreamVolume(int streamType, int direction) {
@@ -208,7 +202,7 @@ index ca9471c..b146afa 100644
          }
          IAudioService service = getService();
 diff --git a/media/java/android/media/AudioService.java b/media/java/android/media/AudioService.java
-index 98c52c0..58ee1bc 100644
+index ab376c2..0203f09 100644
 --- a/media/java/android/media/AudioService.java
 +++ b/media/java/android/media/AudioService.java
 @@ -1,5 +1,6 @@
@@ -262,7 +256,7 @@ index 98c52c0..58ee1bc 100644
      };
  
      private boolean mLinkNotificationWithVolume;
-@@ -540,6 +549,8 @@ public class AudioService extends IAudioService.Stub implements OnFinished {
+@@ -541,6 +550,8 @@ public class AudioService extends IAudioService.Stub implements OnFinished {
          }
          intentFilter.addAction(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED);
          intentFilter.addAction(Intent.ACTION_DOCK_EVENT);
@@ -271,7 +265,7 @@ index 98c52c0..58ee1bc 100644
          intentFilter.addAction(Intent.ACTION_USB_AUDIO_ACCESSORY_PLUG);
          intentFilter.addAction(Intent.ACTION_USB_AUDIO_DEVICE_PLUG);
          intentFilter.addAction(Intent.ACTION_BOOT_COMPLETED);
-@@ -812,6 +823,8 @@ public class AudioService extends IAudioService.Stub implements OnFinished {
+@@ -813,6 +824,8 @@ public class AudioService extends IAudioService.Stub implements OnFinished {
                   (1 << AudioSystem.STREAM_RING)|
                   (1 << AudioSystem.STREAM_SYSTEM)),
                   UserHandle.USER_CURRENT);
@@ -280,7 +274,7 @@ index 98c52c0..58ee1bc 100644
  
          boolean masterMute = System.getIntForUser(cr, System.VOLUME_MASTER_MUTE,
                                                    0, UserHandle.USER_CURRENT) == 1;
-@@ -856,6 +869,8 @@ public class AudioService extends IAudioService.Stub implements OnFinished {
+@@ -857,6 +870,8 @@ public class AudioService extends IAudioService.Stub implements OnFinished {
              adjustRemoteVolume(AudioSystem.STREAM_MUSIC, direction, 0);
          } else if (AudioSystem.isStreamActive(AudioSystem.STREAM_MUSIC, 0)) {
              adjustStreamVolume(AudioSystem.STREAM_MUSIC, direction, 0);
@@ -289,7 +283,7 @@ index 98c52c0..58ee1bc 100644
          }
      }
  
-@@ -2659,6 +2674,10 @@ public class AudioService extends IAudioService.Stub implements OnFinished {
+@@ -2660,6 +2675,10 @@ public class AudioService extends IAudioService.Stub implements OnFinished {
                      if (DEBUG_VOL)
                          Log.v(TAG, "getActiveStreamType: Forcing STREAM_MUSIC stream active");
                      return AudioSystem.STREAM_MUSIC;
@@ -300,7 +294,7 @@ index 98c52c0..58ee1bc 100644
                  } else {
                      if (mVolumeKeysControlRingStream) {
                          if (DEBUG_VOL)
-@@ -2674,6 +2693,10 @@ public class AudioService extends IAudioService.Stub implements OnFinished {
+@@ -2675,6 +2694,10 @@ public class AudioService extends IAudioService.Stub implements OnFinished {
                  if (DEBUG_VOL)
                      Log.v(TAG, "getActiveStreamType: Forcing STREAM_MUSIC stream active");
                  return AudioSystem.STREAM_MUSIC;
@@ -311,7 +305,7 @@ index 98c52c0..58ee1bc 100644
              } else {
                  if (DEBUG_VOL) Log.v(TAG, "getActiveStreamType: Returning suggested type "
                          + suggestedStreamType);
-@@ -2778,6 +2801,10 @@ public class AudioService extends IAudioService.Stub implements OnFinished {
+@@ -2779,6 +2802,10 @@ public class AudioService extends IAudioService.Stub implements OnFinished {
              // selection if not the speaker.
              if ((device & AudioSystem.DEVICE_OUT_SPEAKER) != 0) {
                  device = AudioSystem.DEVICE_OUT_SPEAKER;
@@ -322,7 +316,7 @@ index 98c52c0..58ee1bc 100644
              } else {
                  device &= AudioSystem.DEVICE_OUT_ALL_A2DP;
              }
-@@ -4268,6 +4295,35 @@ public class AudioService extends IAudioService.Stub implements OnFinished {
+@@ -4269,6 +4296,35 @@ public class AudioService extends IAudioService.Stub implements OnFinished {
                  if (packageName != null) {
                      cleanupMediaButtonReceiverForPackage(packageName, false);
                  }
@@ -359,17 +353,18 @@ index 98c52c0..58ee1bc 100644
                  AudioSystem.setParameters("screen_state=on");
              } else if (action.equals(Intent.ACTION_SCREEN_OFF)) {
 diff --git a/media/java/android/media/AudioSystem.java b/media/java/android/media/AudioSystem.java
-index 5848684..2770ac1 100644
+index 3a6c0af..9593982 100644
 --- a/media/java/android/media/AudioSystem.java
 +++ b/media/java/android/media/AudioSystem.java
-@@ -1,5 +1,6 @@
- /*
+@@ -3,6 +3,7 @@
+  * Not a Contribution.
+  *
   * Copyright (C) 2006 The Android Open Source Project
 + * Copyright (c) 2013, The Linux Foundation. All rights reserved.
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
-@@ -54,13 +55,15 @@ public class AudioSystem
+@@ -57,13 +58,15 @@ public class AudioSystem
      public static final int STREAM_TTS = 9;
      /* @hide The audio stream for incall music delivery */
      public static final int STREAM_INCALL_MUSIC = 10;
@@ -387,17 +382,10 @@ index 5848684..2770ac1 100644
  
      /*
 diff --git a/packages/SettingsProvider/src/com/android/providers/settings/DatabaseHelper.java b/packages/SettingsProvider/src/com/android/providers/settings/DatabaseHelper.java
-index a016769..bd1b580 100644
+index 75f25f4..fc576cc 100644
 --- a/packages/SettingsProvider/src/com/android/providers/settings/DatabaseHelper.java
 +++ b/packages/SettingsProvider/src/com/android/providers/settings/DatabaseHelper.java
-@@ -1,5 +1,6 @@
- /*
-  * Copyright (C) 2007 The Android Open Source Project
-+ * Copyright (c) 2013, The Linux Foundation. All rights reserved.
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-@@ -1878,6 +1879,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
+@@ -1882,6 +1882,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
  
              loadSetting(stmt, Settings.System.VOLUME_MUSIC,
                      AudioManager.DEFAULT_STREAM_VOLUME[AudioManager.STREAM_MUSIC]);
@@ -407,7 +395,7 @@ index a016769..bd1b580 100644
                      AudioManager.DEFAULT_STREAM_VOLUME[AudioManager.STREAM_RING]);
              loadSetting(stmt, Settings.System.VOLUME_SYSTEM,
 diff --git a/policy/src/com/android/internal/policy/impl/PhoneWindowManager.java b/policy/src/com/android/internal/policy/impl/PhoneWindowManager.java
-index caf7eb8..1a5d875 100644
+index 755fab3..21e7ec3 100644
 --- a/policy/src/com/android/internal/policy/impl/PhoneWindowManager.java
 +++ b/policy/src/com/android/internal/policy/impl/PhoneWindowManager.java
 @@ -1,6 +1,7 @@
@@ -418,7 +406,7 @@ index caf7eb8..1a5d875 100644
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
-@@ -4079,6 +4080,18 @@ public class PhoneWindowManager implements WindowManagerPolicy {
+@@ -4033,6 +4034,18 @@ public class PhoneWindowManager implements WindowManagerPolicy {
      }
  
      /**
@@ -437,7 +425,7 @@ index caf7eb8..1a5d875 100644
       * Tell the audio service to adjust the volume appropriate to the event.
       * @param keycode
       */
-@@ -4377,8 +4390,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
+@@ -4330,8 +4343,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                              Log.w(TAG, "ITelephony threw RemoteException", ex);
                          }
                      }
@@ -484,5 +472,4 @@ index cc88283..cb943bc 100644
                          return true;
                      } else {
 -- 
-1.7.9.5
-
+1.8.1.2
