@@ -49,10 +49,6 @@ TARGET_GLOBAL_CPPFLAGS += -mtune=cortex-a5 -mfpu=neon -mfloat-abi=softfp
 BOARD_HAVE_QCOM_FM := true
 COMMON_GLOBAL_CFLAGS += -DQCOM_FM_ENABLED
 
-## Webkit
-ENABLE_WEBGL := true
-TARGET_FORCE_CPU_UPLOAD := true
-
 ## ION
 TARGET_USES_ION := true
 
