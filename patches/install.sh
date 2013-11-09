@@ -29,3 +29,7 @@ cd packages/apps/Settings
 echo "Applying packages/apps/Settings patches..."
 git am $rootdirectory/device/samsung/msm7x27a-common/patches/packages_apps_Settings/*.patch
 cd $rootdirectory
+cd hardware/libhardware
+echo "Applying hardware/libhardware patches..."
+git am $rootdirectory/device/samsung/msm7x27a-common/patches/hardware_libhardware/*.patch
+cd $rootdirectory
