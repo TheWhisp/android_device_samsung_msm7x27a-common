@@ -33,3 +33,7 @@ cd hardware/libhardware
 echo "Applying hardware/libhardware patches..."
 git am $rootdirectory/device/samsung/msm7x27a-common/patches/hardware_libhardware/*.patch
 cd $rootdirectory
+cd vendor/tmobile/apps/ThemeChooser
+echo "Applying vendor/tmobile/apps/ThemeChooser patches..."
+git am $rootdirectory/device/samsung/msm7x27a-common/patches/vendor_tmobile_apps_ThemeChooser/*.patch
+cd $rootdirectory
