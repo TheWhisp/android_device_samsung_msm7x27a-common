@@ -1,0 +1,62 @@
+From 98caa31c385f8a86e861a41821b0dc56980d63d1 Mon Sep 17 00:00:00 2001
+From: TheWhisp <daavis.90@gmail.com>
+Date: Sun, 10 Nov 2013 13:52:20 +0200
+Subject: [PATCH 2/2] qcom-fm: Add proper permission for FM to get/set property
+
+Change-Id: I1d2ab5d3880239d15c0189c86244de367410aa20
+---
+ include/private/android_filesystem_config.h | 6 ++++++
+ init/property_service.c                     | 6 ++++++
+ 2 files changed, 12 insertions(+)
+
+diff --git a/include/private/android_filesystem_config.h b/include/private/android_filesystem_config.h
+index 152a0a2..ab6c8af 100644
+--- a/include/private/android_filesystem_config.h
++++ b/include/private/android_filesystem_config.h
+@@ -77,6 +77,9 @@
+ #define AID_SDCARD_AV     1034  /* external storage audio/video access */
+ #define AID_SDCARD_ALL    1035  /* access all users external storage */
+ #define AID_AUDIT         1036  /* audit daemon */
++#ifdef QCOM_FM_ENABLED
++#define AID_FM_RADIO      1033  /* FM radio */
++#endif
+ 
+ #define AID_THEMEMAN      1300  /* theme manager */
+ 
+@@ -205,6 +208,9 @@ static const struct android_id_info android_ids[] = {
+ #endif
+ 
+     { "misc",          AID_MISC, },
++#ifdef QCOM_FM_ENABLED
++    { "fm_radio",  AID_FM_RADIO, },
++#endif
+     { "nobody",        AID_NOBODY, },
+     { "theme_man", AID_THEMEMAN },
+     { "audit",      AID_AUDIT, },
+diff --git a/init/property_service.c b/init/property_service.c
+index 3932b2f..d803f37 100644
+--- a/init/property_service.c
++++ b/init/property_service.c
+@@ -99,6 +99,9 @@ struct {
+     { "persist.security.", AID_SYSTEM,   0 },
+     { "persist.service.bdroid.", AID_BLUETOOTH,   0 },
+     { "selinux."         , AID_SYSTEM,   0 },
++#ifdef QCOM_FM_ENABLED
++    { "hw.fm.",           AID_FM_RADIO,  0 },
++#endif
+     { "net.pdp",          AID_RADIO,    AID_RADIO },
+     { "service.bootanim.exit", AID_GRAPHICS, 0 },
+ #ifdef PROPERTY_PERMS_APPEND
+@@ -121,6 +124,9 @@ struct {
+ } control_perms[] = {
+     { "dumpstate",AID_SHELL, AID_LOG },
+     { "ril-daemon",AID_RADIO, AID_RADIO },
++#ifdef QCOM_FM_ENABLED
++    { "fm_dl", AID_FM_RADIO, AID_FM_RADIO},
++#endif
+ #ifdef CONTROL_PERMS_APPEND
+ CONTROL_PERMS_APPEND
+ #endif
+-- 
+1.8.1.2
+
