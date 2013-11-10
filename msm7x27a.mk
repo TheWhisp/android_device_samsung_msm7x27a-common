@@ -24,7 +24,8 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     copybit.msm7x27a \
     gralloc.msm7x27a \
-    hwcomposer.msm7x27a
+    hwcomposer.msm7x27a \
+    libtilerenderer
 
 ## Misc.
 PRODUCT_PACKAGES += \
@@ -37,6 +38,7 @@ PRODUCT_PACKAGES += \
     audio.primary.msm7x27a \
     audio_policy.msm7x27a \
     audio.a2dp.default \
+    audio.usb.default \
     audio_policy.conf \
     libaudioutils
 
