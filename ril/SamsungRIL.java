@@ -104,7 +104,7 @@ public class SamsungRIL extends RIL implements CommandsInterface {
     }
 
     @Override
-    protected void
+    protected RILRequest
     processSolicited (Parcel p) {
         int serial, error;
 
@@ -121,7 +121,7 @@ public class SamsungRIL extends RIL implements CommandsInterface {
         if (rr == null) {
             Log.w(LOG_TAG, "Unexpected solicited response! sn: "
                     + serial + " error: " + error);
-            return;
+            return null;
         }
 
         Object ret = null;
@@ -253,7 +253,7 @@ public class SamsungRIL extends RIL implements CommandsInterface {
                     rr.mResult.sendToTarget();
                 }
                 rr.release();
-                return;
+                return rr;
             }
         }
 
@@ -270,12 +270,12 @@ public class SamsungRIL extends RIL implements CommandsInterface {
                             + " exception, Processing Samsung SMS fix ", tr);
                     rr.onError(error, ret);
                     rr.release();
-                    return;
+                    return rr;
                 }
             } else {
                 rr.onError(error, ret);
                 rr.release();
-                return;
+                return rr;
             }
         }
 
@@ -288,6 +288,7 @@ public class SamsungRIL extends RIL implements CommandsInterface {
         }
 
         rr.release();
+		return rr;
     }
 
     @Override
