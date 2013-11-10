@@ -1,0 +1,240 @@
+From 260d4105358263fdd2b13a4a9a858be2222585f6 Mon Sep 17 00:00:00 2001
+From: TheWhisp <daavis.90@gmail.com>
+Date: Sun, 10 Nov 2013 17:43:20 +0200
+Subject: [PATCH] add qcom fm support
+
+Change-Id: I754110aeb45e9df3ff2052bad1e6848e98e026a1
+---
+ audio/AudioPolicyCompatClient.cpp                |  8 ++++++++
+ audio/AudioPolicyCompatClient.h                  |  3 +++
+ audio/AudioPolicyManagerBase.cpp                 | 21 +++++++++++++++++++-
+ include/hardware_legacy/AudioHardwareInterface.h |  5 +++++
+ include/hardware_legacy/AudioPolicyInterface.h   |  6 ++++++
+ include/hardware_legacy/AudioSystemLegacy.h      | 25 ++++++++++++++++++++----
+ 6 files changed, 63 insertions(+), 5 deletions(-)
+
+diff --git a/audio/AudioPolicyCompatClient.cpp b/audio/AudioPolicyCompatClient.cpp
+index 162968c..d730f35 100644
+--- a/audio/AudioPolicyCompatClient.cpp
++++ b/audio/AudioPolicyCompatClient.cpp
+@@ -128,6 +128,14 @@ status_t AudioPolicyCompatClient::setStreamVolume(
+                                           volume, output, delayMs);
+ }
+ 
++#ifdef QCOM_FM_ENABLED
++status_t AudioPolicyCompatClient::setFmVolume(float volume,
++                                              int delayMs)
++{
++    return mServiceOps->set_fm_volume(mService, volume, delayMs);
++}
++#endif
++
+ status_t AudioPolicyCompatClient::startTone(ToneGenerator::tone_type tone,
+                                        AudioSystem::stream_type stream)
+ {
+diff --git a/audio/AudioPolicyCompatClient.h b/audio/AudioPolicyCompatClient.h
+index 494c8af..98df585 100644
+--- a/audio/AudioPolicyCompatClient.h
++++ b/audio/AudioPolicyCompatClient.h
+@@ -69,6 +69,9 @@ public:
+                                      float volume,
+                                      audio_io_handle_t output,
+                                      int delayMs = 0);
++#ifdef QCOM_FM_ENABLED
++    virtual status_t setFmVolume(float volume, int delayMs = 0);
++#endif
+     virtual status_t startTone(ToneGenerator::tone_type tone, AudioSystem::stream_type stream);
+     virtual status_t stopTone();
+     virtual status_t setVoiceVolume(float volume, int delayMs = 0);
+diff --git a/audio/AudioPolicyManagerBase.cpp b/audio/AudioPolicyManagerBase.cpp
+index f5f9a41..a4acfdc 100644
+--- a/audio/AudioPolicyManagerBase.cpp
++++ b/audio/AudioPolicyManagerBase.cpp
+@@ -2263,6 +2263,9 @@ AudioPolicyManagerBase::routing_strategy AudioPolicyManagerBase::getStrategy(
+ #ifdef QCOM_HARDWARE
+     case AudioSystem::INCALL_MUSIC:
+ #endif
++#ifdef QCOM_FM_ENABLED
++    case AudioSystem::FM:
++#endif
+         return STRATEGY_MEDIA;
+     case AudioSystem::ENFORCED_AUDIBLE:
+         return STRATEGY_ENFORCED_AUDIBLE;
+@@ -2764,6 +2767,9 @@ AudioPolicyManagerBase::device_category AudioPolicyManagerBase::getDeviceCategor
+         case AUDIO_DEVICE_OUT_BLUETOOTH_SCO_HEADSET:
+         case AUDIO_DEVICE_OUT_BLUETOOTH_A2DP:
+         case AUDIO_DEVICE_OUT_BLUETOOTH_A2DP_HEADPHONES:
++#if defined(QCOM_FM_ENABLED)
++        case AUDIO_DEVICE_OUT_FM:
++#endif
+             return DEVICE_CATEGORY_HEADSET;
+         case AUDIO_DEVICE_OUT_SPEAKER:
+         case AUDIO_DEVICE_OUT_BLUETOOTH_SCO_CARKIT:
+@@ -2929,6 +2935,13 @@ const AudioPolicyManagerBase::VolumeCurvePoint
+         sDefaultMediaVolumeCurve  // DEVICE_CATEGORY_EARPIECE
+     },
+ #endif
++#ifdef QCOM_FM_ENABLED
++    { // AUDIO_STREAM_FM
++        sDefaultMediaVolumeCurve, // DEVICE_CATEGORY_HEADSET
++        sSpeakerMediaVolumeCurve, // DEVICE_CATEGORY_SPEAKER
++        sDefaultMediaVolumeCurve  // DEVICE_CATEGORY_EARPIECE
++    },
++#endif
+ 
+ };
+ 
+@@ -3612,6 +3625,10 @@ const struct StringToEnum sDeviceNameToEnumTable[] = {
+     STRING_TO_ENUM(AUDIO_DEVICE_OUT_ANLG_DOCK_HEADSET),
+     STRING_TO_ENUM(AUDIO_DEVICE_OUT_USB_DEVICE),
+     STRING_TO_ENUM(AUDIO_DEVICE_OUT_USB_ACCESSORY),
++#if defined(QCOM_FM_ENABLED)
++    STRING_TO_ENUM(AUDIO_DEVICE_OUT_FM),
++    STRING_TO_ENUM(AUDIO_DEVICE_OUT_FM_TX),
++#endif
+     STRING_TO_ENUM(AUDIO_DEVICE_OUT_ALL_USB),
+ #ifdef QCOM_HARDWARE
+     STRING_TO_ENUM(AUDIO_DEVICE_OUT_PROXY),
+@@ -3622,9 +3639,11 @@ const struct StringToEnum sDeviceNameToEnumTable[] = {
+     STRING_TO_ENUM(AUDIO_DEVICE_IN_WIRED_HEADSET),
+ #ifdef QCOM_HARDWARE
+     STRING_TO_ENUM(AUDIO_DEVICE_IN_ANC_HEADSET),
++#if defined(QCOM_FM_ENABLED)
+     STRING_TO_ENUM(AUDIO_DEVICE_IN_FM_RX),
+     STRING_TO_ENUM(AUDIO_DEVICE_IN_FM_RX_A2DP),
+ #endif
++#endif
+     STRING_TO_ENUM(AUDIO_DEVICE_IN_AUX_DIGITAL),
+     STRING_TO_ENUM(AUDIO_DEVICE_IN_VOICE_CALL),
+     STRING_TO_ENUM(AUDIO_DEVICE_IN_BACK_MIC),
+@@ -4083,4 +4102,4 @@ void AudioPolicyManagerBase::defaultAudioPolicyConfig(void)
+     mHwModules.add(module);
+ }
+ 
+-}; // namespace android
++}; // namespace android
+\ No newline at end of file
+diff --git a/include/hardware_legacy/AudioHardwareInterface.h b/include/hardware_legacy/AudioHardwareInterface.h
+index bf0c3f3..c4bb101 100644
+--- a/include/hardware_legacy/AudioHardwareInterface.h
++++ b/include/hardware_legacy/AudioHardwareInterface.h
+@@ -222,6 +222,11 @@ public:
+     /** set the audio volume of a voice call. Range is between 0.0 and 1.0 */
+     virtual status_t    setVoiceVolume(float volume) = 0;
+ 
++#ifdef QCOM_FM_ENABLED
++    /** set the fm volume. Range is between 0.0 and 1.0 */
++    virtual status_t    setFmVolume(float volume) { return 0; }
++#endif
++
+     /**
+      * set the audio volume for all audio activities other than voice call.
+      * Range between 0.0 and 1.0. If any value other than NO_ERROR is returned,
+diff --git a/include/hardware_legacy/AudioPolicyInterface.h b/include/hardware_legacy/AudioPolicyInterface.h
+index 7847bdd..d0ddc95 100644
+--- a/include/hardware_legacy/AudioPolicyInterface.h
++++ b/include/hardware_legacy/AudioPolicyInterface.h
+@@ -1,5 +1,6 @@
+ /*
+  * Copyright (C) 2009 The Android Open Source Project
++ * Copyright (c) 2011-2013, The Linux Foundation. All rights reserved.
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+@@ -252,6 +253,11 @@ public:
+                                      audio_io_handle_t srcOutput,
+                                      audio_io_handle_t dstOutput) = 0;
+ 
++#ifdef QCOM_FM_ENABLED
++    // set FM volume.
++    virtual status_t setFmVolume(float volume, int delayMs = 0) { return 0; }
++#endif
++
+ };
+ 
+ extern "C" AudioPolicyInterface* createAudioPolicyManager(AudioPolicyClientInterface *clientInterface);
+diff --git a/include/hardware_legacy/AudioSystemLegacy.h b/include/hardware_legacy/AudioSystemLegacy.h
+index e3cb4fe..63dc447 100644
+--- a/include/hardware_legacy/AudioSystemLegacy.h
++++ b/include/hardware_legacy/AudioSystemLegacy.h
+@@ -63,7 +63,7 @@ enum audio_source {
+     AUDIO_SOURCE_VOICE_RECOGNITION = 6,
+     AUDIO_SOURCE_VOICE_COMMUNICATION = 7,
+     AUDIO_SOURCE_REMOTE_SUBMIX = 8,
+-#ifdef QCOM_HARDWARE
++#ifdef QCOM_FM_ENABLED
+     AUDIO_SOURCE_FM_RX = 9,
+     AUDIO_SOURCE_FM_RX_A2DP = 10,
+     AUDIO_SOURCE_MAX = AUDIO_SOURCE_FM_RX_A2DP,
+@@ -92,6 +92,9 @@ public:
+ #ifdef QCOM_HARDWARE
+         INCALL_MUSIC     = 10,
+ #endif
++#ifdef QCOM_FM_ENABLED
++        FM               = 11,
++#endif
+         NUM_STREAM_TYPES
+     };
+ 
+@@ -144,6 +147,12 @@ public:
+         HE_AAC_V1           = 0x05000000,
+         HE_AAC_V2           = 0x06000000,
+         VORBIS              = 0x07000000,
++#ifdef QCOM_HARDWARE
++        EVRC                = 0x08000000,
++        QCELP               = 0x09000000,
++        EVRCB               = 0x10000000,
++        EVRCWB              = 0x11000000,
++#endif
+         MAIN_FORMAT_MASK    = 0xFF000000,
+         SUB_FORMAT_MASK     = 0x00FFFFFF,
+         // Aliases
+@@ -257,8 +266,12 @@ public:
+ #ifdef QCOM_HARDWARE
+         DEVICE_OUT_USB_ACCESSORY = 0x2000,
+         DEVICE_OUT_USB_DEVICE = 0x4000,
++#endif
++#if defined(QCOM_FM_ENABLED)
+         DEVICE_OUT_FM = 0x8000,
+         DEVICE_OUT_FM_TX = 0x10000,
++#endif
++#ifdef QCOM_HARDWARE
+         DEVICE_OUT_ANC_HEADSET = 0x20000,
+         DEVICE_OUT_ANC_HEADPHONE = 0x40000,
+         DEVICE_OUT_PROXY = 0x80000,
+@@ -274,9 +287,11 @@ public:
+ #ifdef QCOM_HARDWARE
+                 DEVICE_OUT_USB_ACCESSORY | DEVICE_OUT_USB_DEVICE |
+                 DEVICE_OUT_ANC_HEADSET | DEVICE_OUT_ANC_HEADPHONE |
+-                DEVICE_OUT_FM | DEVICE_OUT_FM_TX |
+                 DEVICE_OUT_PROXY |
+ #endif
++#if defined(QCOM_FM_ENABLED)
++                DEVICE_OUT_FM | DEVICE_OUT_FM_TX |
++#endif
+                 DEVICE_OUT_DEFAULT),
+         DEVICE_OUT_ALL_A2DP = (DEVICE_OUT_BLUETOOTH_A2DP | DEVICE_OUT_BLUETOOTH_A2DP_HEADPHONES |
+                 DEVICE_OUT_BLUETOOTH_A2DP_SPEAKER),
+@@ -317,9 +332,11 @@ public:
+                 DEVICE_IN_VOICE_CALL | DEVICE_IN_BACK_MIC |
+ #ifdef QCOM_HARDWARE
+                 DEVICE_IN_ANC_HEADSET |
+-                DEVICE_IN_FM_RX | DEVICE_IN_FM_RX_A2DP |
+                 DEVICE_IN_ANLG_DOCK_HEADSET | DEVICE_IN_PROXY |
+ #endif
++#if defined(QCOM_FM_ENABLED)
++                DEVICE_IN_FM_RX | DEVICE_IN_FM_RX_A2DP |
++#endif
+                 DEVICE_IN_DEFAULT)
+     };
+ 
+@@ -414,4 +431,4 @@ public:
+ 
+ };  // namespace android
+ 
+-#endif // ANDROID_AUDIOSYSTEM_LEGACY_H_
++#endif // ANDROID_AUDIOSYSTEM_LEGACY_H_
+\ No newline at end of file
+-- 
+1.8.1.2
+
