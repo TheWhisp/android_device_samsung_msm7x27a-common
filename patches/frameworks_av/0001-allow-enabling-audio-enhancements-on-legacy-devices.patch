@@ -1,0 +1,40 @@
+From 88f2369bc86448cf2860f346e547a5ebae541fae Mon Sep 17 00:00:00 2001
+From: TheWhisp <daavis.90@gmail.com>
+Date: Mon, 11 Nov 2013 19:48:08 +0200
+Subject: [PATCH] allow enabling audio enhancements on legacy devices
+
+Change-Id: I1cae5dcabe858994c0bde6da946cf8d9a4805030
+---
+ media/libmedia/Android.mk       | 2 +-
+ media/libstagefright/Android.mk | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/media/libmedia/Android.mk b/media/libmedia/Android.mk
+index dd6d677..0871be0 100644
+--- a/media/libmedia/Android.mk
++++ b/media/libmedia/Android.mk
+@@ -87,7 +87,7 @@ LOCAL_SRC_FILES += \
+     IDirectTrack.cpp \
+     IDirectTrackClient.cpp
+ 
+-ifneq ($(filter caf bfam,$(TARGET_QCOM_AUDIO_VARIANT)),)
++ifneq ($(filter caf bfam legacy,$(TARGET_QCOM_AUDIO_VARIANT)),)
+ ifeq ($(BOARD_USES_ALSA_AUDIO),true)
+     LOCAL_CFLAGS += -DQCOM_VOIP_ENABLED
+ else
+diff --git a/media/libstagefright/Android.mk b/media/libstagefright/Android.mk
+index 3067065..6a17af0 100644
+--- a/media/libstagefright/Android.mk
++++ b/media/libstagefright/Android.mk
+@@ -111,7 +111,7 @@ LOCAL_SRC_FILES += \
+         PCMExtractor.cpp
+ endif
+ 
+-ifneq ($(filter caf bfam,$(TARGET_QCOM_AUDIO_VARIANT)),)
++ifneq ($(filter caf bfam legacy,$(TARGET_QCOM_AUDIO_VARIANT)),)
+     ifeq ($(BOARD_USES_ALSA_AUDIO),true)
+         LOCAL_SRC_FILES += LPAPlayerALSA.cpp
+         ifeq ($(call is-chipset-in-board-platform,msm8960),true)
+-- 
+1.8.1.2
+

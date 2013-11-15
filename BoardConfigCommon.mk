@@ -20,7 +20,7 @@ TARGET_NO_BOOTLOADER := true
 TARGET_NO_RADIOIMAGE := true
 BOARD_KERNEL_BASE := 0x00200000
 BOARD_KERNEL_PAGESIZE := 4096
-TARGET_KERNEL_SOURCE := kernel/samsung/msm7x27a
+TARGET_KERNEL_SOURCE := kernel/samsung/caf
 
 ## Platform
 TARGET_ARCH := arm
@@ -39,11 +39,11 @@ TARGET_GLOBAL_CFLAGS += -mtune=cortex-a5 -mfpu=neon -mfloat-abi=softfp
 TARGET_GLOBAL_CPPFLAGS += -mtune=cortex-a5 -mfpu=neon -mfloat-abi=softfp
 
 ## Camera
-BOARD_USES_LEGACY_OVERLAY := true
-BOARD_NEEDS_MEMORYHEAPPMEM := true
-TARGET_DISABLE_ARM_PIE := true
-COMMON_GLOBAL_CFLAGS += -DBINDER_COMPAT 
-COMMON_GLOBAL_CFLAGS += -DSAMSUNG_CAMERA_LEGACY
+#BOARD_USES_LEGACY_OVERLAY := true
+#BOARD_NEEDS_MEMORYHEAPPMEM := true
+#TARGET_DISABLE_ARM_PIE := true
+#COMMON_GLOBAL_CFLAGS += -DBINDER_COMPAT
+#COMMON_GLOBAL_CFLAGS += -DSAMSUNG_CAMERA_LEGACY
 
 ## FM Radio
 BOARD_HAVE_QCOM_FM := true
@@ -53,16 +53,20 @@ COMMON_GLOBAL_CFLAGS += -DQCOM_FM_ENABLED
 ENABLE_WEBGL := true
 TARGET_FORCE_CPU_UPLOAD := true
 
+## ION
+TARGET_USES_ION := true
+
 ## Graphics, audio, video
 USE_OPENGL_RENDERER := true
 TARGET_QCOM_DISPLAY_VARIANT := legacy
 TARGET_QCOM_MEDIA_VARIANT := legacy
-TARGET_QCOM_LEGACY_OMX := true
-TARGET_NO_HW_VSYNC := false
+TARGET_QCOM_AUDIO_VARIANT := legacy
+TARGET_ENABLE_QC_AV_ENHANCEMENTS : true
+TARGET_USES_QCOM_BSP := true
 BOARD_USES_QCOM_HARDWARE := true
 BOARD_ADRENO_DECIDE_TEXTURE_TARGET := true
 BOARD_EGL_CFG := device/samsung/msm7x27a-common/prebuilt/lib/egl/egl.cfg
-COMMON_GLOBAL_CFLAGS += -DQCOM_HARDWARE -DANCIENT_GL
+COMMON_GLOBAL_CFLAGS += -DQCOM_HARDWARE -DQCOM_BSP
 
 ## GPS
 BOARD_USES_QCOM_LIBRPC := true
@@ -82,25 +86,12 @@ BOARD_HOSTAPD_DRIVER := NL80211
 BOARD_HOSTAPD_PRIVATE_LIB := lib_driver_cmd_ath6kl
 WIFI_EXT_MODULE_NAME := cfg80211
 WIFI_EXT_MODULE_PATH := /system/lib/modules/cfg80211.ko
+WIFI_AP_DRIVER_MODULE_NAME := ath6kl_sdio
+WIFI_AP_DRIVER_MODULE_PATH := /system/lib/modules/ath6kl_sdio.ko
 WIFI_AP_DRIVER_MODULE_ARG := "suspend_mode=3 wow_mode=2 ath6kl_p2p=1 recovery_enable=1"
-WIFI_AP_DRIVER_MODULE_NAME := ath6kl
-WIFI_AP_DRIVER_MODULE_PATH := /system/lib/modules/ath6kl.ko
+WIFI_DRIVER_MODULE_NAME := ath6kl_sdio
+WIFI_DRIVER_MODULE_PATH := /system/lib/modules/ath6kl_sdio.ko
 WIFI_DRIVER_MODULE_ARG := "suspend_mode=3 wow_mode=2 ath6kl_p2p=1 recovery_enable=1"
-WIFI_DRIVER_MODULE_NAME := ath6kl
-WIFI_DRIVER_MODULE_PATH := /system/lib/modules/ath6kl.ko
-
-KERNEL_EXTERNAL_MODULES:
-	## Wipe & prepare ath6kl-compat working directory
-	rm -rf $(OUT)/ath6kl-compat
-	cp -a hardware/atheros/ath6kl-compat $(OUT)/
-	## Run build
-	$(MAKE) -C $(OUT)/ath6kl-compat KERNEL_DIR=$(KERNEL_OUT) KLIB=$(KERNEL_OUT) KLIB_BUILD=$(KERNEL_OUT) ARCH=$(TARGET_ARCH) $(ARM_CROSS_COMPILE) defconfig-ath6kl
-	$(MAKE) -C $(OUT)/ath6kl-compat KERNEL_DIR=$(KERNEL_OUT) KLIB=$(KERNEL_OUT) KLIB_BUILD=$(KERNEL_OUT) ARCH=$(TARGET_ARCH) $(ARM_CROSS_COMPILE)
-	## Copy & strip modules (to economize space)
-	$(TARGET_OBJCOPY) --strip-unneeded $(OUT)/ath6kl-compat/compat/compat.ko $(KERNEL_MODULES_OUT)/compat.ko
-	$(TARGET_OBJCOPY) --strip-unneeded $(OUT)/ath6kl-compat/drivers/net/wireless/ath/ath6kl/ath6kl.ko $(KERNEL_MODULES_OUT)/ath6kl.ko
-	$(TARGET_OBJCOPY) --strip-unneeded $(OUT)/ath6kl-compat/net/wireless/cfg80211.ko $(KERNEL_MODULES_OUT)/cfg80211.ko
-TARGET_KERNEL_MODULES := KERNEL_EXTERNAL_MODULES
 
 ## RIL
 BOARD_USES_LEGACY_RIL := true
