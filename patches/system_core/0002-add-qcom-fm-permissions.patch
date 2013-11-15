@@ -1,35 +1,28 @@
-From 8984ba33d18fafdb1f1fe0b833a97f275cf41ff3 Mon Sep 17 00:00:00 2001
-From: Venkateshwarlu Domakonda <Venkateshwarlu@codeaurora.org>
-Date: Thu, 22 Nov 2012 19:35:13 +0530
-Subject: [PATCH] qcom-fm: Add proper permission for FM to get/set property
- variables
+From d6bbf67c3486caa2dd80b7fb9361c82125e54d14 Mon Sep 17 00:00:00 2001
+From: TheWhisp <daavis.90@gmail.com>
+Date: Fri, 15 Nov 2013 18:37:47 +0200
+Subject: [PATCH 2/2] add qcom fm permissions
 
-Allow FM Process to set and get the system property variables
-specific for FM operation.
-
-For mr1 based qcom fm solution.
-
-Change-Id: Idc937e5c3ca4fbb9fbfe2e4e9eed9eb9bd50499c
 ---
- include/private/android_filesystem_config.h |    6 ++++++
- init/property_service.c                     |    6 ++++++
+ include/private/android_filesystem_config.h | 6 ++++++
+ init/property_service.c                     | 6 ++++++
  2 files changed, 12 insertions(+)
 
 diff --git a/include/private/android_filesystem_config.h b/include/private/android_filesystem_config.h
-index 94b26cf..eda4085 100644
+index cdb6f13..5ec01c8 100644
 --- a/include/private/android_filesystem_config.h
 +++ b/include/private/android_filesystem_config.h
-@@ -73,6 +73,9 @@
+@@ -72,6 +72,9 @@
+ #define AID_CLAT          1029  /* clat part of nat464 */
  #define AID_LOOP_RADIO    1030  /* loop radio devices */
  #define AID_MEDIA_DRM     1031  /* MediaDrm plugins */
- #define AID_AUDIT         1032  /* audit daemon */
 +#ifdef QCOM_FM_ENABLED
 +#define AID_FM_RADIO      1033  /* FM radio */
 +#endif
  
- #define AID_THEMEMAN      1300  /* theme manager */
- 
-@@ -187,6 +190,9 @@ static const struct android_id_info android_ids[] = {
+ #define AID_SHELL         2000  /* adb and debug shell user */
+ #define AID_CACHE         2001  /* cache access */
+@@ -184,6 +187,9 @@ static const struct android_id_info android_ids[] = {
      { "mot_dlna",  AID_MOT_DLNA, },
  #endif
      { "misc",      AID_MISC, },
@@ -40,10 +33,10 @@ index 94b26cf..eda4085 100644
      { "clat",      AID_CLAT, },
      { "mediadrm",  AID_MEDIA_DRM, },
 diff --git a/init/property_service.c b/init/property_service.c
-index c4cb1e5..ecab5f7 100755
+index b00cd71..12623a5 100755
 --- a/init/property_service.c
 +++ b/init/property_service.c
-@@ -98,6 +98,9 @@ struct {
+@@ -97,6 +97,9 @@ struct {
      { "persist.security.", AID_SYSTEM,   0 },
      { "persist.service.bdroid.", AID_BLUETOOTH,   0 },
      { "selinux."         , AID_SYSTEM,   0 },
@@ -51,9 +44,9 @@ index c4cb1e5..ecab5f7 100755
 +    { "hw.fm.",           AID_FM_RADIO,  0 },
 +#endif
      { "net.pdp",          AID_RADIO,    AID_RADIO },
-     { "service.bootanim.exit", AID_GRAPHICS, 0 },
  #ifdef PROPERTY_PERMS_APPEND
-@@ -120,6 +123,9 @@ struct {
+ PROPERTY_PERMS_APPEND
+@@ -118,6 +121,9 @@ struct {
  } control_perms[] = {
      { "dumpstate",AID_SHELL, AID_LOG },
      { "ril-daemon",AID_RADIO, AID_RADIO },
@@ -64,5 +57,5 @@ index c4cb1e5..ecab5f7 100755
  CONTROL_PERMS_APPEND
  #endif
 -- 
-1.7.9.5
+1.8.1.2
 

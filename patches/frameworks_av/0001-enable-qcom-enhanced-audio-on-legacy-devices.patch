@@ -1,0 +1,25 @@
+From b506652251eb582727309a39705fbc89e8556fd2 Mon Sep 17 00:00:00 2001
+From: TheWhisp <daavis.90@gmail.com>
+Date: Fri, 15 Nov 2013 18:51:43 +0200
+Subject: [PATCH] enable qcom enhanced audio on legacy devices
+
+---
+ media/libstagefright/Android.mk | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/media/libstagefright/Android.mk b/media/libstagefright/Android.mk
+index 27f784f..f9bf4fb 100644
+--- a/media/libstagefright/Android.mk
++++ b/media/libstagefright/Android.mk
+@@ -83,7 +83,7 @@ LOCAL_SRC_FILES += \
+         PCMExtractor.cpp
+ endif
+ 
+-ifeq ($(TARGET_QCOM_AUDIO_VARIANT),caf)
++ifneq ($(filter caf legacy,$(TARGET_QCOM_AUDIO_VARIANT)),)
+     ifeq ($(BOARD_USES_ALSA_AUDIO),true)
+         LOCAL_SRC_FILES += LPAPlayerALSA.cpp
+         ifeq ($(call is-chipset-in-board-platform,msm8960),true)
+-- 
+1.8.1.2
+
