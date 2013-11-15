@@ -91,7 +91,9 @@ PRODUCT_COPY_FILES += \
 ## Recovery
 PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/recovery/postrecoveryboot.sh:recovery/root/sbin/postrecoveryboot.sh \
-    device/samsung/msm7x27a-common/recovery/postrecoveryboot.sh:recovery/system/bin/postrecoveryboot.sh
+    device/samsung/msm7x27a-common/recovery/postrecoveryboot.sh:recovery/system/bin/postrecoveryboot.sh \
+    device/samsung/msm7x27a-common/recovery/twrp.fstab:root/etc/twrp.fstab \
+    device/samsung/msm7x27a-common/recovery/init.recovery.qcom.rc:root/init.recovery.qcom.rc
 
 ## FM
 PRODUCT_COPY_FILES += \
