@@ -1,4 +1,4 @@
-From 07d130d19fc0a1b582885fda23c418552178b709 Mon Sep 17 00:00:00 2001
+From df3a9111b1c90b8048596dc3541e06f8ad78e65e Mon Sep 17 00:00:00 2001
 From: TheWhisp <daavis.90@gmail.com>
 Date: Fri, 15 Nov 2013 19:48:55 +0200
 Subject: [PATCH] add qcom fm support
@@ -11,12 +11,12 @@ Subject: [PATCH] add qcom fm support
  data/etc/platform.xml                              |  2 +
  media/java/android/media/AudioManager.java         | 18 +++++-
  media/java/android/media/AudioService.java         | 64 ++++++++++++++++++++--
- media/java/android/media/AudioSystem.java          |  5 +-
+ media/java/android/media/AudioSystem.java          | 22 +++++++-
  .../android/providers/settings/DatabaseHelper.java |  5 ++
  .../internal/policy/impl/PhoneWindowManager.java   | 18 +++++-
  .../policy/impl/keyguard/KeyguardViewBase.java     |  9 +++
  .../android/server/pm/PackageManagerService.java   |  5 ++
- 12 files changed, 178 insertions(+), 10 deletions(-)
+ 12 files changed, 195 insertions(+), 10 deletions(-)
 
 diff --git a/core/java/android/content/Intent.java b/core/java/android/content/Intent.java
 index 8e3d44e..87c734b 100644
@@ -384,17 +384,20 @@ index d052899..30cdc49 100644
                  AudioSystem.setParameters("screen_state=on");
              } else if (action.equals(Intent.ACTION_SCREEN_OFF)) {
 diff --git a/media/java/android/media/AudioSystem.java b/media/java/android/media/AudioSystem.java
-index 5e88ba5..de094b6 100644
+index 5e88ba5..d903559 100644
 --- a/media/java/android/media/AudioSystem.java
 +++ b/media/java/android/media/AudioSystem.java
-@@ -1,5 +1,6 @@
+@@ -1,5 +1,9 @@
  /*
++ * Copyright (c) 2013, The Linux Foundation. All rights reserved.
++ * Not a Contribution.
++ *
   * Copyright (C) 2006 The Android Open Source Project
 + * Copyright (c) 2013, The Linux Foundation. All rights reserved.
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
-@@ -54,13 +55,15 @@ public class AudioSystem
+@@ -54,13 +58,15 @@ public class AudioSystem
      public static final int STREAM_TTS = 9;
      /* @hide The audio stream for incall music delivery */
      public static final int STREAM_INCALL_MUSIC = 10;
@@ -411,6 +414,62 @@ index 5e88ba5..de094b6 100644
      public static final int getNumStreamTypes() { return NUM_STREAM_TYPES; }
  
      /*
+@@ -232,6 +238,8 @@ public class AudioSystem
+     public static final int DEVICE_OUT_ANC_HEADSET = 0x10000;
+     public static final int DEVICE_OUT_ANC_HEADPHONE = 0x20000;
+     public static final int DEVICE_OUT_PROXY = 0x40000;
++    public static final int DEVICE_OUT_FM = 0x80000;
++    public static final int DEVICE_OUT_FM_TX = 0x100000;
+     public static final int DEVICE_OUT_DEFAULT = DEVICE_BIT_DEFAULT;
+ 
+     public static final int DEVICE_OUT_ALL = (DEVICE_OUT_EARPIECE |
+@@ -253,6 +261,8 @@ public class AudioSystem
+                                               DEVICE_OUT_ANC_HEADSET |
+                                               DEVICE_OUT_ANC_HEADPHONE |
+                                               DEVICE_OUT_PROXY |
++                                              DEVICE_OUT_FM |
++                                              DEVICE_OUT_FM_TX |
+                                               DEVICE_OUT_DEFAULT);
+     public static final int DEVICE_OUT_ALL_A2DP = (DEVICE_OUT_BLUETOOTH_A2DP |
+                                                    DEVICE_OUT_BLUETOOTH_A2DP_HEADPHONES |
+@@ -279,6 +289,8 @@ public class AudioSystem
+     public static final int DEVICE_IN_USB_DEVICE = DEVICE_BIT_IN | 0x1000;
+     public static final int DEVICE_IN_ANC_HEADSET = DEVICE_BIT_IN | 0x2000;
+     public static final int DEVICE_IN_PROXY = DEVICE_BIT_IN | 0x4000;
++    public static final int DEVICE_IN_FM_RX = DEVICE_BIT_IN | 0x8000;
++    public static final int DEVICE_IN_FM_RX_A2DP = DEVICE_BIT_IN | 0x10000;
+     public static final int DEVICE_IN_DEFAULT = DEVICE_BIT_IN | DEVICE_BIT_DEFAULT;
+ 
+     public static final int DEVICE_IN_ALL = (DEVICE_IN_COMMUNICATION |
+@@ -296,6 +308,8 @@ public class AudioSystem
+                                              DEVICE_IN_USB_DEVICE |
+                                              DEVICE_IN_ANC_HEADSET |
+                                              DEVICE_IN_PROXY |
++                                             DEVICE_IN_FM_RX |
++                                             DEVICE_IN_FM_RX_A2DP |
+                                              DEVICE_IN_DEFAULT);
+     public static final int DEVICE_IN_ALL_SCO = DEVICE_IN_BLUETOOTH_SCO_HEADSET;
+ 
+@@ -323,6 +337,8 @@ public class AudioSystem
+     public static final String DEVICE_OUT_ANC_HEADSET_NAME = "anc_headset";
+     public static final String DEVICE_OUT_ANC_HEADPHONE_NAME = "anc_headphone";
+     public static final String DEVICE_OUT_PROXY_NAME = "proxy";
++    public static final String DEVICE_OUT_FM_NAME = "fm";
++    public static final String DEVICE_OUT_FM_TX_NAME = "fm_tx";
+ 
+     public static String getDeviceName(int device)
+     {
+@@ -365,6 +381,10 @@ public class AudioSystem
+             return DEVICE_OUT_ANC_HEADPHONE_NAME;
+         case DEVICE_OUT_PROXY:
+             return DEVICE_OUT_PROXY_NAME;
++        case DEVICE_OUT_FM:
++            return DEVICE_OUT_FM_NAME;
++        case DEVICE_OUT_FM_TX:
++            return DEVICE_OUT_FM_TX_NAME;
+         case DEVICE_OUT_DEFAULT:
+         default:
+             return "";
 diff --git a/packages/SettingsProvider/src/com/android/providers/settings/DatabaseHelper.java b/packages/SettingsProvider/src/com/android/providers/settings/DatabaseHelper.java
 index c770b7a..a5608db 100644
 --- a/packages/SettingsProvider/src/com/android/providers/settings/DatabaseHelper.java
