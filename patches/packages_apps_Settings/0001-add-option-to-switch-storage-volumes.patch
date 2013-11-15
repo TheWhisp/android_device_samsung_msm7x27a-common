@@ -1,9 +1,14 @@
-From 2a8bb580609c7963918689d7f85e5b5f8f8c861c Mon Sep 17 00:00:00 2001
-From: TheWhisp <daavis.90@gmail.com>
-Date: Sat, 12 Oct 2013 20:53:01 +0300
-Subject: [PATCH] add option to switch storage volumes
+From 0df41ff53052e65d938fa17761e6257ebea21892 Mon Sep 17 00:00:00 2001
+From: dhacker29 <davidhackerdvm@gmail.com>
+Date: Sat, 17 Aug 2013 16:35:18 -0500
+Subject: [PATCH] Add setting for Vold Switchable Pair (2/2)
 
-Change-Id: If5fdae2e800b2581c37f8c7531c38d9a28081205
+This will be hidden unless the device has non-emulated internal storage
+and an external SD, in which case persist.sys.vold.switchablepair will be
+set automaticaly.  This does away with the need for ro.vold.switchablepair
+to be set in the build.prop.
+
+Change-Id: Id83fc90d771ca3a7179f2c50d0ae828eb3dbaa9f
 ---
  AndroidManifest.xml                             |  1 +
  res/values/cm_strings.xml                       |  7 ++++
@@ -12,44 +17,44 @@ Change-Id: If5fdae2e800b2581c37f8c7531c38d9a28081205
  4 files changed, 66 insertions(+), 1 deletion(-)
 
 diff --git a/AndroidManifest.xml b/AndroidManifest.xml
-index 20f5209..ef8c4bf 100644
+index 58f1da4..6a35018 100644
 --- a/AndroidManifest.xml
 +++ b/AndroidManifest.xml
 @@ -66,6 +66,7 @@
      <uses-permission android:name="android.permission.SET_TIME" />
      <uses-permission android:name="android.permission.ACCESS_NOTIFICATIONS" />
      <uses-permission android:name="android.permission.CHANGE_PRIVACY_GUARD_STATE" />
-+	<uses-permission android:name="android.permission.REBOOT" />
++    <uses-permission android:name="android.permission.REBOOT" />
  
      <permission
          android:name="android.permission.REQUEST_SUPERUSER"
 diff --git a/res/values/cm_strings.xml b/res/values/cm_strings.xml
-index d0d9fcc..98da99b 100644
+index c2c2c30..39dab44 100644
 --- a/res/values/cm_strings.xml
 +++ b/res/values/cm_strings.xml
-@@ -1012,6 +1012,13 @@ two in order to insert additional control points. \'Remove\' deletes the selecte
-     <string name="selinux_enable_title">Security Enhanced Android</string>
-     <string name="selinux_enable_warning">You are about to enable SEAndroid, an advanced security mechanism, on your device.\n\nThis option exists for debugging purposes only, and it is very likely that your device isn\'t fully ready for it, which may cause parts (or all) of your hardware to block or hang.\n\nAre you sure you want to proceed?</string>
+@@ -623,6 +623,13 @@
+     <string name="storage_rescan_media">Rescan media for the storage volume</string>
+     <string name="storage_rescan_media_complete">Scan completed</string>
  
-+	<!-- Vold Switchable Pair -->
++    <!-- Vold Switchable Pair -->
 +    <string name="storage_switch_title">Use external SD as primary</string>
 +    <string name="storage_switch_summary_off">Using expanded internal storage for apps and media</string>
 +    <string name="storage_switch_summary_on">Using SD Card for apps and media</string>
 +    <string name="reboot_prompt_title">Reboot required</string>
 +    <string name="reboot_prompt_message">In order to apply the changed configuration, a reboot is required.\n\nDo you want to reboot now?</string>
 +
-     <!-- GPS download data over wi-fi only -->
-     <string name="gps_download_data_wifi_only">Download GPS assisted data only over Wi-Fi networks</string>
- </resources>
+     <!-- Android debugging over WiFi -->
+     <string name="adb_over_network">ADB over network</string>
+     <string name="adb_over_network_summary">Enable TCP/IP debugging over network interfaces (Wi-Fi, USB networks). This setting is reset on reboot</string>
 diff --git a/res/xml/device_info_memory.xml b/res/xml/device_info_memory.xml
-index e905f39..0767d12 100644
+index e905f39..2010b2c 100644
 --- a/res/xml/device_info_memory.xml
 +++ b/res/xml/device_info_memory.xml
 @@ -16,6 +16,11 @@
  
  <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
          android:title="@string/storage_settings_title">
-+	<CheckBoxPreference
++    <CheckBoxPreference
 +        android:key="key_switch_storage"
 +        android:title="@string/storage_switch_title"
 +        android:summaryOn="@string/storage_switch_summary_on"
@@ -58,7 +63,7 @@ index e905f39..0767d12 100644
  <!-- Preference categories are dynamically created based on the list of available storage volumes -->
  
 diff --git a/src/com/android/settings/deviceinfo/Memory.java b/src/com/android/settings/deviceinfo/Memory.java
-index 79216fc..4e2867b 100644
+index 79216fc..d6ae78f 100644
 --- a/src/com/android/settings/deviceinfo/Memory.java
 +++ b/src/com/android/settings/deviceinfo/Memory.java
 @@ -31,16 +31,20 @@ import android.hardware.usb.UsbManager;
@@ -86,7 +91,7 @@ index 79216fc..4e2867b 100644
      private UsbManager mUsbManager;
  
      private ArrayList<StorageVolumePreferenceCategory> mCategories = Lists.newArrayList();
-+	private static final String KEY_SWITCH_STORAGE = "key_switch_storage";
++    private static final String KEY_SWITCH_STORAGE = "key_switch_storage";
 +    private static final String VOLD_SWITCH_PERSIST_PROP = "persist.sys.vold.switchexternal";
 +    private static final String VOLD_SWITCHABLEPAIR_PROP = "persist.sys.vold.switchablepair";
 +    private CheckBoxPreference mSwitchStoragePref;
@@ -97,7 +102,7 @@ index 79216fc..4e2867b 100644
  
          addPreferencesFromResource(R.xml.device_info_memory);
  
-+		String voldswitch = SystemProperties.get(VOLD_SWITCH_PERSIST_PROP, "0");
++        String voldswitch = SystemProperties.get(VOLD_SWITCH_PERSIST_PROP, "0");
 +        mSwitchStoragePref = (CheckBoxPreference) findPreference(KEY_SWITCH_STORAGE);
 +        mSwitchStoragePref.setChecked("1".equals(voldswitch));
 +        if (!Environment.isExternalStorageEmulated()) {
@@ -126,7 +131,7 @@ index 79216fc..4e2867b 100644
      @Override
      public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
 -        if (StorageVolumePreferenceCategory.KEY_CACHE.equals(preference.getKey())) {
-+         if(preference == mSwitchStoragePref) {
++        if(preference == mSwitchStoragePref) {
 +            Log.d(TAG,"Setting persist.sys.vold.switchexternal to "+(
 +                    mSwitchStoragePref.isChecked() ? "1" : "0"));
 +            SystemProperties.set(VOLD_SWITCH_PERSIST_PROP,
@@ -141,7 +146,7 @@ index 79216fc..4e2867b 100644
          }
      }
 +
-+	private void showRebootPrompt() {
++    private void showRebootPrompt() {
 +        AlertDialog dialog = new AlertDialog.Builder(getActivity())
 +                .setTitle(R.string.reboot_prompt_title)
 +                .setMessage(R.string.reboot_prompt_message)
@@ -156,8 +161,7 @@ index 79216fc..4e2867b 100644
 +                .create();
 +
 +        dialog.show();
-+	}
++    }
  }
 -- 
 1.8.1.2
-
