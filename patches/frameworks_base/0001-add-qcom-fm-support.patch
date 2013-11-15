@@ -1,4 +1,4 @@
-From df3a9111b1c90b8048596dc3541e06f8ad78e65e Mon Sep 17 00:00:00 2001
+From e602f55e364cb72e8c0776089d38019d4e75de4e Mon Sep 17 00:00:00 2001
 From: TheWhisp <daavis.90@gmail.com>
 Date: Fri, 15 Nov 2013 19:48:55 +0200
 Subject: [PATCH] add qcom fm support
@@ -12,11 +12,12 @@ Subject: [PATCH] add qcom fm support
  media/java/android/media/AudioManager.java         | 18 +++++-
  media/java/android/media/AudioService.java         | 64 ++++++++++++++++++++--
  media/java/android/media/AudioSystem.java          | 22 +++++++-
+ media/java/android/media/MediaRecorder.java        | 17 +++++-
  .../android/providers/settings/DatabaseHelper.java |  5 ++
  .../internal/policy/impl/PhoneWindowManager.java   | 18 +++++-
  .../policy/impl/keyguard/KeyguardViewBase.java     |  9 +++
  .../android/server/pm/PackageManagerService.java   |  5 ++
- 12 files changed, 195 insertions(+), 10 deletions(-)
+ 13 files changed, 211 insertions(+), 11 deletions(-)
 
 diff --git a/core/java/android/content/Intent.java b/core/java/android/content/Intent.java
 index 8e3d44e..87c734b 100644
@@ -470,6 +471,41 @@ index 5e88ba5..d903559 100644
          case DEVICE_OUT_DEFAULT:
          default:
              return "";
+diff --git a/media/java/android/media/MediaRecorder.java b/media/java/android/media/MediaRecorder.java
+index 0d78fe8..75af524 100644
+--- a/media/java/android/media/MediaRecorder.java
++++ b/media/java/android/media/MediaRecorder.java
+@@ -179,6 +179,18 @@ public class MediaRecorder
+          *  is applied.
+          */
+         public static final int VOICE_COMMUNICATION = 7;
++
++        /**
++         * @hide
++         * Audio source for remote submix.
++         */
++        public static final int REMOTE_SUBMIX_SOURCE = 8;
++
++        /** @hide */
++        public static final int FM_RX = 9;
++
++        /** @hide */
++        public static final int FM_RX_A2DP = 10;
+     }
+ 
+     /**
+@@ -307,7 +319,10 @@ public class MediaRecorder
+      * @see android.media.MediaRecorder.AudioSource
+      */
+     public static final int getAudioSourceMax() {
+-        return AudioSource.VOICE_COMMUNICATION;
++        // FIXME disable selection of the remote submxi source selection once test code
++        //       doesn't rely on it
++        return AudioSource.FM_RX_A2DP;
++        //return AudioSource.VOICE_COMMUNICATION;
+     }
+ 
+     /**
 diff --git a/packages/SettingsProvider/src/com/android/providers/settings/DatabaseHelper.java b/packages/SettingsProvider/src/com/android/providers/settings/DatabaseHelper.java
 index c770b7a..a5608db 100644
 --- a/packages/SettingsProvider/src/com/android/providers/settings/DatabaseHelper.java
