@@ -35,5 +35,6 @@ echo $WIFIMAC > /data/.nvmac.info
 
 # Convert BT MAC address to proper format
 echo $BTMAC | sed 's!^M$!!;s!\-!!g;s!\.!!g;s!\(..\)!\1:!g;s!:$!!' > /data/misc/bluedroid/bdaddr
+busybox chown bluetooth:bluetooth /data/misc/bluedroid/bdaddr
 
 exit
