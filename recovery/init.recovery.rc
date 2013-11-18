@@ -6,21 +6,17 @@ on init
     export ANDROID_ROOT /system
     export ANDROID_DATA /data
     export EXTERNAL_STORAGE /sdcard
+    export SECONDARY_STORAGE /external_sd
 
     symlink /system/etc /etc
 
-    mkdir /boot
-    mkdir /recovery
     mkdir /sdcard
-    mkdir /internal_sd
+    mkdir /usbdisk
     mkdir /external_sd
-    mkdir /sd-ext
-    mkdir /datadata
-    mkdir /emmc
     mkdir /system
     mkdir /data
+    mkdir /data/data
     mkdir /cache
-    mkdir /efs
     mount /tmp /tmp tmpfs
 
     chown root shell /tmp
@@ -48,13 +44,14 @@ on init
 
     write /sys/class/android_usb/android0/enable 0
     write /sys/class/android_usb/android0/idVendor 04e8
-    write /sys/class/android_usb/android0/idProduct 6860
-    write /sys/class/android_usb/android0/functions mass_storage,adb
+    write /sys/class/android_usb/android0/idProduct 685e
+    write /sys/class/android_usb/android0/functions adb
     write /sys/class/android_usb/android0/iManufacturer ${ro.product.manufacturer}
     write /sys/class/android_usb/android0/iProduct ${ro.product.model}
     write /sys/class/android_usb/android0/iSerial ${ro.serialno}
 
 on boot
+    mount debugfs /sys/kernel/debug /sys/kernel/debug
 
     ifup lo
     hostname localhost
@@ -62,16 +59,23 @@ on boot
 
     class_start default
 
+    write /sys/class/android_usb/android0/iManufacturer Samsung
+    write /sys/class/android_usb/android0/iProduct ${ro.product.model}
+    write /sys/class/android_usb/f_mass_storage/inquiry_string ${ro.product.manufacturer}
+
 service ueventd /sbin/ueventd
     critical
 
 service recovery /sbin/recovery
 
 service setup_adbd /sbin/setup_adbd
-	oneshot
+    oneshot
 
-service adbd /sbin/adbd
+service adbd /sbin/adbd recovery
     disabled
+
+service rmt_storage /sbin/rmt_storage_recovery
+    user root
 
 service vold /sbin/minivold
     socket vold stream 0660 root mount
@@ -82,3 +86,13 @@ on property:service.adb.root=1
     write /sys/class/android_usb/android0/enable 0
     restart adbd
     write /sys/class/android_usb/android0/enable 1
+
+on property:sys.storage.ums_enabled=1
+    write /sys/class/android_usb/android0/enable 0
+    write /sys/class/android_usb/android0/functions adb,mass_storage
+    write /sys/class/android_usb/android0/enable 1
+
+on property:sys.storage.ums_enabled=0
+    write /sys/class/android_usb/android0/enable 0
+    write /sys/class/android_usb/android0/functions adb
+    write /sys/class/android_usb/android0/enable ${service.adb.root}
