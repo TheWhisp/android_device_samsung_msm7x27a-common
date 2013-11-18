@@ -135,6 +135,10 @@ BOARD_USES_MMCUTILS := true
 BOARD_HAS_NO_MISC_PARTITION := true
 BOARD_FLASH_BLOCK_SIZE := 131072
 
+## Recovery graphics
+TARGET_RECOVERY_LCD_BACKLIGHT_PATH := "/sys/class/leds/lcd-backlight/brightness"
+TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
+
 ## Filesystem
 BOARD_DATA_DEVICE := /dev/block/mmcblk0p18
 BOARD_DATA_FILESYSTEM := ext4
