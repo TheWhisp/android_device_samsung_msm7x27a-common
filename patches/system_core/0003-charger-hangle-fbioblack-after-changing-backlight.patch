@@ -1,0 +1,37 @@
+From 76043e694ff0fc54afce7b54f22585434b88b151 Mon Sep 17 00:00:00 2001
+From: TheWhisp <daavis.90@gmail.com>
+Date: Mon, 18 Nov 2013 15:56:57 +0200
+Subject: [PATCH] charger: hangle fbioblack after changing backlight
+
+Change-Id: Icee1819f138d8ea73fe25ec29a3fd1134f022732
+---
+ charger/charger.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/charger/charger.c b/charger/charger.c
+index 9c70bbc..05675cc 100644
+--- a/charger/charger.c
++++ b/charger/charger.c
+@@ -836,8 +836,8 @@ static void update_screen_state(struct charger *charger, int64_t now)
+ 
+     /* unblank the screen  on first cycle */
+     if (batt_anim->cur_cycle == 0) {
+-        gr_fb_blank(false);
+         set_backlight(true);
++        gr_fb_blank(false);
+     }
+ 
+ 
+@@ -955,8 +955,8 @@ static void process_key(struct charger *charger, int code, int64_t now)
+                 } else {
+                     reset_animation(batt_anim);
+                     charger->next_screen_transition = -1;
+-                    gr_fb_blank(true);
+                     set_backlight(false);
++                    gr_fb_blank(true);
+                     if (charger->num_supplies_online > 0)
+                         request_suspend(true);
+                 }
+-- 
+1.8.1.2
+
