@@ -38,13 +38,6 @@ ARCH_ARM_HAVE_TLS_REGISTER := true
 TARGET_GLOBAL_CFLAGS += -mtune=cortex-a5 -mfpu=neon -mfloat-abi=softfp
 TARGET_GLOBAL_CPPFLAGS += -mtune=cortex-a5 -mfpu=neon -mfloat-abi=softfp
 
-## Camera
-#BOARD_USES_LEGACY_OVERLAY := true
-#BOARD_NEEDS_MEMORYHEAPPMEM := true
-#TARGET_DISABLE_ARM_PIE := true
-#COMMON_GLOBAL_CFLAGS += -DBINDER_COMPAT
-#COMMON_GLOBAL_CFLAGS += -DSAMSUNG_CAMERA_LEGACY
-
 ## FM Radio
 BOARD_HAVE_QCOM_FM := true
 COMMON_GLOBAL_CFLAGS += -DQCOM_FM_ENABLED
@@ -127,17 +120,17 @@ TARGET_PROVIDES_LIBAUDIO := true
 ## Recovery
 TARGET_RECOVERY_INITRC := device/samsung/msm7x27a-common/recovery/init.recovery.rc
 TARGET_RECOVERY_FSTAB := device/samsung/msm7x27a-common/rootdir/fstab.qcom
+ifdef BUILD_RECOVERY
+BOARD_CUSTOM_GRAPHICS := ../../../device/samsung/msm7x27a-common/recovery/graphics.c
+endif
 BOARD_CUSTOM_RECOVERY_KEYMAPPING := ../../device/samsung/msm7x27a-common/recovery/recovery_keys.c
+TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
 TARGET_USERIMAGES_USE_EXT4 := true
 BOARD_HAS_SDCARD_INTERNAL := true
 BOARD_HAS_DOWNLOAD_MODE := true
 BOARD_USES_MMCUTILS := true
 BOARD_HAS_NO_MISC_PARTITION := true
 BOARD_FLASH_BLOCK_SIZE := 131072
-
-## Recovery graphics
-TARGET_RECOVERY_LCD_BACKLIGHT_PATH := "/sys/class/leds/lcd-backlight/brightness"
-TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
 
 ## Filesystem
 BOARD_DATA_DEVICE := /dev/block/mmcblk0p18
