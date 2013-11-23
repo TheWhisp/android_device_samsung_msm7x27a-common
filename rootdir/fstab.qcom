@@ -6,10 +6,10 @@
 /dev/block/mmcblk0p8      /boot        	emmc     defaults    					    defaults
 /dev/block/mmcblk0p12     /recovery    	emmc     defaults    					    defaults
 /dev/block/mmcblk0p16     /system      	ext4     ro,barrier=1                                       wait
-/dev/block/mmcblk0p17     /cache       	ext4     nosuid,nodev,barrier=0                             wait,check
 /dev/block/mmcblk0p18     /data        	ext4     nosuid,nodev,noauto_da_alloc,barrier=1     	    wait,check,encryptable=footer,length=-16384
+/dev/block/mmcblk0p17     /cache       	ext4     nosuid,nodev,barrier=1                             wait,check
 
 # vold managed volumes
-/devices/platform/msm_sdcc.3/mmc_host   /storage/sdcard0     vfat     nosuid,nodev     wait,voldmanaged=sdcard0:23,nonremovable,noemulatedsd
-/devices/platform/msm_sdcc.1/mmc_host   /storage/sdcard1     vfat     nosuid,nodev     wait,voldmanaged=sdcard1:auto
-/devices/platform/msm_hsusb_host.0 	auto                 auto     defaults         wait,voldmanaged=usbdisk:auto
+/devices/platform/msm_sdcc.3/mmc_host   auto     auto     defaults         wait,voldmanaged=sdcard0:23,nonremovable,noemulatedsd
+/devices/platform/msm_sdcc.1/mmc_host   auto     auto     defaults         wait,voldmanaged=sdcard1:auto
+/devices/platform/msm_hsusb_host.0 	auto     auto     defaults         wait,voldmanaged=usbdisk:auto
