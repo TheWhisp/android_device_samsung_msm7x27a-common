@@ -153,7 +153,4 @@
     <integer-array name="config_scrollBarrierVibePattern">
         <item>40</item>
     </integer-array>
-
-    <!-- Disable the home key unlock setting -->
-    <bool name="config_disableHomeUnlockSetting">false</bool>
 </resources>
