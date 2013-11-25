@@ -124,6 +124,9 @@
          that can be set by the user. -->
     <integer name="config_screenBrightnessDim">20</integer>
 
+    <!-- Disable lockscreen translucent decor by default -->
+    <bool name="config_enableLockScreenTranslucentDecor">true</bool>
+
     <!-- Vibrator pattern for feedback about a long screen/key press -->
     <integer-array name="config_longPressVibePattern">
         <item>50</item>
