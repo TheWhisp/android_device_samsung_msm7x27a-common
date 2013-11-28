@@ -1,13 +1,12 @@
-CyanogenMod 10.2 common device configuration for Samsung MSM7x27A devices
+CyanogenMod 11.0 common device configuration for Samsung MSM7x27A devices
 
 Curently supports:
 
-	1) Galaxy Ace Plus
-	2) Galaxy Mini 2
+	Galaxy Ace Plus
+	
 
-Created and maintained by TheWhisp
+Created and maintained by readone
 
-http://forum.xda-developers.com/showthread.php?t=2169122
 
 Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
