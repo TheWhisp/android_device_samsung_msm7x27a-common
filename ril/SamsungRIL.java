@@ -287,8 +287,7 @@ public class SamsungRIL extends RIL implements CommandsInterface {
             rr.mResult.sendToTarget();
         }
 
-        rr.release();
-		return rr;
+        return rr;
     }
 
     @Override
