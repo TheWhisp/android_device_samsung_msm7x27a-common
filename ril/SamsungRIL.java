@@ -252,7 +252,6 @@ public class SamsungRIL extends RIL implements CommandsInterface {
                     AsyncResult.forMessage(rr.mResult, null, tr);
                     rr.mResult.sendToTarget();
                 }
-                rr.release();
                 return rr;
             }
         }
@@ -269,7 +268,6 @@ public class SamsungRIL extends RIL implements CommandsInterface {
                             + requestToString(rr.mRequest)
                             + " exception, Processing Samsung SMS fix ", tr);
                     rr.onError(error, ret);
-                    rr.release();
                     return rr;
                 }
             } else {
@@ -289,6 +287,7 @@ public class SamsungRIL extends RIL implements CommandsInterface {
 
         return rr;
     }
+
 
     @Override
     public void
