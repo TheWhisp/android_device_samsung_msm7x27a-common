@@ -1,0 +1,34 @@
+From 58b353cc4ab5d425844d1b030b240c964e32b427 Mon Sep 17 00:00:00 2001
+From: "Arun Kumar K.R" <akumarkr@codeaurora.org>
+Date: Fri, 17 Aug 2012 11:23:21 -0700
+Subject: [PATCH] hwcomposer: Add sourceTransform to hwc_layer_t
+
+sourceTransform has the source buffer transform which can used to
+apply rotation on displays whose orientation is fixed(HDMI).
+
+CRs-fixed: 387357
+Change-Id: I26eb2de76b3548634a80ca8b98547c6fdfe145ea
+(cherry picked from commit f16aed381eb2a7232bf576c1d77cdad61be54419)
+---
+ include/hardware/hwcomposer_v0.h | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/include/hardware/hwcomposer_v0.h b/include/hardware/hwcomposer_v0.h
+index 473819b..6e9308d 100644
+--- a/include/hardware/hwcomposer_v0.h
++++ b/include/hardware/hwcomposer_v0.h
+@@ -97,6 +97,11 @@ typedef struct hwc_layer {
+              * not changed. */
+             buffer_handle_t handle;
+ 
++#ifdef QCOM_HARDWARE
++            /* source transform of the buffer */
++            uint32_t sourceTransform;
++#endif
++
+             /* transformation to apply to the buffer during composition */
+             uint32_t transform;
+ 
+-- 
+1.8.3.2
+
