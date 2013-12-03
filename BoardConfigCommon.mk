@@ -43,11 +43,11 @@ ARCH_ARM_HAVE_TLS_REGISTER := true
 TARGET_USE_SPARROW_BIONIC_OPTIMIZATION := true
 
 ## Camera
-BOARD_USES_LEGACY_OVERLAY := true
-BOARD_NEEDS_MEMORYHEAPPMEM := true
-TARGET_DISABLE_ARM_PIE := true
-COMMON_GLOBAL_CFLAGS += -DBINDER_COMPAT 
-COMMON_GLOBAL_CFLAGS += -DSAMSUNG_CAMERA_QCOM
+#BOARD_USES_LEGACY_OVERLAY := true
+#BOARD_NEEDS_MEMORYHEAPPMEM := true
+#ARGET_DISABLE_ARM_PIE := true
+#COMMON_GLOBAL_CFLAGS += -DBINDER_COMPAT 
+#COMMON_GLOBAL_CFLAGS += -DSAMSUNG_CAMERA_QCOM
 
 ## FM Radio
 BOARD_HAVE_QCOM_FM := true
@@ -57,13 +57,16 @@ COMMON_GLOBAL_CFLAGS += -DQCOM_FM_ENABLED
 ENABLE_WEBGL := true
 TARGET_FORCE_CPU_UPLOAD := true
 
+## ION
+TARGET_USES_ION := true
+
 ## Graphics, media
 USE_OPENGL_RENDERER := true
-TARGET_NO_HW_VSYNC := false
+TARGET_USES_QCOM_BSP := true
 BOARD_USES_QCOM_HARDWARE := true
 BOARD_ADRENO_DECIDE_TEXTURE_TARGET := true
 BOARD_EGL_CFG := device/samsung/msm7x27a-common/prebuilt/lib/egl/egl.cfg
-COMMON_GLOBAL_CFLAGS += -DQCOM_HARDWARE
+COMMON_GLOBAL_CFLAGS += -DQCOM_HARDWARE -DQCOM_BSP
 
 ## GPS
 BOARD_USES_QCOM_LIBRPC := true
@@ -83,24 +86,12 @@ BOARD_HOSTAPD_DRIVER := NL80211
 BOARD_HOSTAPD_PRIVATE_LIB := lib_driver_cmd_ath6kl
 WIFI_EXT_MODULE_NAME := cfg80211
 WIFI_EXT_MODULE_PATH := /system/lib/modules/cfg80211.ko
-WIFI_AP_DRIVER_MODULE_ARG := "suspend_mode=3 wow_mode=2 ath6kl_p2p=1 recovery_enable=1 debug_mask=0xffffffff"
-WIFI_AP_DRIVER_MODULE_NAME := ath6kl
-WIFI_AP_DRIVER_MODULE_PATH := /system/lib/modules/ath6kl.ko
-WIFI_DRIVER_MODULE_ARG := "suspend_mode=3 wow_mode=2 ath6kl_p2p=1 recovery_enable=1 debug_mask=0xffffffff"
-WIFI_DRIVER_MODULE_NAME := ath6kl
-WIFI_DRIVER_MODULE_PATH := /system/lib/modules/ath6kl.ko
-
-KERNEL_EXTERNAL_MODULES:
-	## Wipe & prepare ath6kl-compat working directory
-	rm -rf $(OUT)/ath6kl-compat
-	cp -a hardware/atheros/ath6kl-compat $(OUT)/
-	## Run build
-	$(MAKE) -C $(OUT)/ath6kl-compat KERNEL_DIR=$(KERNEL_OUT) KLIB=$(KERNEL_OUT) KLIB_BUILD=$(KERNEL_OUT) ARCH=$(TARGET_ARCH) $(ARM_CROSS_COMPILE)
-	## Copy & strip modules (to economize space)
-	$(TARGET_OBJCOPY) --strip-unneeded $(OUT)/ath6kl-compat/compat/compat.ko $(KERNEL_MODULES_OUT)/compat.ko
-	$(TARGET_OBJCOPY) --strip-unneeded $(OUT)/ath6kl-compat/drivers/net/wireless/ath/ath6kl/ath6kl.ko $(KERNEL_MODULES_OUT)/ath6kl.ko
-	$(TARGET_OBJCOPY) --strip-unneeded $(OUT)/ath6kl-compat/net/wireless/cfg80211.ko $(KERNEL_MODULES_OUT)/cfg80211.ko
-TARGET_KERNEL_MODULES := KERNEL_EXTERNAL_MODULES
+WIFI_AP_DRIVER_MODULE_NAME := ath6kl_sdio
+WIFI_AP_DRIVER_MODULE_PATH := /system/lib/modules/ath6kl_sdio.ko
+WIFI_AP_DRIVER_MODULE_ARG := "suspend_mode=3 wow_mode=2 ath6kl_p2p=1 recovery_enable=1"
+WIFI_DRIVER_MODULE_NAME := ath6kl_sdio
+WIFI_DRIVER_MODULE_PATH := /system/lib/modules/ath6kl_sdio.ko
+WIFI_DRIVER_MODULE_ARG := "suspend_mode=3 wow_mode=2 ath6kl_p2p=1 recovery_enable=1"
 
 ## RIL
 BOARD_USES_LEGACY_RIL := true
@@ -121,6 +112,11 @@ BOARD_USE_LEGACY_TOUCHSCREEN := true
 ## Samsung has weird framebuffer
 TARGET_NO_INITLOGO := true
 
+## Charging mode
+BOARD_LPM_BOOT_ARGUMENT_NAME := androidboot.boot_pause
+BOARD_LPM_BOOT_ARGUMENT_VALUE := batt
+BOARD_CHARGER_RES := device/samsung/msm7x27a-common/res/charger
+
 ## Bootanimation
 TARGET_BOOTANIMATION_USE_RGB565 := true
 
@@ -132,7 +128,7 @@ TARGET_PROVIDES_LIBAUDIO := true
 TARGET_RECOVERY_INITRC := device/samsung/msm7x27a-common/recovery/init.rc
 TARGET_RECOVERY_FSTAB := device/samsung/msm7x27a-common/recovery/recovery.fstab
 BOARD_CUSTOM_RECOVERY_KEYMAPPING := ../../device/samsung/msm7x27a-common/recovery/recovery_keys.c
-BOARD_CUSTOM_GRAPHICS := ../../../device/samsung/msm7x27a-common/recovery/graphics.c
+TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
 TARGET_USERIMAGES_USE_EXT4 := true
 BOARD_HAS_SDCARD_INTERNAL := true
 BOARD_HAS_DOWNLOAD_MODE := true

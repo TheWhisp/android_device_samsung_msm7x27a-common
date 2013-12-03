@@ -4,8 +4,6 @@ on early-init
     mount debugfs debugfs /sys/kernel/debug
 
 on init
-    write /proc/sys/kernel/randomize_va_space 1
-
     export EXTERNAL_STORAGE /storage/sdcard0
     export SECONDARY_STORAGE /storage/sdcard1
 
@@ -28,7 +26,7 @@ on emmc-fs
     mount_all /fstab.qcom
 
 on boot
-
+    ## Setup Bluetooth
     chown bluetooth bluetooth /sys/module/bluetooth_power/parameters/power
     chown bluetooth bluetooth /sys/class/rfkill/rfkill0/type
     chown bluetooth bluetooth /sys/class/rfkill/rfkill0/state
@@ -46,15 +44,12 @@ on boot
     chown bluetooth bluetooth /sys/devices/platform/msm_serial_hs.0/clock
     chmod 0660 /sys/devices/platform/msm_serial_hs.0/clock
 
-	## Setup Wi-Fi
+    ## Setup Wi-Fi
     mkdir /data/misc/wifi 0770 wifi wifi
     mkdir /data/misc/wifi/sockets 0770 wifi wifi
     mkdir /data/misc/wifi/wpa_supplicant 0775 wifi wifi
     mkdir /data/misc/dhcp 0770 dhcp dhcp
     chown dhcp dhcp /data/misc/dhcp
-
-    ## Compatibility module needed for ath6kl
-    insmod /system/lib/modules/compat.ko
 
     ## Setup NFC
     chmod 0660 /dev/pn544
@@ -82,6 +77,10 @@ on boot
     chmod 0660 /dev/alps_io
 
     ## Chown polling nodes as needed from UI running on system server
+    chmod 0664 /sys/devices/platform/msm_sdcc.1/polling
+    chmod 0664 /sys/devices/platform/msm_sdcc.2/polling
+    chmod 0664 /sys/devices/platform/msm_sdcc.3/polling
+    chmod 0664 /sys/devices/platform/msm_sdcc.4/polling
     chown system system /sys/devices/platform/msm_sdcc.1/polling
     chown system system /sys/devices/platform/msm_sdcc.2/polling
     chown system system /sys/devices/platform/msm_sdcc.3/polling
@@ -95,7 +94,7 @@ on boot
     chmod 0644 /proc/cmdline
 
 on post-fs-data
-	mkdir /data/misc/bluetooth 0770 bluetooth bluetooth
+    mkdir /data/misc/bluetooth 0770 bluetooth bluetooth
 
     ## Create log system
     mkdir /data/log 0775 system log
@@ -133,42 +132,37 @@ service abtfilt /system/bin/abtfilt -d -z -n -v -s -a -q
     disabled
     oneshot 
 
-service wpa_supplicant /system/bin/wpa_supplicant -Dnl80211 -iwlan0 -W -c/data/misc/wifi/wpa_supplicant.conf
+service p2p_supplicant /system/bin/logwrapper /system/bin/wpa_supplicant \
+    -ip2p0 -Dnl80211 -c/data/misc/wifi/p2p_supplicant.conf -N \
+    -iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf \
+    -e/data/misc/wifi/entropy.bin -puse_p2p_group_interface=1
+    #   we will start as root and wpa_supplicant will switch to user wifi
+    #   after setting up the capabilities required for WEXT
+    #   user wifi
+    #   group wifi inet keystore
     class main
-    group wifi inet
     socket wpa_wlan0 dgram 660 wifi wifi
     disabled
     oneshot
 
-service p2p_supplicant /system/bin/wpa_supplicant \
-		-iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf \
-		-ip2p0 -Dnl80211 -c/data/misc/wifi/p2p_supplicant.conf
+service wpa_supplicant /system/bin/logwrapper /system/bin/wpa_supplicant \
+    -iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf \
+    -e/data/misc/wifi/entropy.bin
+    #   we will start as root and wpa_supplicant will switch to user wifi
+    #   after setting up the capabilities required for WEXT
+    #   user wifi
+    #   group wifi inet keystore
     class main
-    group wifi inet
     socket wpa_wlan0 dgram 660 wifi wifi
     disabled
     oneshot
 
-service hostapd /system/bin/hostapd -dddd /data/misc/wifi/hostapd.conf
-    class main
-    group wifi inet
-    socket hostapd_wlan0 dgram 660 wifi wifi
-    disabled
-    oneshot
-
-service fm_dl /system/bin/sh /system/etc/init.qcom.fm.sh
-    class main
-    user root
-    group system qcom_oncrpc
-    disabled
-    oneshot
-
-service dhcpcd_bnep0 /system/bin/dhcpcd -BKLG
+service dhcpcd_wlan0 /system/bin/dhcpcd -aABDKL
     class main
     disabled
     oneshot
 
-service dhcpcd_wlan0 /system/bin/dhcpcd -BKLG
+service dhcpcd_p2p /system/bin/dhcpcd -aABKL
     class main
     disabled
     oneshot
@@ -178,23 +172,36 @@ service iprenew_wlan0 /system/bin/dhcpcd -n
     disabled
     oneshot
 
-service iprelease_wlan0 /system/bin/dhcpcd -k
-    class late_start
-    disabled
-    oneshot
-
-service dhcpcd_p2p /system/bin/dhcpcd -BKLG
+service iprenew_p2p /system/bin/dhcpcd -n
     class main
     disabled
     oneshot
 
-service iprenew_p2p /system/bin/dhcpcd -n p2p
+service dhcpcd_bnep0 /system/bin/dhcpcd -BKLG
     class main
     disabled
     oneshot
 
+service iprenew_bnep0 /system/bin/dhcpcd -n
+    class main
+    disabled
+    oneshot
 on property:init.svc.wpa_supplicant=stopped
     stop dhcpcd
+
+service hostapd /system/bin/hostapd -dddd /data/hostapd/hostapd.conf
+    class late_start
+    user root
+    group root
+    oneshot
+    disabled
+
+service fm_dl /system/bin/sh /system/etc/init.qcom.fm.sh
+    class main
+    user root
+    group system qcom_oncrpc
+    disabled
+    oneshot
 
 service qmiproxy /system/bin/qmiproxy
     class core
