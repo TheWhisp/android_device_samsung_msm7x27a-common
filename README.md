@@ -5,10 +5,10 @@ Curently supports:
 	1) Galaxy Ace Plus
 	2) Galaxy Mini 2
 	
-mkdir cm-11.0
-cd cm-11.0
-repo init -u git://github.com/TesterTerbon/manifest-trebon.git -b cm-11.0
-repo sync -j16
+         mkdir cm-11.0
+         cd cm-11.0
+         repo init -u git://github.com/TesterTerbon/manifest-trebon.git -b cm-11.0
+         repo sync -j16
 	
 
 
