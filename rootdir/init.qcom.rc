@@ -44,7 +44,7 @@ on boot
     chown bluetooth bluetooth /dev/ttyHS0
     chmod 0660 /dev/ttyHS0
     chown bluetooth bluetooth /sys/devices/platform/msm_serial_hs.0/clock
-    chmod 0660 /sys/devices/platform/msm_serial_hs.0/clock	
+    chmod 0660 /sys/devices/platform/msm_serial_hs.0/clock
 
     ## Setup Wi-Fi
     mkdir /data/misc/wifi 0770 wifi wifi
