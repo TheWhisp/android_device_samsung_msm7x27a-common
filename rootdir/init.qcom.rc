@@ -87,10 +87,6 @@ on boot
     chown system system /sys/devices/platform/msm_sdcc.2/polling
     chown system system /sys/devices/platform/msm_sdcc.3/polling
     chown system system /sys/devices/platform/msm_sdcc.4/polling
-
-    ## For qmuxd socket
-    mkdir /data/radio 0770 radio radio
-    chown radio radio 0770 /data/radio
 	
     ## TelephonyManager.java requires this
     chmod 0644 /proc/cmdline
@@ -190,19 +186,6 @@ service fm_dl /system/bin/sh /system/etc/init.qcom.fm.sh
     disabled
     oneshot
 
-service qmiproxy /system/bin/qmiproxy
-    class core
-    user radio
-    group radio audio bluetooth gps qcom_diag
-
-service qmuxd /system/bin/qmuxd
-    class core
-    user radio
-    group radio audio bluetooth gps qcom_diag
-
-service netmgrd /system/bin/netmgrd
-    class main
-
 service get_macaddrs /system/bin/get_macaddrs
     class main
     user root
@@ -223,3 +206,21 @@ service fuse_sdcard1 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard1
 service fuse_usbdisk /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/usbdisk /storage/usbdisk
     class late_start
     disabled
+
+# Powersave
+on property:sys.perf.profile=0
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor "conservative"
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq "800000"
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq "122880"
+
+# Balanced
+on property:sys.perf.profile=1
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor "interactive"
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq "1008000"
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq "245760"
+
+# Performance
+on property:sys.perf.profile=2
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor "performance"
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq "1056000"
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq "320000"
