@@ -100,4 +100,4 @@
 /dev/oncrpc/3000008c:00050000 0660   system       qcom_oncrpc
 
 # wifi
-/dev/rfkill               0660   root        wifi
+/dev/rfkill               0660   wifi        wifi
