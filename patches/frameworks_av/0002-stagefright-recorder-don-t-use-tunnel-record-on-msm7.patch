@@ -1,0 +1,46 @@
+From 8d69d9d3d7b55c8a87e0282ae93458961d13f32c Mon Sep 17 00:00:00 2001
+From: TheWhisp <daavis.90@gmail.com>
+Date: Sat, 14 Dec 2013 23:34:51 +0200
+Subject: [PATCH] stagefright recorder: don't use tunnel record on msm7x27a
+
+Change-Id: I07cc5df16f274c29258daac1bda0fa27e869039b
+---
+ media/libmediaplayerservice/Android.mk              | 1 +
+ media/libmediaplayerservice/StagefrightRecorder.cpp | 2 ++
+ 2 files changed, 3 insertions(+)
+
+diff --git a/media/libmediaplayerservice/Android.mk b/media/libmediaplayerservice/Android.mk
+index 1c8c32d..e702a7b 100644
+--- a/media/libmediaplayerservice/Android.mk
++++ b/media/libmediaplayerservice/Android.mk
+@@ -79,6 +79,7 @@ endif #TARGET_ENABLE_QC_AV_ENHANCEMENTS
+ 
+ ifeq ($(TARGET_BOARD_PLATFORM),msm7x27a)
+     LOCAL_CFLAGS += -DUSE_SUBMIT_ONE_INPUT_BUFFER
++    LOCAL_CFLAGS += -DDONT_USE_TUNNEL_RECORDING
+ endif
+ 
+ include $(BUILD_SHARED_LIBRARY)
+diff --git a/media/libmediaplayerservice/StagefrightRecorder.cpp b/media/libmediaplayerservice/StagefrightRecorder.cpp
+index a064448..fbb88a5 100644
+--- a/media/libmediaplayerservice/StagefrightRecorder.cpp
++++ b/media/libmediaplayerservice/StagefrightRecorder.cpp
+@@ -878,6 +878,7 @@ status_t StagefrightRecorder::start() {
+ 
+ sp<MediaSource> StagefrightRecorder::createAudioSource() {
+ #ifdef QCOM_HARDWARE
++#ifndef DONT_USE_TUNNEL_RECORDING
+     bool tunneledSource = false;
+     const char *tunnelMime;
+     {
+@@ -925,6 +926,7 @@ sp<MediaSource> StagefrightRecorder::createAudioSource() {
+         return audioSource->initCheck( ) == OK ? audioSource : NULL;
+     }
+ #endif
++#endif
+     sp<AudioSource> audioSource =
+         new AudioSource(
+                 mAudioSource,
+-- 
+1.8.3.2
+
