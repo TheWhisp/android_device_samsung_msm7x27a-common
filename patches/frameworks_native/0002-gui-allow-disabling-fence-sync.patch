@@ -1,0 +1,28 @@
+From f9027c8abf4210b4eb2176cddbffad7ab6424bd1 Mon Sep 17 00:00:00 2001
+From: TheWhisp <daavis.90@gmail.com>
+Date: Sun, 15 Dec 2013 18:33:40 +0200
+Subject: [PATCH 1/2] gui: allow disabling fence sync
+
+Change-Id: I049c4a43d73fbbec482909219adc9738c97cab82
+---
+ libs/gui/Android.mk | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/libs/gui/Android.mk b/libs/gui/Android.mk
+index 3151b38..1ef60e0 100644
+--- a/libs/gui/Android.mk
++++ b/libs/gui/Android.mk
+@@ -48,7 +48,9 @@ endif
+ ifeq ($(TARGET_BOARD_PLATFORM), tegra3)
+ 	LOCAL_CFLAGS += -DDONT_USE_FENCE_SYNC
+ endif
+-
++ifeq ($(TARGET_DOESNT_USE_FENCE_SYNC), true)
++	LOCAL_CFLAGS += -DDONT_USE_FENCE_SYNC
++endif
+ ifeq ($(SENSORS_NEED_SETRATE_ON_ENABLE), true)
+         LOCAL_CFLAGS += -DSENSORS_SETRATE_ON_ENABLE
+ endif
+-- 
+1.8.3.2
+

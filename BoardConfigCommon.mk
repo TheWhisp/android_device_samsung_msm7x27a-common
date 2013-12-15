@@ -53,8 +53,10 @@ BOARD_USES_QCOM_HARDWARE := true
 BOARD_USE_MHEAP_SCREENSHOT := true
 COMMON_GLOBAL_CFLAGS += -DQCOM_HARDWARE
 
-## EGL
+## EGL, graphics
 USE_OPENGL_RENDERER := true
+TARGET_DOESNT_USE_FENCE_SYNC := true
+BOARD_ADRENO_DECIDE_TEXTURE_TARGET := true
 BOARD_EGL_CFG := device/samsung/msm7x27a-common/prebuilt/lib/egl/egl.cfg
 
 ## Qualcomm BSP
