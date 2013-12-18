@@ -1,0 +1,30 @@
+From 9bc136bc856aa08be18052be93d87934d937be3e Mon Sep 17 00:00:00 2001
+From: Mingming Yin <mingming@codeaurora.org>
+Date: Thu, 27 Dec 2012 17:40:25 -0800
+Subject: [PATCH] audio: Add support for FM feature
+
+-Define audio stream for FM
+-Define audio source for FM RX and FM RX A2DP
+
+Change-Id: If24e4c32916f6614e3367b4c9f2cd828562e0347
+---
+ include/system/audio.h | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/include/system/audio.h b/include/system/audio.h
+index 0b9f70b..4f18523 100644
+--- a/include/system/audio.h
++++ b/include/system/audio.h
+@@ -59,6 +59,9 @@
+ #ifdef QCOM_HARDWARE
+     AUDIO_STREAM_INCALL_MUSIC     = 10,
+ #endif
++#ifdef QCOM_FM_ENABLED
++    AUDIO_STREAM_FM               = 11,
++#endif
+ 
+     AUDIO_STREAM_CNT,
+     AUDIO_STREAM_MAX              = AUDIO_STREAM_CNT - 1,
+-- 
+1.8.5.1
+
