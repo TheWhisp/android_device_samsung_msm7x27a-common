@@ -39,8 +39,8 @@ TARGET_GLOBAL_CFLAGS += -mtune=cortex-a5 -mfpu=neon -mfloat-abi=softfp
 TARGET_GLOBAL_CPPFLAGS += -mtune=cortex-a5 -mfpu=neon -mfloat-abi=softfp
 
 ## FM Radio
-#BOARD_HAVE_QCOM_FM := true
-#COMMON_GLOBAL_CFLAGS += -DQCOM_FM_ENABLED
+BOARD_HAVE_QCOM_FM := true
+COMMON_GLOBAL_CFLAGS += -DQCOM_FM_ENABLED
 
 ## ION
 TARGET_USES_ION := true
