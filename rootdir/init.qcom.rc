@@ -28,6 +28,8 @@ on fs
     mount_all /fstab.qcom
 
 on boot
+    setenforce 0
+
     ## Setup Bluetooth
     chown bluetooth bluetooth /sys/module/bluetooth_power/parameters/power
     chown bluetooth bluetooth /sys/class/rfkill/rfkill0/type
