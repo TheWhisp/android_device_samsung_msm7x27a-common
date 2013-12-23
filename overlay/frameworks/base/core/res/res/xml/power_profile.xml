@@ -1,41 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+**
+** Copyright 2009, The Android Open Source Project
+**
+** Licensed under the Apache License, Version 2.0 (the "License")
+** you may not use this file except in compliance with the License.
+** You may obtain a copy of the License at
+**
+**     http://www.apache.org/licenses/LICENSE-2.0
+**
+** Unless required by applicable law or agreed to in writing, software
+** distributed under the License is distributed on an "AS IS" BASIS,
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+** See the License for the specific language governing permissions and
+** limitations under the License.
+*/
+-->
+
 <device name="Android">
-    <item name="none">0</item>
-    <item name="screen.on">22</item>
-    <item name="bluetooth.active">120</item>
-    <item name="bluetooth.on">0.34</item>
-    <item name="bluetooth.at">35690</item>
-    <item name="screen.full">127</item>
-    <item name="wifi.on">4</item>
-    <item name="wifi.active">120</item>
-    <item name="wifi.scan">220</item>
-    <item name="dsp.audio">38</item>
-    <item name="dsp.video">55</item>
-    <item name="gps.on">48</item>
-    <item name="radio.active">220</item>
-    <item name="radio.scanning">90</item>
-    <array name="radio.on">
-        <value>3</value>
-        <value>3</value>
-    </array>
-    <array name="cpu.speeds">
-        <value>122880</value>
-        <value>245760</value>
-        <value>320000</value>
-        <value>480000</value>
-        <value>600000</value>
-        <value>800000</value>
-		<value>1008000</value>
-    </array>
-    <item name="cpu.idle">1.0</item>
-    <item name="cpu.awake">20</item>
-    <array name="cpu.active">
-        <value>51</value>
-        <value>58</value>
-        <value>63</value>
-        <value>70</value>
-        <value>80</value>
-        <value>105</value>
-    </array>
-    <item name="battery.capacity">1300</item>
+  <item name="none">0</item>
+  <item name="screen.on">22</item>
+  <item name="bluetooth.active">103</item>
+  <item name="bluetooth.on">0.8</item>
+  <item name="bluetooth.at">35690</item>
+  <item name="screen.full">127</item>
+  <item name="wifi.on">4</item>
+  <item name="wifi.active">120</item>
+  <item name="wifi.scan">220</item>
+  <item name="dsp.audio">38</item>
+  <item name="dsp.video">55</item>
+  <item name="radio.active">220</item>
+  <item name="gps.on">70</item>
+  <array name="radio.on">
+      <value>3</value>
+      <value>3</value>
+  </array>
+  <array name="cpu.speeds">
+      <value>122880</value>
+      <value>245760</value>
+      <value>320000</value>
+      <value>480000</value>
+      <value>600000</value>
+      <value>800000</value>
+      <value>1008000</value>
+      <value>1056000</value>
+      <value>1113600</value>
+      <value>1152000</value>
+      <value>1190400</value>
+      <value>1228800</value>
+      <value>1267200</value>
+  </array>
+  <item name="cpu.idle">1.0</item>
+  <array name="cpu.active">
+      <value>51</value>
+      <value>58</value>
+      <value>63</value>
+      <value>70</value>
+      <value>80</value>
+      <value>105</value>
+      <value>120</value>
+      <value>125</value>
+      <value>129</value>
+      <value>132</value>
+      <value>135</value>
+      <value>138</value>
+      <value>142</value>
+  </array>
+  <item name="battery.capacity">1300</item>
 </device>
