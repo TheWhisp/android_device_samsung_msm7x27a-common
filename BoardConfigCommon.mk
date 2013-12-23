@@ -43,11 +43,11 @@ ARCH_ARM_HAVE_TLS_REGISTER := true
 TARGET_USE_SPARROW_BIONIC_OPTIMIZATION := true
 
 ## Camera
-#BOARD_USES_LEGACY_OVERLAY := true
-#BOARD_NEEDS_MEMORYHEAPPMEM := true
-#ARGET_DISABLE_ARM_PIE := true
-#COMMON_GLOBAL_CFLAGS += -DBINDER_COMPAT 
-#COMMON_GLOBAL_CFLAGS += -DSAMSUNG_CAMERA_QCOM
+BOARD_USES_LEGACY_OVERLAY := true
+BOARD_NEEDS_MEMORYHEAPPMEM := true
+TARGET_DISABLE_ARM_PIE := true
+COMMON_GLOBAL_CFLAGS += -DBINDER_COMPAT
+COMMON_GLOBAL_CFLAGS += -DSAMSUNG_CAMERA_QCOM
 
 ## FM Radio
 BOARD_HAVE_QCOM_FM := true
@@ -84,19 +84,16 @@ BOARD_WPA_SUPPLICANT_DRIVER := NL80211
 BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_ath6kl
 BOARD_HOSTAPD_DRIVER := NL80211
 BOARD_HOSTAPD_PRIVATE_LIB := lib_driver_cmd_ath6kl
-WIFI_EXT_MODULE_NAME := cfg80211
-WIFI_EXT_MODULE_PATH := /system/lib/modules/cfg80211.ko
-WIFI_AP_DRIVER_MODULE_NAME := ath6kl_sdio
-WIFI_AP_DRIVER_MODULE_PATH := /system/lib/modules/ath6kl_sdio.ko
-WIFI_AP_DRIVER_MODULE_ARG := "suspend_mode=3 wow_mode=2 ath6kl_p2p=1 recovery_enable=1"
-WIFI_DRIVER_MODULE_NAME := ath6kl_sdio
-WIFI_DRIVER_MODULE_PATH := /system/lib/modules/ath6kl_sdio.ko
+WIFI_EXT_MODULE_NAME := "cfg80211"
+WIFI_EXT_MODULE_PATH := "/system/lib/modules/cfg80211.ko"
+WIFI_DRIVER_MODULE_AP_ARG := "suspend_mode=3 wow_mode=2 ath6kl_p2p=1 recovery_enable=1"
+WIFI_DRIVER_MODULE_NAME := "ath6kl_sdio"
+WIFI_DRIVER_MODULE_PATH := "/system/lib/modules/ath6kl_sdio.ko"
 WIFI_DRIVER_MODULE_ARG := "suspend_mode=3 wow_mode=2 ath6kl_p2p=1 recovery_enable=1"
 
 ## RIL
 BOARD_USES_LEGACY_RIL := true
-BOARD_USES_LIBSECRIL_STUB := true
-BOARD_MOBILEDATA_INTERFACE_NAME := "pdp0"
+BOARD_RIL_CLASS := ../../../device/samsung/msm7x27a-common/ril/
 
 ## Vold
 BOARD_VOLD_EMMC_SHARES_DEV_MAJOR := true
@@ -106,9 +103,6 @@ BOARD_VOLD_MAX_PARTITIONS := 24
 TARGET_USE_CUSTOM_LUN_FILE_PATH := /sys/devices/platform/msm_hsusb/gadget/lun%d/file
 BOARD_UMS_LUNFILE := "/sys/devices/platform/msm_hsusb/gadget/lun%d/file"
 
-## Legacy touchscreen support
-BOARD_USE_LEGACY_TOUCHSCREEN := true
-
 ## Samsung has weird framebuffer
 TARGET_NO_INITLOGO := true
 
@@ -116,9 +110,6 @@ TARGET_NO_INITLOGO := true
 BOARD_LPM_BOOT_ARGUMENT_NAME := androidboot.boot_pause
 BOARD_LPM_BOOT_ARGUMENT_VALUE := batt
 BOARD_CHARGER_RES := device/samsung/msm7x27a-common/res/charger
-
-## Bootanimation
-TARGET_BOOTANIMATION_USE_RGB565 := true
 
 ## Use device specific modules
 TARGET_PROVIDES_LIBLIGHTS := true
