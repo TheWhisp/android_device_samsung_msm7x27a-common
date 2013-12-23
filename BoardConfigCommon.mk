@@ -108,9 +108,6 @@ BOARD_VOLD_MAX_PARTITIONS := 24
 TARGET_USE_CUSTOM_LUN_FILE_PATH := /sys/devices/platform/msm_hsusb/gadget/lun%d/file
 BOARD_UMS_LUNFILE := "/sys/devices/platform/msm_hsusb/gadget/lun%d/file"
 
-## Legacy touchscreen support
-BOARD_USE_LEGACY_TOUCHSCREEN := true
-
 ## Samsung has weird framebuffer
 TARGET_NO_INITLOGO := true
 
