@@ -1,13 +1,29 @@
-From d9586dc8d172fe9b7a3c812acc53d4a406764092 Mon Sep 17 00:00:00 2001
+From 2eed61e6919ee7757ba3f20cf241c9e7bb01c8d5 Mon Sep 17 00:00:00 2001
 From: TheWhisp <daavis.90@gmail.com>
-Date: Tue, 3 Dec 2013 17:36:20 +0200
-Subject: [PATCH] init: detect lpm bootmode
+Date: Thu, 26 Dec 2013 23:08:39 +0200
+Subject: [PATCH] init: detect charger mode
 
-Change-Id: Id44663d6293543f585a041a903ada67ddfade275
+Change-Id: Ie2648bfc86c0c79320a3fd038c4c8d6836d003c1
 ---
- init/init.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ init/Android.mk |  4 +++-
+ init/init.c     | 13 ++++++++++++-
+ 2 files changed, 15 insertions(+), 2 deletions(-)
 
+diff --git a/init/Android.mk b/init/Android.mk
+index 15fc0ec..a41479a 100644
+--- a/init/Android.mk
++++ b/init/Android.mk
+@@ -34,7 +34,9 @@ ifneq ($(TARGET_NR_SVC_SUPP_GIDS),)
+ LOCAL_CFLAGS += -DNR_SVC_SUPP_GIDS=$(TARGET_NR_SVC_SUPP_GIDS)
+ endif
+ 
+-SYSTEM_CORE_INIT_DEFINES := BOARD_CHARGING_MODE_BOOTING_LPM
++SYSTEM_CORE_INIT_DEFINES := BOARD_CHARGING_MODE_BOOTING_LPM \
++    BOARD_LPM_BOOT_ARGUMENT_NAME \
++    BOARD_LPM_BOOT_ARGUMENT_VALUE
+ 
+ $(foreach system_core_init_define,$(SYSTEM_CORE_INIT_DEFINES), \
+   $(if $($(system_core_init_define)), \
 diff --git a/init/init.c b/init/init.c
 index fe7dbba..f5eb288 100755
 --- a/init/init.c
