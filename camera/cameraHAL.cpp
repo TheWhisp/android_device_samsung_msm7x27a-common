@@ -21,7 +21,7 @@
 
 #define LOG_TAG "CameraHAL"
 
-#define GRALLOC_USAGE_PMEM_PRIVATE_ADSP GRALLOC_USAGE_PRIVATE_0
+//#define GRALLOC_USAGE_PMEM_PRIVATE_ADSP GRALLOC_USAGE_PRIVATE_0
 
 #include <camera/CameraParameters.h>
 #include <hardware/camera.h>
@@ -280,7 +280,7 @@ int camera_set_preview_window(struct camera_device * device, struct preview_stre
 
     ALOGV("%s: preview format %s", __FUNCTION__, str_preview_format);
 
-    dev->window->set_usage(dev->window, GRALLOC_USAGE_PMEM_PRIVATE_ADSP | GRALLOC_USAGE_SW_READ_OFTEN);
+    dev->window->set_usage(dev->window, GRALLOC_USAGE_PRIVATE_SYSTEM_HEAP | GRALLOC_USAGE_SW_READ_OFTEN);
 
     if (dev->window->set_buffers_geometry(dev->window, dev->preview_width,
                                      dev->preview_height, HAL_PIXEL_FORMAT_YCrCb_420_SP)) {
