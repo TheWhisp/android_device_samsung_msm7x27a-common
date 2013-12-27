@@ -1,0 +1,44 @@
+From 4d9cbaf03c375bb7228503dbfa5e4514640863b0 Mon Sep 17 00:00:00 2001
+From: TheWhisp <daavis.90@gmail.com>
+Date: Fri, 27 Dec 2013 01:48:58 +0200
+Subject: [PATCH] hwcomposer: add compatibility for display-legacy
+
+Change-Id: I3c736e3107945e6b12a6f078fe81b576ddc7dec4
+---
+ include/hardware/hwcomposer_defs.h | 3 +++
+ include/hardware/hwcomposer_v0.h   | 5 +++++
+ 2 files changed, 8 insertions(+)
+
+diff --git a/include/hardware/hwcomposer_defs.h b/include/hardware/hwcomposer_defs.h
+index b23f08a..8ec048b 100644
+--- a/include/hardware/hwcomposer_defs.h
++++ b/include/hardware/hwcomposer_defs.h
+@@ -97,6 +97,9 @@ enum {
+     /* this layer holds the result of compositing the HWC_FRAMEBUFFER layers.
+      * Added in HWC_DEVICE_API_VERSION_1_1. */
+     HWC_FRAMEBUFFER_TARGET = 3,
++
++    /* this layer will be handled in the HWC, using a blit engine */
++    HWC_BLIT = 4,
+ };
+ 
+ /*
+diff --git a/include/hardware/hwcomposer_v0.h b/include/hardware/hwcomposer_v0.h
+index 473819b..6e9308d 100644
+--- a/include/hardware/hwcomposer_v0.h
++++ b/include/hardware/hwcomposer_v0.h
+@@ -97,6 +97,11 @@ typedef struct hwc_layer {
+              * not changed. */
+             buffer_handle_t handle;
+ 
++#ifdef QCOM_HARDWARE
++            /* source transform of the buffer */
++            uint32_t sourceTransform;
++#endif
++
+             /* transformation to apply to the buffer during composition */
+             uint32_t transform;
+ 
+-- 
+1.8.3.2
+
