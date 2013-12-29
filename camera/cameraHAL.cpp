@@ -49,25 +49,25 @@ static int camera_get_number_of_cameras(void);
 static int camera_get_camera_info(int camera_id, struct camera_info *info);
 
 static struct hw_module_methods_t camera_module_methods = {
-    open: camera_device_open
+    .open = camera_device_open
 };
 
 static hw_module_t camera_common  = {
-    tag: HARDWARE_MODULE_TAG,
-    version_major: 1,
-    version_minor: 1,
-    id: CAMERA_HARDWARE_MODULE_ID,
-    name: "Jellybean Camera Hal",
-    author: "Raviprasad V Mummidi",
-    methods: &camera_module_methods,
-    dso: NULL,
-    reserved: {0},
+    .tag = HARDWARE_MODULE_TAG,
+    .version_major = 1,
+    .version_minor = 1,
+    .id = CAMERA_HARDWARE_MODULE_ID,
+    .name = "Jellybean Camera Hal",
+    .author = "Raviprasad V Mummidi",
+    .methods = &camera_module_methods,
+    .dso = NULL,
+    .reserved = {0},
 };
 
 camera_module_t HAL_MODULE_INFO_SYM = {
-    common: camera_common,
-    get_number_of_cameras: camera_get_number_of_cameras,
-    get_camera_info: camera_get_camera_info,
+    .common = camera_common,
+    .get_number_of_cameras = camera_get_number_of_cameras,
+    .get_camera_info = camera_get_camera_info,
 };
 
 typedef struct priv_camera_device {
