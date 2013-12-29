@@ -26,7 +26,7 @@ index c819046..d4f45a4 100644
          endif
          ifeq ($(call is-chipset-in-board-platform,msm8974),true)
 -            LOCAL_SRC_FILES += TunnelPlayer.cpp
-+            LOCAL_SRC_FILES += TunnsseaelPlayer.cpp
++            LOCAL_SRC_FILES += TunnelPlayer.cpp
              LOCAL_CFLAGS += -DUSE_TUNNEL_MODE
          endif
          ifeq ($(NO_TUNNEL_MODE_FOR_MULTICHANNEL),true)
