@@ -1,0 +1,26 @@
+From 8b02dd309307531fe9c080dccfe95e0239f3666c Mon Sep 17 00:00:00 2001
+From: TheWhisp <daavis.90@gmail.com>
+Date: Sun, 29 Dec 2013 12:33:07 +0200
+Subject: [PATCH 1/2] stagefrightrecorder: allow not to use tunnel source
+
+Change-Id: I8cb88b8c51e9cbf0eae7b40164a53714a55ec292
+---
+ media/libmediaplayerservice/StagefrightRecorder.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/media/libmediaplayerservice/StagefrightRecorder.cpp b/media/libmediaplayerservice/StagefrightRecorder.cpp
+index 63ffa88..023b2cd 100644
+--- a/media/libmediaplayerservice/StagefrightRecorder.cpp
++++ b/media/libmediaplayerservice/StagefrightRecorder.cpp
+@@ -877,7 +877,7 @@ status_t StagefrightRecorder::start() {
+ }
+ 
+ sp<MediaSource> StagefrightRecorder::createAudioSource() {
+-#ifdef QCOM_DIRECTTRACK
++#if defined(QCOM_DIRECTTRACK) && !defined(NO_TUNNELED_SOURCE)
+     bool tunneledSource = false;
+     const char *tunnelMime;
+     {
+-- 
+1.8.3.2
+

@@ -1,0 +1,51 @@
+From 39f5659f987d2cb26122489650cec000da281417 Mon Sep 17 00:00:00 2001
+From: TheWhisp <daavis.90@gmail.com>
+Date: Sun, 29 Dec 2013 12:50:10 +0200
+Subject: [PATCH] allow building LPA for legacy msm7x27a audio
+
+Change-Id: I099364769d1e6bb16005ce99b21abf1a32561aab
+---
+ media/libmedia/Android.mk       | 2 +-
+ media/libstagefright/Android.mk | 6 +++++-
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/media/libmedia/Android.mk b/media/libmedia/Android.mk
+index dd12df0..5f76b23 100644
+--- a/media/libmedia/Android.mk
++++ b/media/libmedia/Android.mk
+@@ -79,7 +79,7 @@ LOCAL_CFLAGS += -DUSE_SAMSUNG_SEPARATEDSTREAM
+ endif
+ 
+ ifeq ($(BOARD_USES_QCOM_HARDWARE),true)
+-    ifneq ($(filter caf bfam,$(TARGET_QCOM_AUDIO_VARIANT)),)
++    ifneq ($(filter caf bfam legacy,$(TARGET_QCOM_AUDIO_VARIANT)),)
+         ifeq ($(BOARD_USES_LEGACY_ALSA_AUDIO),true)
+             LOCAL_SRC_FILES += IDirectTrack.cpp IDirectTrackClient.cpp
+         endif
+diff --git a/media/libstagefright/Android.mk b/media/libstagefright/Android.mk
+index 33af977..ae30bd7 100644
+--- a/media/libstagefright/Android.mk
++++ b/media/libstagefright/Android.mk
+@@ -78,7 +78,7 @@ else
+ LOCAL_C_INCLUDES += $(TOP)/frameworks/native/include/media/openmax
+ endif
+ 
+-ifneq ($(filter caf bfam,$(TARGET_QCOM_AUDIO_VARIANT)),)
++ifneq ($(filter caf bfam legacy,$(TARGET_QCOM_AUDIO_VARIANT)),)
+     ifeq ($(BOARD_USES_LEGACY_ALSA_AUDIO),true)
+         ifeq ($(call is-chipset-in-board-platform,msm8960),true)
+             LOCAL_SRC_FILES += LPAPlayerALSA.cpp TunnelPlayer.cpp
+@@ -95,6 +95,10 @@ ifneq ($(filter caf bfam,$(TARGET_QCOM_AUDIO_VARIANT)),)
+             LOCAL_SRC_FILES += LPAPlayer.cpp
+             LOCAL_CFLAGS += -DLEGACY_LPA -DUSE_LPA_MODE
+         endif
++        ifeq ($(call is-chipset-in-board-platform,msm7x27a),true)
++            LOCAL_SRC_FILES += LPAPlayer.cpp
++            LOCAL_CFLAGS += -DLEGACY_LPA -DUSE_LPA_MODE
++        endif
+         ifeq ($(NO_TUNNEL_MODE_FOR_MULTICHANNEL),true)
+             LOCAL_CFLAGS += -DNO_TUNNEL_MODE_FOR_MULTICHANNEL
+         endif
+-- 
+1.8.3.2
+
