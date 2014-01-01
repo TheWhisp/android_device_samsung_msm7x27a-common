@@ -28,6 +28,8 @@ on init
 on fs
     ## Mount partitions
     mount_all /fstab.qcom
+    ## zRam
+    swapon_all /fstab.qcom
 
 on boot
     setenforce 0
@@ -94,6 +96,10 @@ on boot
 	
     ## TelephonyManager.java requires this
     chmod 0644 /proc/cmdline
+
+    ## zRam
+    write /proc/sys/vm/page-cluster 0
+    write /proc/sys/vm/swappiness 70
 
 on post-fs-data
     mkdir /data/misc/bluetooth 0770 bluetooth bluetooth
