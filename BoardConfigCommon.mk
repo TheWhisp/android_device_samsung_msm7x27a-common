@@ -91,7 +91,6 @@ TARGET_FORCE_CPU_UPLOAD := true
 
 ## Bluetooth
 BOARD_HAVE_BLUETOOTH := true
-BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := device/samsung/msm7x27a-common/bluetooth
 
 ## Wi-Fi
 BOARD_WLAN_DEVICE := ath6kl
