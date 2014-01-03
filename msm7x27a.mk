@@ -142,7 +142,7 @@ PRODUCT_COPY_FILES += \
 ## Properties
 PRODUCT_PROPERTY_OVERRIDES += \
     rild.libpath=/system/lib/libsec-ril.so \
-    rild.libargs=-d /dev/smd0 \
+    rild.libargs=-d/dev/smd0 \
     ro.telephony.ril_class=SamsungRIL \
     ro.telephony.ril.v3=datacall,icccardstatus,facilitylock \
     ro.telephony.call_ring.multiple=false
@@ -166,7 +166,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.sys.force_highendgfx=0
 
 PRODUCT_PROPERTY_OVERRIDES += \
-    dalvik.vm.dexopt-data-only=1
+    dalvik.vm.dexopt-data-only=1 \
     dalvik.vm.jit.codecachesize=0 \
     ro.config.low_ram=true \
     ro.zram.default=18
