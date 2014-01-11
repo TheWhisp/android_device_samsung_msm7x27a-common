@@ -32,11 +32,6 @@ on fs
     ## zRam
     swapon_all /fstab.qcom
 
-    ## Kernel Samepage Merging (KSM)
-    write /sys/kernel/mm/ksm/sleep_millisecs 4000
-    write /sys/kernel/mm/ksm/pages_to_scan 256
-    write /sys/kernel/mm/ksm/run 1
-
 on boot
     setenforce 0
 
