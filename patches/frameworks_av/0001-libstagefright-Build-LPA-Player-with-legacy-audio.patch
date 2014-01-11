@@ -1,0 +1,26 @@
+From 60cfa0b23c27ef878b78548093cd671aeecd2d58 Mon Sep 17 00:00:00 2001
+From: Giovanni Santini <giovannisantini93@yahoo.it>
+Date: Sat, 11 Jan 2014 17:16:25 +0100
+Subject: [PATCH] [PATCH] libstagefright: Build LPA Player with legacy audio
+
+Change-Id: I9466b34399118ad2329ba5768fcc8baebe74fbc5
+---
+ media/libstagefright/Android.mk | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/media/libstagefright/Android.mk b/media/libstagefright/Android.mk
+index 1c7d480..54e9de4 100755
+--- a/media/libstagefright/Android.mk
++++ b/media/libstagefright/Android.mk
+@@ -104,7 +104,7 @@ LOCAL_C_INCLUDES += \
+         $(TOP)/hardware/qcom/media/mm-core/inc
+ endif
+ 
+-ifeq ($(TARGET_QCOM_AUDIO_VARIANT),caf)
++ifneq ($(filter caf legacy,$(TARGET_QCOM_AUDIO_VARIANT)),)
+     ifeq ($(call is-board-platform-in-list,msm8660 msm7x27a msm7x30),true)
+         LOCAL_SRC_FILES += LPAPlayer.cpp
+     else
+-- 
+1.8.5.2
+
