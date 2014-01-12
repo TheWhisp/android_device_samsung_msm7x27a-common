@@ -167,9 +167,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 PRODUCT_PROPERTY_OVERRIDES += \
     dalvik.vm.dexopt-data-only=1 \
-    dalvik.vm.jit.codecachesize=0 \
-    ro.config.low_ram=true \
-    ro.zram.default=18
+    dalvik.vm.jit.codecachesize=1 \
+    ro.config.low_ram=true
 
 PRODUCT_PROPERTY_OVERRIDES += \
     lpa.decode=true \
@@ -184,7 +183,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 PRODUCT_PROPERTY_OVERRIDES += \
     persist.sys.usb.config=mtp,adb \
-    ro.vold.umsdirtyratio=50
+    ro.vold.umsdirtyratio=50 \
+    persist.sys.vold.switchablepair=sdcard0,sdcard1
 
 PRODUCT_PROPERTY_OVERRIDES += \
     persist.webview.provider=classic
