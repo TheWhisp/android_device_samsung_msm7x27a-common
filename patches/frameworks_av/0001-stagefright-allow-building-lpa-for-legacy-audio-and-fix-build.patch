@@ -1,0 +1,38 @@
+From e062c16408f0ef2b7fa183ed2e15a1ce9a47bcf5 Mon Sep 17 00:00:00 2001
+From: Giovanni Santini <giovannisantini93@yahoo.it>
+Date: Fri, 17 Jan 2014 07:32:35 +0100
+Subject: [PATCH] stagefright: allow building lpa for legacy audio and fix build
+
+Change-Id: I598b7d774007ed9b56cd01469f0819c7d885d5ec
+---
+ media/libstagefright/Android.mk | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/media/libstagefright/Android.mk b/media/libstagefright/Android.mk
+index 1c7d480..be03ac6 100755
+--- a/media/libstagefright/Android.mk
++++ b/media/libstagefright/Android.mk
+@@ -95,16 +95,17 @@ LOCAL_SRC_FILES += \
+         ExtendedExtractor.cpp             \
+         QCUtilityClass.cpp
+ 
+-ifeq ($(TARGET_QCOM_MEDIA_VARIANT),caf)
++ifneq ($(TARGET_QCOM_MEDIA_VARIANT),)
+ LOCAL_C_INCLUDES += \
+-        $(TOP)/hardware/qcom/media-caf/mm-core/inc
++        $(TOP)/hardware/qcom/display-$(TARGET_QCOM_MEDIA_VARIANT)/libgralloc \
++        $(TOP)/hardware/qcom/media-$(TARGET_QCOM_MEDIA_VARIANT)/mm-core/inc
+ else
+ LOCAL_C_INCLUDES += \
+         $(TOP)/hardware/qcom/display-legacy/libgralloc \
+         $(TOP)/hardware/qcom/media/mm-core/inc
+ endif
+ 
+-ifeq ($(TARGET_QCOM_AUDIO_VARIANT),caf)
++ifneq ($(filter caf legacy,$(TARGET_QCOM_AUDIO_VARIANT)),)
+     ifeq ($(call is-board-platform-in-list,msm8660 msm7x27a msm7x30),true)
+         LOCAL_SRC_FILES += LPAPlayer.cpp
+     else
+-- 
+1.8.5.3
+
