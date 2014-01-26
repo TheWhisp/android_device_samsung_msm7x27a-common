@@ -47,7 +47,8 @@ PRODUCT_PACKAGES += \
     camera.msm7x27a \
     lights.msm7x27a \
     gps.msm7x27a \
-    power.msm7x27a
+    power.msm7x27a \
+    libhealthd.msm7x27a
 
 ## FM radio
 PRODUCT_PACKAGES += \
