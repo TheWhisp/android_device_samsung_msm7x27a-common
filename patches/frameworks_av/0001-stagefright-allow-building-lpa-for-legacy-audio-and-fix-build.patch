@@ -20,7 +20,6 @@ index 1c7d480..be03ac6 100755
 +ifneq ($(TARGET_QCOM_MEDIA_VARIANT),)
  LOCAL_C_INCLUDES += \
 -        $(TOP)/hardware/qcom/media-caf/mm-core/inc
-+        $(TOP)/hardware/qcom/display-$(TARGET_QCOM_MEDIA_VARIANT)/libgralloc \
 +        $(TOP)/hardware/qcom/media-$(TARGET_QCOM_MEDIA_VARIANT)/mm-core/inc
  else
  LOCAL_C_INCLUDES += \
