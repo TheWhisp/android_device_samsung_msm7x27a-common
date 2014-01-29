@@ -24,7 +24,8 @@
                          ExportVideoProfile)>
   <!ELEMENT CamcorderProfiles (EncoderProfile+, ImageEncoding+, ImageDecoding, Camera)>
   <!ELEMENT EncoderProfile (Video, Audio)>
-  <!ATTLIST EncoderProfile quality (timelapsehigh|timelapselow|qcif|high|low) #REQUIRED>
+  <!-- ATTLIST EncoderProfile quality (timelapse480p|480p|timelapsehigh|timelapselow|qcif|high|low) #REQUIRED -->
+  <!ATTLIST EncoderProfile quality (timelapse480p|480p) #REQUIRED>
   <!ATTLIST EncoderProfile fileFormat (mp4|3gp) #REQUIRED>
   <!ATTLIST EncoderProfile duration (30|60) #REQUIRED>
   <!ELEMENT Video EMPTY>
@@ -39,7 +40,7 @@
   <!ATTLIST Audio sampleRate CDATA #REQUIRED>
   <!ATTLIST Audio channels (1|2) #REQUIRED>
   <!ELEMENT ImageEncoding EMPTY>
-  <!ATTLIST ImageEncoding quality (90|80|70|60|50|40) #REQUIRED>
+  <!ATTLIST ImageEncoding quality (100|90|80|70|60|50|40) #REQUIRED>
   <!ELEMENT ImageDecoding EMPTY>
   <!ATTLIST ImageDecoding memCap CDATA #REQUIRED>
   <!ELEMENT Camera EMPTY>
@@ -91,7 +92,33 @@
     <!-- Each camcorder profile defines a set of predefined configuration parameters -->
     <!-- Back Camera -->
     <CamcorderProfiles cameraId="0">
+    
+    
+    <!-- EncoderProfile quality="480p" fileFormat="mp4" duration="30">
+        <Video codec="h264"
+            bitRate="2000000"
+            width="640"
+            height="480"
+            frameRate="31" />
+        <Audio codec="aac"
+            bitRate="96000"
+            sampleRate="16000"
+            channels="1" />
+    </EncoderProfile -->
 
+    <!-- HD -->
+    <EncoderProfile quality="480p" fileFormat="mp4" duration="30">
+        <Video codec="h264"
+            bitRate="2000000"
+            width="640"
+            height="480"
+            frameRate="31" />
+        <Audio codec="aac"
+            bitRate="131100"
+            sampleRate="44100"
+            channels="1" />
+    </EncoderProfile>
+    
     <EncoderProfile quality="high" fileFormat="mp4" duration="60">
         <Video codec="h263"
             bitRate="2000000"
@@ -113,6 +140,31 @@
         <Audio codec="amrnb"
             bitRate="12200"
             sampleRate="8000"
+            channels="1" />
+    </EncoderProfile>
+
+    <!-- EncoderProfile quality="timelapse480p" fileFormat="mp4" duration="30">
+      <Video codec="h264"
+             bitRate="2000000"
+             width="640"
+             height="480"
+             frameRate="31" />
+        <Audio codec="aac"
+            bitRate="96000"
+            sampleRate="16000"
+            channels="1" />
+    </EncoderProfile -->
+
+    <!-- HD one -->
+    <EncoderProfile quality="timelapse480p" fileFormat="mp4" duration="30">
+        <Video codec="h264"
+            bitRate="2000000"
+            width="640"
+            height="480"
+            frameRate="31" />
+        <Audio codec="aac"
+            bitRate="131100"
+            sampleRate="44100"
             channels="1" />
     </EncoderProfile>
 
@@ -140,10 +192,10 @@
             channels="1" />
     </EncoderProfile>
 
+    <ImageEncoding quality="100" />
     <ImageEncoding quality="90" />
     <ImageEncoding quality="80" />
-    <ImageEncoding quality="70" />
-    <ImageDecoding memCap="30000000" />
+    <ImageDecoding memCap="20000000" />
 
     </CamcorderProfiles>
 
