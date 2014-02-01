@@ -23,7 +23,7 @@ index 162968c..d730f35 100644
                                            volume, output, delayMs);
  }
  
-+#ifdef QCOM_FM_ENABLED
++#ifdef QCOM_MR1_FM
 +status_t AudioPolicyCompatClient::setFmVolume(float volume,
 +                                              int delayMs)
 +{
@@ -42,7 +42,7 @@ index 494c8af..98df585 100644
                                       float volume,
                                       audio_io_handle_t output,
                                       int delayMs = 0);
-+#ifdef QCOM_FM_ENABLED
++#ifdef QCOM_MR1_FM
 +    virtual status_t setFmVolume(float volume, int delayMs = 0);
 +#endif
      virtual status_t startTone(ToneGenerator::tone_type tone, AudioSystem::stream_type stream);
@@ -56,7 +56,7 @@ index fcedd43..8929d6b 100644
  #ifdef AUDIO_EXTN_INCALL_MUSIC_ENABLED
      case AudioSystem::INCALL_MUSIC:
  #endif
-+#ifdef QCOM_FM_ENABLED
++#ifdef QCOM_MR1_FM
 +    case AudioSystem::FM:
 +#endif
          return STRATEGY_MEDIA;
@@ -66,7 +66,7 @@ index fcedd43..8929d6b 100644
          case AUDIO_DEVICE_OUT_BLUETOOTH_SCO_HEADSET:
          case AUDIO_DEVICE_OUT_BLUETOOTH_A2DP:
          case AUDIO_DEVICE_OUT_BLUETOOTH_A2DP_HEADPHONES:
-+#if defined(QCOM_FM_ENABLED) || defined(STE_FM)
++#if defined(QCOM_MR1_FM) || defined(STE_FM)
 +        case AUDIO_DEVICE_OUT_FM:
 +#endif
              return DEVICE_CATEGORY_HEADSET;
@@ -76,7 +76,7 @@ index fcedd43..8929d6b 100644
          sDefaultMediaVolumeCurve  // DEVICE_CATEGORY_EARPIECE
      },
  #endif
-+#ifdef QCOM_FM_ENABLED
++#ifdef QCOM_MR1_FM
 +    { // AUDIO_STREAM_FM
 +        sDefaultMediaVolumeCurve, // DEVICE_CATEGORY_HEADSET
 +        sSpeakerMediaVolumeCurve, // DEVICE_CATEGORY_SPEAKER
@@ -94,7 +94,7 @@ index 3bf3b10..37bd08b 100644
      /** set the audio volume of a voice call. Range is between 0.0 and 1.0 */
      virtual status_t    setVoiceVolume(float volume) = 0;
  
-+#ifdef QCOM_FM_ENABLED
++#ifdef QCOM_MR1_FM
 +    /** set the fm volume. Range is between 0.0 and 1.0 */
 +    virtual status_t    setFmVolume(float volume) { return 0; }
 +#endif
@@ -110,7 +110,7 @@ index 7847bdd..9cff50d 100644
                                       audio_io_handle_t srcOutput,
                                       audio_io_handle_t dstOutput) = 0;
  
-+#ifdef QCOM_FM_ENABLED
++#ifdef QCOM_MR1_FM
 +    // set FM volume.
 +    virtual status_t setFmVolume(float volume, int delayMs = 0) { return 0; }
 +#endif
@@ -126,7 +126,7 @@ index b0ca0b3..5e4073e 100644
  #ifdef QCOM_HARDWARE
          INCALL_MUSIC     = 10,
  #endif
-+#ifdef QCOM_FM_ENABLED
++#ifdef QCOM_MR1_FM
 +        FM               = 11,
 +#endif
          NUM_STREAM_TYPES
