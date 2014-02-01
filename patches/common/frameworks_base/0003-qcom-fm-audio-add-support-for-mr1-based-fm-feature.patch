@@ -1,7 +1,7 @@
-From 8de027dc5c877837e9a567147694b8c7ff58aa40 Mon Sep 17 00:00:00 2001
+From 6eabccaa3c2f59f44a62952fb36ed806ad40bf34 Mon Sep 17 00:00:00 2001
 From: Mingming Yin <mingming@codeaurora.org>
 Date: Thu, 27 Dec 2012 17:43:24 -0800
-Subject: [PATCH 2/9] qcom-fm: audio: add support for mr1 based fm feature
+Subject: [PATCH 02/11] qcom-fm: audio: add support for mr1 based fm feature
 
 Change-Id: Id48a52ceb7359deb65d4a69e664b22ed80cf997c
 ---
@@ -54,10 +54,10 @@ index 882dbfc..ffdd525 100644
       * Broadcast Action: An analog audio speaker/headset plugged in or unplugged.
       *
 diff --git a/core/java/android/provider/Settings.java b/core/java/android/provider/Settings.java
-index 7bdfd1b..fa8641b9 100644
+index e266209..30ed223 100644
 --- a/core/java/android/provider/Settings.java
 +++ b/core/java/android/provider/Settings.java
-@@ -2014,6 +2014,18 @@ public final class Settings {
+@@ -2025,6 +2025,18 @@ public final class Settings {
           */
          public static final String VOLUME_MUSIC = "volume_music";
  
@@ -76,7 +76,7 @@ index 7bdfd1b..fa8641b9 100644
          /**
           * Alarm volume. This is used internally, changing this
           * value will not change the volume. See AudioManager.
-@@ -2155,7 +2167,9 @@ public final class Settings {
+@@ -2166,7 +2178,9 @@ public final class Settings {
           */
          public static final String[] VOLUME_SETTINGS = {
              VOLUME_VOICE, VOLUME_SYSTEM, VOLUME_RING, VOLUME_MUSIC,
@@ -87,7 +87,7 @@ index 7bdfd1b..fa8641b9 100644
          };
  
          /**
-@@ -3380,6 +3394,7 @@ public final class Settings {
+@@ -3481,6 +3495,7 @@ public final class Settings {
              VOLUME_SYSTEM,
              VOLUME_RING,
              VOLUME_MUSIC,
@@ -96,10 +96,10 @@ index 7bdfd1b..fa8641b9 100644
              VOLUME_NOTIFICATION,
              VOLUME_BLUETOOTH_SCO,
 diff --git a/core/java/android/view/VolumePanel.java b/core/java/android/view/VolumePanel.java
-index 18c8646..d98ca48 100644
+index 6d9165b..863d022 100644
 --- a/core/java/android/view/VolumePanel.java
 +++ b/core/java/android/view/VolumePanel.java
-@@ -171,6 +171,11 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
+@@ -173,6 +173,11 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
                  R.drawable.ic_audio_notification,
                  R.drawable.ic_audio_notification_mute,
                  true),
@@ -111,7 +111,7 @@ index 18c8646..d98ca48 100644
          // for now, use media resources for master volume
          MasterStream(STREAM_MASTER,
                  R.string.volume_icon_description_media, //FIXME should have its own description
-@@ -207,6 +212,7 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
+@@ -209,6 +214,7 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
          StreamResources.MediaStream,
          StreamResources.NotificationStream,
          StreamResources.AlarmStream,
@@ -119,7 +119,7 @@ index 18c8646..d98ca48 100644
          StreamResources.MasterStream,
          StreamResources.RemoteStream
      };
-@@ -756,6 +762,11 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
+@@ -758,6 +764,11 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
                  break;
              }
  
@@ -181,7 +181,7 @@ index c225adb..ea56095 100644
          }
          IAudioService service = getService();
 diff --git a/media/java/android/media/AudioService.java b/media/java/android/media/AudioService.java
-index ad49018..761aaa4 100644
+index 4c88365..344fa51 100644
 --- a/media/java/android/media/AudioService.java
 +++ b/media/java/android/media/AudioService.java
 @@ -216,7 +216,9 @@ public class AudioService extends IAudioService.Stub {
@@ -264,7 +264,7 @@ index ad49018..761aaa4 100644
          } else if (mMediaFocusControl.checkUpdateRemoteStateIfActive(AudioSystem.STREAM_MUSIC)) {
              mMediaFocusControl.adjustRemoteVolume(AudioSystem.STREAM_MUSIC, direction, 0);
          }
-@@ -2740,6 +2756,10 @@ public class AudioService extends IAudioService.Stub {
+@@ -2749,6 +2765,10 @@ public class AudioService extends IAudioService.Stub {
                      if (DEBUG_VOL)
                          Log.v(TAG, "getActiveStreamType: Forcing STREAM_MUSIC stream active");
                      return AudioSystem.STREAM_MUSIC;
@@ -275,7 +275,7 @@ index ad49018..761aaa4 100644
                  } else
                      if (mMediaFocusControl.checkUpdateRemoteStateIfActive(AudioSystem.STREAM_MUSIC))
                      {
-@@ -2761,6 +2781,10 @@ public class AudioService extends IAudioService.Stub {
+@@ -2770,6 +2790,10 @@ public class AudioService extends IAudioService.Stub {
                  if (DEBUG_VOL)
                      Log.v(TAG, "getActiveStreamType: Forcing STREAM_MUSIC stream active");
                  return AudioSystem.STREAM_MUSIC;
@@ -286,7 +286,7 @@ index ad49018..761aaa4 100644
              } else {
                  if (DEBUG_VOL) Log.v(TAG, "getActiveStreamType: Returning suggested type "
                          + suggestedStreamType);
-@@ -2872,6 +2896,10 @@ public class AudioService extends IAudioService.Stub {
+@@ -2881,6 +2905,10 @@ public class AudioService extends IAudioService.Stub {
              // selection if not the speaker.
              if ((device & AudioSystem.DEVICE_OUT_SPEAKER) != 0) {
                  device = AudioSystem.DEVICE_OUT_SPEAKER;
@@ -297,7 +297,7 @@ index ad49018..761aaa4 100644
              } else {
                  device &= AudioSystem.DEVICE_OUT_ALL_A2DP;
              }
-@@ -4333,6 +4361,35 @@ public class AudioService extends IAudioService.Stub {
+@@ -4342,6 +4370,35 @@ public class AudioService extends IAudioService.Stub {
                          null,
                          SAFE_VOLUME_CONFIGURE_TIMEOUT_MS);
                  adjustCurrentStreamVolume();
@@ -380,10 +380,10 @@ index bff1f93..fc4c5f2 100644
                          return true;
                      } else {
 diff --git a/packages/SettingsProvider/src/com/android/providers/settings/DatabaseHelper.java b/packages/SettingsProvider/src/com/android/providers/settings/DatabaseHelper.java
-index 4980f90..16eaa83 100644
+index 4f6f223..0724da9 100644
 --- a/packages/SettingsProvider/src/com/android/providers/settings/DatabaseHelper.java
 +++ b/packages/SettingsProvider/src/com/android/providers/settings/DatabaseHelper.java
-@@ -1918,6 +1918,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
+@@ -1921,6 +1921,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
  
              loadSetting(stmt, Settings.System.VOLUME_MUSIC,
                      AudioManager.DEFAULT_STREAM_VOLUME[AudioManager.STREAM_MUSIC]);
@@ -393,10 +393,10 @@ index 4980f90..16eaa83 100644
                      AudioManager.DEFAULT_STREAM_VOLUME[AudioManager.STREAM_RING]);
              loadSetting(stmt, Settings.System.VOLUME_SYSTEM,
 diff --git a/policy/src/com/android/internal/policy/impl/PhoneWindowManager.java b/policy/src/com/android/internal/policy/impl/PhoneWindowManager.java
-index 9cc8da4..477bbfd 100644
+index b335559..5aa0be0 100644
 --- a/policy/src/com/android/internal/policy/impl/PhoneWindowManager.java
 +++ b/policy/src/com/android/internal/policy/impl/PhoneWindowManager.java
-@@ -4200,6 +4200,18 @@ public class PhoneWindowManager implements WindowManagerPolicy {
+@@ -4224,6 +4224,18 @@ public class PhoneWindowManager implements WindowManagerPolicy {
      }
  
      /**
@@ -415,7 +415,7 @@ index 9cc8da4..477bbfd 100644
       * Tell the audio service to adjust the volume appropriate to the event.
       * @param keycode
       */
-@@ -4501,7 +4513,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
+@@ -4567,7 +4579,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
  
                  }
  

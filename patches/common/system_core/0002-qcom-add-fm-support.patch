@@ -18,7 +18,7 @@ index 152a0a2..a4e5303 100644
  #define AID_SDCARD_AV     1034  /* external storage audio/video access */
  #define AID_SDCARD_ALL    1035  /* access all users external storage */
  #define AID_AUDIT         1036  /* audit daemon */
-+#ifdef QCOM_FM_ENABLED
++#ifdef QCOM_MR1_FM
 +#define AID_FM_RADIO      1037  /* FM radio */
 +#endif
  
@@ -28,7 +28,7 @@ index 152a0a2..a4e5303 100644
  #endif
  
      { "misc",          AID_MISC, },
-+#ifdef QCOM_FM_ENABLED
++#ifdef QCOM_MR1_FM
 +    { "fm_radio",  AID_FM_RADIO, },
 +#endif
      { "nobody",        AID_NOBODY, },
@@ -42,7 +42,7 @@ index 4563e67..9f856e9 100644
  #ifdef QCOM_HARDWARE
      AUDIO_STREAM_INCALL_MUSIC     = 10,
  #endif
-+#ifdef QCOM_FM_ENABLED
++#ifdef QCOM_MR1_FM
 +    AUDIO_STREAM_FM               = 11,
 +#endif
  
@@ -56,7 +56,7 @@ index 0b4845e..12a238f 100644
      { "persist.security.", AID_SYSTEM,   0 },
      { "persist.service.bdroid.", AID_BLUETOOTH,   0 },
      { "selinux."         , AID_SYSTEM,   0 },
-+#ifdef QCOM_FM_ENABLED
++#ifdef QCOM_MR1_FM
 +    { "hw.fm.",           AID_FM_RADIO,  0 },
 +#endif
      { "wc_transport.",     AID_BLUETOOTH,   AID_SYSTEM },
@@ -66,7 +66,7 @@ index 0b4845e..12a238f 100644
  } control_perms[] = {
      { "dumpstate",AID_SHELL, AID_LOG },
      { "ril-daemon",AID_RADIO, AID_RADIO },
-+#ifdef QCOM_FM_ENABLED
++#ifdef QCOM_MR1_FM
 +    { "fm_dl", AID_FM_RADIO, AID_FM_RADIO},
 +#endif
  #ifdef CONTROL_PERMS_APPEND

@@ -1,7 +1,7 @@
-From 1cacc7a982ed0394045d1f72d528cea06392f864 Mon Sep 17 00:00:00 2001
+From 56d352612ea05c14294833315aaad2d6c9437647 Mon Sep 17 00:00:00 2001
 From: Konsta <konsta09@gmail.com>
 Date: Fri, 26 Apr 2013 16:55:27 +0300
-Subject: [PATCH 1/9] qcom-fm: add support for mr1 based fm solution
+Subject: [PATCH 01/11] qcom-fm: add support for mr1 based fm solution
 
 Squashed commit between:
 https://www.codeaurora.org/gitweb/quic/la/?p=platform/frameworks/base.git;a=commit;h=27086d06dec240e8915580208197ab7169ec498e
@@ -44,7 +44,7 @@ index 29865bb..0690ac8 100644
  
  </permissions>
 diff --git a/services/java/com/android/server/pm/PackageManagerService.java b/services/java/com/android/server/pm/PackageManagerService.java
-index 34d93d2..6df71a5 100644
+index 530d15f..382f187 100644
 --- a/services/java/com/android/server/pm/PackageManagerService.java
 +++ b/services/java/com/android/server/pm/PackageManagerService.java
 @@ -198,11 +198,16 @@ public class PackageManagerService extends IPackageManager.Stub {
