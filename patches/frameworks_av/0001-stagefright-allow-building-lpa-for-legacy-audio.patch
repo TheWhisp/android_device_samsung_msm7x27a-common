@@ -1,18 +1,21 @@
 From ef34b64d15b62d6b685bd6b421fe18dcc4cf365f Mon Sep 17 00:00:00 2001
 From: TheWhisp <daavis.90@gmail.com>
 Date: Fri, 27 Dec 2013 01:23:20 +0200
-Subject: [PATCH] stagefright: allow building lpa for legacy audio
+Subject: [PATCH 1/2] stagefright: allow building lpa for legacy audio
 
-Change-Id: I4d86b952d20f04d2f033ba428b22439014d86269
+Reworked by Giovanni Santini <giovannisantini93@yahoo.it>
+on date Mon, 3 Feb 2014 19:49:57 +0100
+
+Change-Id: Icdda1261c8e89eb2fc80c82d496106e059dcf80d
 ---
  media/libstagefright/Android.mk | 6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/media/libstagefright/Android.mk b/media/libstagefright/Android.mk
-index a859e4a..f884dfc 100755
+index 1c7d480..43d8626 100755
 --- a/media/libstagefright/Android.mk
 +++ b/media/libstagefright/Android.mk
-@@ -95,15 +95,15 @@ LOCAL_SRC_FILES += \
+@@ -95,16 +95,16 @@ LOCAL_SRC_FILES += \
          ExtendedExtractor.cpp             \
          QCUtilityClass.cpp
  
@@ -23,6 +26,7 @@ index a859e4a..f884dfc 100755
 +        $(TOP)/hardware/qcom/media-$(TARGET_QCOM_MEDIA_VARIANT)/mm-core/inc
  else
  LOCAL_C_INCLUDES += \
+         $(TOP)/hardware/qcom/display-legacy/libgralloc \
          $(TOP)/hardware/qcom/media/mm-core/inc
  endif
  
@@ -32,5 +36,5 @@ index a859e4a..f884dfc 100755
          LOCAL_SRC_FILES += LPAPlayer.cpp
      else
 -- 
-1.8.3.2
+1.8.5.3
 
