@@ -1,0 +1,56 @@
+From facdd67e964427dc9c53a841ea8ccc9df759c6dc Mon Sep 17 00:00:00 2001
+From: Preetam Singh Ranawat <apranawat@codeaurora.org>
+Date: Fri, 10 Aug 2012 13:02:01 +0000
+Subject: [PATCH] Fix for Mute Unmute and volume up down issue for FM
+
+This is a combination of 2 commits.
+
+hardware/libhardware_legcay :Fix for Mute Unmute and volume up down issue for FM
+
+(cherry picked from commit 27eca2244ad03fd63e28a284d077dbb443e8ad77)
+
+Change-Id: I2ba0312af2beb98a438e3ebc6c13d6616e01e182
+
+libhardware_legacy: Fix for FM volume issue
+
+- FM volume up/down/mute does not work when headphone[no mic]
+  is connected.
+- Volume Up/down key presses do not have impact because,
+  headphone[no mic], was not included when querying for the
+  possible output devices on which volume can be changed.
+- Fix is to add headphone[no mic] device to the list of
+  devices which it queries for during volume change.
+
+CRs-fixed: 410954
+(cherry picked from commit 0b38799689532899e5ec3ba9680116d27054034b)
+
+Change-Id: I66493df2a62ce17f65df60bc0df1ede429443771
+---
+ audio/AudioPolicyManagerBase.cpp |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/audio/AudioPolicyManagerBase.cpp b/audio/AudioPolicyManagerBase.cpp
+index d92fef7..2f2b087 100644
+--- a/audio/AudioPolicyManagerBase.cpp
++++ b/audio/AudioPolicyManagerBase.cpp
+@@ -2494,7 +2494,16 @@ audio_devices_t AudioPolicyManagerBase::getDeviceForVolume(audio_devices_t devic
+         // selection if not the speaker.
+         if (device & AUDIO_DEVICE_OUT_SPEAKER) {
+             device = AUDIO_DEVICE_OUT_SPEAKER;
+-        } else {
++        }
++#ifdef QCOM_FM_ENABLED
++        else if((device & AUDIO_DEVICE_OUT_WIRED_HEADSET) != 0) {
++            device = AUDIO_DEVICE_OUT_WIRED_HEADSET;
++        }
++        else if ((device & AUDIO_DEVICE_OUT_WIRED_HEADPHONE) != 0) {
++            device = AUDIO_DEVICE_OUT_WIRED_HEADPHONE;
++        }
++#endif
++        else {
+             device = (audio_devices_t)(device & AUDIO_DEVICE_OUT_ALL_A2DP);
+         }
+     }
+-- 
+1.7.9.5
+
