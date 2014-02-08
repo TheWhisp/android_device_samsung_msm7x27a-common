@@ -12,25 +12,9 @@ is a better fix for this issue, please let me know.
 
 Change-Id: I266c6d21196c193e389e6773d532591df7b3534a
 ---
- services/camera/libcameraservice/Android.mk            | 4 ++++
  services/camera/libcameraservice/api1/CameraClient.cpp | 2 ++
- 2 files changed, 6 insertions(+)
+ 1 files changed, 2 insertions(+)
 
-diff --git a/services/camera/libcameraservice/Android.mk b/services/camera/libcameraservice/Android.mk
-index b04c27c..b941b92 100644
---- a/services/camera/libcameraservice/Android.mk
-+++ b/services/camera/libcameraservice/Android.mk
-@@ -78,6 +78,10 @@ ifeq ($(BOARD_CAMERA_MSG_MGMT),true)
-     LOCAL_CFLAGS += -DCAMERA_MSG_MGMT
- endif
- 
-+ifeq ($(BOARD_CAMERA_NO_UNWANTED_MSG),true)
-+    LOCAL_CFLAGS += -DCAMERA_NO_UNWANTED_MSG
-+endif
-+
- LOCAL_MODULE:= libcameraservice
- 
- include $(BUILD_SHARED_LIBRARY)
 diff --git a/services/camera/libcameraservice/api1/CameraClient.cpp b/services/camera/libcameraservice/api1/CameraClient.cpp
 index afaf12a..8d6f75c 100644
 --- a/services/camera/libcameraservice/api1/CameraClient.cpp
