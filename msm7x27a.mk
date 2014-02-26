@@ -163,8 +163,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.bq.gpu_to_cpu_unsupported=1 \
     ro.max.fling_velocity=4000 \
     ro.opengles.version=131072 \
-    ro.sf.lcd_density=160 \
-    persist.sys.force_highendgfx=0
+    ro.sf.lcd_density=160
 
 PRODUCT_PROPERTY_OVERRIDES += \
     dalvik.vm.dexopt-data-only=1 \
@@ -172,9 +171,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.config.low_ram=true
 
 PRODUCT_PROPERTY_OVERRIDES += \
-    lpa.decode=true \
-    use.non-omx.mp3.decoder=true \
-    use.non-omx.aac.decoder=true
+    lpa.decode=true
 
 PRODUCT_PROPERTY_OVERRIDES += \
     com.qc.hardware=true \
@@ -187,8 +184,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.vold.umsdirtyratio=50 \
     persist.sys.vold.switchablepair=sdcard0,sdcard1
 
-PRODUCT_PROPERTY_OVERRIDES += \
-    persist.webview.provider=classic
+#PRODUCT_PROPERTY_OVERRIDES += \
+#    persist.webview.provider=classic
 
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.cwm.enable_key_repeat=true
