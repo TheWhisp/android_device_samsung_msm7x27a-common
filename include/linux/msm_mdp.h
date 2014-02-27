@@ -1,7 +1,7 @@
 /* include/linux/msm_mdp.h
  *
  * Copyright (C) 2007 Google Incorporated
- * Copyright (c) 2012-2013 The Linux Foundation. All rights reserved.
+ * Copyright (c) 2012 The Linux Foundation. All rights reserved.
  *
  * This software is licensed under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation, and
@@ -70,16 +70,7 @@
 #define MSMFB_MDP_PP _IOWR(MSMFB_IOCTL_MAGIC, 156, struct msmfb_mdp_pp)
 #define MSMFB_OVERLAY_VSYNC_CTRL _IOW(MSMFB_IOCTL_MAGIC, 160, unsigned int)
 #define MSMFB_VSYNC_CTRL  _IOW(MSMFB_IOCTL_MAGIC, 161, unsigned int)
-#define MSMFB_BUFFER_SYNC  _IOW(MSMFB_IOCTL_MAGIC, 162, struct mdp_buf_sync)
-#define MSMFB_METADATA_SET  _IOW(MSMFB_IOCTL_MAGIC, 163, struct msmfb_metadata)
-#define MSMFB_DISPLAY_COMMIT      _IOW(MSMFB_IOCTL_MAGIC, 164, \
-						struct mdp_display_commit)
-#define MSMFB_WRITEBACK_SET_MIRRORING_HINT _IOW(MSMFB_IOCTL_MAGIC, 165, \
-						unsigned int)
-#define MSMFB_METADATA_GET  _IOW(MSMFB_IOCTL_MAGIC, 166, struct msmfb_metadata)
-/*AVMUTE IOCTL*/
-#define MSMFB_EXTERNAL_MUTE _IOWR(MSMFB_IOCTL_MAGIC, 167, unsigned int)
-
+#define MSMFB_METADATA_SET  _IOW(MSMFB_IOCTL_MAGIC, 162, struct msmfb_metadata)
 #define FB_TYPE_3D_PANEL 0x10101010
 #define MDP_IMGTYPE2_START 0x10000
 #define MSMFB_DRIVER_VERSION	0xF9E8D701
@@ -97,7 +88,6 @@ enum {
 	MDP_ARGB_8888,    /* ARGB 888 */
 	MDP_RGB_888,      /* RGB 888 planer */
 	MDP_Y_CRCB_H2V2,  /* Y and CrCb, pseudo planer w/ Cr is in MSB */
-	MDP_YCBYCR_H2V1,  /* YCbYCr interleave */
 	MDP_YCRYCB_H2V1,  /* YCrYCb interleave */
 	MDP_Y_CRCB_H2V1,  /* Y and CrCb, pseduo planer w/ Cr is in MSB */
 	MDP_Y_CBCR_H2V1,   /* Y and CrCb, pseduo planer w/ Cr is in MSB */
@@ -164,7 +154,7 @@ enum {
 #define MDP_DEINTERLACE_ODD		0x00400000
 #define MDP_OV_PLAY_NOWAIT		0x00200000
 #define MDP_SOURCE_ROTATED_90		0x00100000
-#define MDP_OVERLAY_PP_CFG_EN		0x00080000
+#define MDP_DPP_HSIC			0x00080000
 #define MDP_BACKEND_COMPOSITION		0x00040000
 #define MDP_BORDERFILL_SUPPORTED	0x00010000
 #define MDP_SECURE_OVERLAY_SESSION      0x00008000
@@ -260,14 +250,6 @@ struct msmfb_data {
 
 #define MSMFB_NEW_REQUEST -1
 
-struct msmfb_frc_data {
-	uint32_t enable;
-	uint32_t frame_cnt;
-	uint32_t timestamp;
-	uint32_t frame_rate;
-	uint32_t render_delay;
-};
-
 struct msmfb_overlay_data {
 	uint32_t id;
 	struct msmfb_data data;
@@ -275,7 +257,6 @@ struct msmfb_overlay_data {
 	struct msmfb_data plane1_data;
 	struct msmfb_data plane2_data;
 	struct msmfb_data dst_data;
-	struct msmfb_frc_data frc_data;
 };
 
 struct msmfb_img {
@@ -290,86 +271,15 @@ struct msmfb_writeback_data {
 	struct msmfb_img img;
 };
 
-#define MDP_PP_OPS_ENABLE 0x1
-#define MDP_PP_OPS_READ 0x2
-#define MDP_PP_OPS_WRITE 0x4
-#define MDP_PP_OPS_DISABLE 0x8
-
-struct mdp_qseed_cfg {
-	uint32_t table_num;
-	uint32_t ops;
-	uint32_t len;
-	uint32_t *data;
-};
-
-struct mdp_qseed_cfg_data {
-	uint32_t block;
-	struct mdp_qseed_cfg qseed_data;
-};
-
-struct mdp_sharp_cfg {
-	uint32_t flags;
-	uint32_t strength;
-	uint32_t edge_thr;
-	uint32_t smooth_thr;
-	uint32_t noise_thr;
-};
-
-#define MDP_OVERLAY_PP_CSC_CFG      0x1
-#define MDP_OVERLAY_PP_QSEED_CFG    0x2
-#define MDP_OVERLAY_PP_PA_CFG    0x4
-#define MDP_OVERLAY_PP_IGC_CFG    0x8
-#define MDP_OVERLAY_PP_SHARP_CFG    0x10
-
-#define MDP_CSC_FLAG_ENABLE	0x1
-#define MDP_CSC_FLAG_YUV_IN	0x2
-#define MDP_CSC_FLAG_YUV_OUT	0x4
-
-struct mdp_csc_cfg {
-	/* flags for enable CSC, toggling RGB,YUV input/output */
-	uint32_t flags;
-	uint32_t csc_mv[9];
-	uint32_t csc_pre_bv[3];
-	uint32_t csc_post_bv[3];
-	uint32_t csc_pre_lv[6];
-	uint32_t csc_post_lv[6];
-};
-
-struct mdp_csc_cfg_data {
-	uint32_t block;
-	struct mdp_csc_cfg csc_data;
-};
-
-struct mdp_pa_cfg {
-	uint32_t flags;
-	uint32_t hue_adj;
-	uint32_t sat_adj;
-	uint32_t val_adj;
-	uint32_t cont_adj;
-};
-
-struct mdp_igc_lut_data {
-	uint32_t block;
-	uint32_t len, ops;
-	uint32_t *c0_c1_data;
-	uint32_t *c2_data;
-};
-
-struct mdp_overlay_pp_params {
-	uint32_t config_ops;
-	struct mdp_csc_cfg csc_cfg;
-	struct mdp_qseed_cfg qseed_cfg[2];
-	struct mdp_pa_cfg pa_cfg;
-	struct mdp_igc_lut_data igc_cfg;
-	struct mdp_sharp_cfg sharp_cfg;
-};
-
-enum {
-	BLEND_OP_NOT_DEFINED = 0,
-	BLEND_OP_OPAQUE,
-	BLEND_OP_PREMULTIPLIED,
-	BLEND_OP_COVERAGE,
-	BLEND_OP_MAX,
+struct dpp_ctrl {
+	/*
+	 *'sharp_strength' has inputs = -128 <-> 127
+	 *  Increasingly positive values correlate with increasingly sharper
+	 *  picture. Increasingly negative values correlate with increasingly
+	 *  smoothed picture.
+	 */
+	int8_t sharp_strength;
+	int8_t hsic_params[NUM_HSIC_PARAM];
 };
 
 struct mdp_overlay {
@@ -380,11 +290,10 @@ struct mdp_overlay {
 	uint32_t is_fg;		/* control alpha & transp */
 	uint32_t alpha;
 	uint32_t transp_mask;
-	uint32_t blend_op;
 	uint32_t flags;
 	uint32_t id;
 	uint32_t user_data[8];
-	struct mdp_overlay_pp_params overlay_pp_cfg;
+	struct dpp_ctrl dpp;
 };
 
 struct msmfb_overlay_3d {
@@ -413,14 +322,11 @@ struct mdp_histogram {
 
 /*
 
-	mdp_block_type defines the identifiers for pipes in MDP 4.3 and up
+	mdp_block_type defines the identifiers for each of pipes in MDP 4.3
 
 	MDP_BLOCK_RESERVED is provided for backward compatibility and is
 	deprecated. It corresponds to DMA_P. So MDP_BLOCK_DMA_P should be used
 	instead.
-
-	MDP_LOGICAL_BLOCK_DISP_0 identifies the display pipe which fb0 uses,
-	same for others.
 
 */
 
@@ -436,9 +342,6 @@ enum {
 	MDP_BLOCK_DMA_S,
 	MDP_BLOCK_DMA_E,
 	MDP_BLOCK_OVERLAY_2,
-	MDP_LOGICAL_BLOCK_DISP_0 = 0x1000,
-	MDP_LOGICAL_BLOCK_DISP_1,
-	MDP_LOGICAL_BLOCK_DISP_2,
 	MDP_BLOCK_MAX,
 };
 
@@ -478,11 +381,38 @@ struct mdp_pcc_cfg_data {
 	struct mdp_pcc_coeff r, g, b;
 };
 
+#define MDP_CSC_FLAG_ENABLE	0x1
+#define MDP_CSC_FLAG_YUV_IN	0x2
+#define MDP_CSC_FLAG_YUV_OUT	0x4
+
+struct mdp_csc_cfg {
+	/* flags for enable CSC, toggling RGB,YUV input/output */
+	uint32_t flags;
+	uint32_t csc_mv[9];
+	uint32_t csc_pre_bv[3];
+	uint32_t csc_post_bv[3];
+	uint32_t csc_pre_lv[6];
+	uint32_t csc_post_lv[6];
+};
+
+struct mdp_csc_cfg_data {
+	uint32_t block;
+	struct mdp_csc_cfg csc_data;
+};
+
 enum {
 	mdp_lut_igc,
 	mdp_lut_pgc,
 	mdp_lut_hist,
 	mdp_lut_max,
+};
+
+
+struct mdp_igc_lut_data {
+	uint32_t block;
+	uint32_t len, ops;
+	uint32_t *c0_c1_data;
+	uint32_t *c2_data;
 };
 
 struct mdp_ar_gc_lut_data {
@@ -519,20 +449,17 @@ struct mdp_lut_cfg_data {
 	} data;
 };
 
+struct mdp_qseed_cfg_data {
+	uint32_t block;
+	uint32_t table_num;
+	uint32_t ops;
+	uint32_t len;
+	uint32_t *data;
+};
+
 struct mdp_bl_scale_data {
 	uint32_t min_lvl;
 	uint32_t scale;
-};
-
-struct mdp_calib_config_data {
-	uint32_t ops;
-	uint32_t addr;
-	uint32_t data;
-};
-
-struct mdp_pa_cfg_data {
-	uint32_t block;
-	struct mdp_pa_cfg pa_data;
 };
 
 enum {
@@ -541,8 +468,6 @@ enum {
 	mdp_op_lut_cfg,
 	mdp_op_qseed_cfg,
 	mdp_bl_scale_cfg,
-	mdp_op_calib_cfg,
-	mdp_op_pa_cfg,
 	mdp_op_max,
 };
 
@@ -554,68 +479,32 @@ struct msmfb_mdp_pp {
 		struct mdp_lut_cfg_data lut_cfg_data;
 		struct mdp_qseed_cfg_data qseed_cfg_data;
 		struct mdp_bl_scale_data bl_scale_data;
-		struct mdp_calib_config_data calib_cfg;
-		struct mdp_pa_cfg_data pa_cfg_data;
 	} data;
 };
 
-enum {
-	metadata_op_none,
-	metadata_op_base_blend,
-	metadata_op_frame_rate,
-	metadata_op_resolution_info,
-	metadata_op_max
-};
-
-struct mdp_res_cfg {
-	uint32_t vFmt;
-	uint32_t set_default_res;
-};
-
-struct mdp_blend_cfg {
-	uint32_t is_premultiplied;
-};
-
-struct msmfb_metadata {
-	uint32_t op;
-	uint32_t flags;
-	union {
-		struct mdp_blend_cfg blend_cfg;
-		uint32_t panel_frame_rate;
-		struct mdp_res_cfg res_cfg;
-	} data;
-};
-
-#define MDP_MAX_FENCE_FD	10
-#define MDP_BUF_SYNC_FLAG_WAIT	1
-
-struct mdp_buf_sync {
-	uint32_t flags;
-	uint32_t acq_fen_fd_cnt;
-	int *acq_fen_fd;
-	int *rel_fen_fd;
-        int *retire_fen_fd;
-};
-
-struct mdp_buf_fence {
-	uint32_t flags;
-	uint32_t acq_fen_fd_cnt;
-	int acq_fen_fd[MDP_MAX_FENCE_FD];
-	int rel_fen_fd[MDP_MAX_FENCE_FD];
-};
-
-#define MDP_DISPLAY_COMMIT_OVERLAY 0x00000001
-
-struct mdp_display_commit {
-	uint32_t flags;
-	uint32_t wait_for_finish;
-	struct fb_var_screeninfo var;
-};
 
 struct mdp_page_protection {
 	uint32_t page_protection;
 };
+
+enum {
+  metadata_op_none,
+  metadata_op_base_blend,
+  metadata_op_max
+};
   
+struct mdp_blend_cfg {
+  uint32_t is_premultiplied;
+};
+
+struct msmfb_metadata {
+  uint32_t op;
+  uint32_t flags;
+  union {
+    struct mdp_blend_cfg blend_cfg;
+  } data;
+};
+
 struct mdp_mixer_info {
 	int pndx;
 	int pnum;
@@ -624,7 +513,7 @@ struct mdp_mixer_info {
 	int z_order;
 };
 
-#define MAX_PIPE_PER_MIXER  5
+#define MAX_PIPE_PER_MIXER  4
 
 struct msmfb_mixer_info_req {
 	int mixer_num;
@@ -635,13 +524,6 @@ struct msmfb_mixer_info_req {
 enum {
 	DISPLAY_SUBSYSTEM_ID,
 	ROTATOR_SUBSYSTEM_ID,
-};
-
-enum {
-	MDP_WRITEBACK_MIRROR_OFF,
-	MDP_WRITEBACK_MIRROR_ON,
-	MDP_WRITEBACK_MIRROR_PAUSE,
-	MDP_WRITEBACK_MIRROR_RESUME,
 };
 
 #ifdef __KERNEL__
