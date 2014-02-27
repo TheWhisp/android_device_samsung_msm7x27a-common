@@ -30,7 +30,7 @@
 
 extern "C" {
 #include <linux/msm_audio.h>
-#include <linux/ion.h>
+#include <linux/msm_ion.h>
 #include <linux/msm_audio_voicememo.h>
 #ifdef QCOM_VOIP_ENABLED
 #include <linux/msm_audio_mvs.h>

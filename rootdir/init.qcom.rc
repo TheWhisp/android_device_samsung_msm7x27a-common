@@ -4,6 +4,8 @@ on early-init
     mount debugfs debugfs /sys/kernel/debug
 
 on init
+    write /proc/sys/kernel/randomize_va_space 1
+
     ## Setup storage
     mkdir /storage 0775 system sdcard_r
     mkdir /storage/sdcard0 0775 system system
@@ -41,7 +43,7 @@ on boot
     chown bluetooth bluetooth /dev/ttyHS0
     chmod 0660 /dev/ttyHS0
     chown bluetooth bluetooth /sys/devices/platform/msm_serial_hs.0/clock
-    chmod 0660 /sys/devices/platform/msm_serial_hs.0/clock	
+    chmod 0660 /sys/devices/platform/msm_serial_hs.0/clock
 
     ## Setup Wi-Fi
     mkdir /data/misc/wifi 0770 wifi wifi
@@ -84,10 +86,6 @@ on boot
     chown system system /sys/devices/platform/msm_sdcc.2/polling
     chown system system /sys/devices/platform/msm_sdcc.3/polling
     chown system system /sys/devices/platform/msm_sdcc.4/polling
-
-    ## For qmuxd socket
-    mkdir /data/radio 0770 radio radio
-    chown radio radio 0770 /data/radio
 	
     ## TelephonyManager.java requires this
     chmod 0644 /proc/cmdline
@@ -138,13 +136,6 @@ service p2p_supplicant /system/bin/logwrapper /system/bin/wpa_supplicant \
     disabled
     oneshot
 
-service hostapd /system/bin/hostapd -dddd /data/hostapd/hostapd.conf
-    class main
-    user root
-    group root
-    oneshot
-    disabled
-
 service dhcpcd_wlan0 /system/bin/dhcpcd -aABDKL
     class main
     disabled
@@ -166,15 +157,24 @@ service iprenew_p2p /system/bin/dhcpcd -n
     oneshot
 
 service dhcpcd_bt-pan /system/bin/dhcpcd -BKLG
+    class main
     disabled
     oneshot
 
 service iprenew_bt-pan /system/bin/dhcpcd -n
+    class main
     disabled
     oneshot
 
 on property:init.svc.wpa_supplicant=stopped
     stop dhcpcd
+
+service hostapd /system/bin/hostapd -dddd /data/hostapd/hostapd.conf
+    class late_start
+    user root
+    group root
+    oneshot
+    disabled
 
 service fm_dl /system/bin/sh /system/etc/init.qcom.fm.sh
     class main
@@ -182,19 +182,6 @@ service fm_dl /system/bin/sh /system/etc/init.qcom.fm.sh
     group system qcom_oncrpc
     disabled
     oneshot
-
-service qmiproxy /system/bin/qmiproxy
-    class core
-    user radio
-    group radio audio bluetooth gps qcom_diag
-
-service qmuxd /system/bin/qmuxd
-    class core
-    user radio
-    group radio audio bluetooth gps qcom_diag
-
-service netmgrd /system/bin/netmgrd
-    class main
 
 service get_macaddrs /system/bin/get_macaddrs
     class main

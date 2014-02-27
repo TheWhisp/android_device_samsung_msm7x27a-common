@@ -20,7 +20,7 @@ TARGET_NO_BOOTLOADER := true
 TARGET_NO_RADIOIMAGE := true
 BOARD_KERNEL_BASE := 0x00200000
 BOARD_KERNEL_PAGESIZE := 4096
-TARGET_KERNEL_SOURCE := kernel/samsung/msm7x27a
+TARGET_KERNEL_SOURCE := kernel/samsung/caf
 
 ## Platform
 TARGET_ARCH := arm
@@ -48,6 +48,13 @@ TARGET_FORCE_CPU_UPLOAD := true
 
 ## ION
 TARGET_USES_ION := true
+BOARD_USES_PMEM_ADSP := true
+BOARD_NEEDS_MEMORYHEAPPMEM := true
+
+## Camera
+TARGET_DISABLE_ARM_PIE := true
+COMMON_GLOBAL_CFLAGS += -DBINDER_COMPAT
+COMMON_GLOBAL_CFLAGS += -DSAMSUNG_CAMERA_LEGACY
 
 ## Graphics, audio, video
 USE_OPENGL_RENDERER := true
@@ -76,13 +83,11 @@ BOARD_WPA_SUPPLICANT_DRIVER := NL80211
 BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_ath6kl
 BOARD_HOSTAPD_DRIVER := NL80211
 BOARD_HOSTAPD_PRIVATE_LIB := lib_driver_cmd_ath6kl
-WIFI_EXT_MODULE_NAME := cfg80211
-WIFI_EXT_MODULE_PATH := /system/lib/modules/cfg80211.ko
-WIFI_AP_DRIVER_MODULE_NAME := ath6kl_sdio
-WIFI_AP_DRIVER_MODULE_PATH := /system/lib/modules/ath6kl_sdio.ko
-WIFI_AP_DRIVER_MODULE_ARG := "suspend_mode=3 wow_mode=2 ath6kl_p2p=1 recovery_enable=1"
-WIFI_DRIVER_MODULE_NAME := ath6kl_sdio
-WIFI_DRIVER_MODULE_PATH := /system/lib/modules/ath6kl_sdio.ko
+WIFI_EXT_MODULE_NAME := "cfg80211"
+WIFI_EXT_MODULE_PATH := "/system/lib/modules/cfg80211.ko"
+WIFI_DRIVER_MODULE_AP_ARG := "suspend_mode=3 wow_mode=2 ath6kl_p2p=1 recovery_enable=1"
+WIFI_DRIVER_MODULE_NAME := "ath6kl_sdio"
+WIFI_DRIVER_MODULE_PATH := "/system/lib/modules/ath6kl_sdio.ko"
 WIFI_DRIVER_MODULE_ARG := "suspend_mode=3 wow_mode=2 ath6kl_p2p=1 recovery_enable=1"
 
 ## RIL
@@ -99,31 +104,23 @@ BOARD_VOLD_MAX_PARTITIONS := 24
 TARGET_USE_CUSTOM_LUN_FILE_PATH := /sys/devices/platform/msm_hsusb/gadget/lun%d/file
 BOARD_UMS_LUNFILE := "/sys/devices/platform/msm_hsusb/gadget/lun%d/file"
 
-## Legacy touchscreen support
-BOARD_USE_LEGACY_TOUCHSCREEN := true
-
 ## Samsung has weird framebuffer
 TARGET_NO_INITLOGO := true
 
 ## Charging mode
 BOARD_LPM_BOOT_ARGUMENT_NAME := androidboot.boot_pause
 BOARD_LPM_BOOT_ARGUMENT_VALUE := batt
-BOARD_CHARGER_RES := device/samsung/msm7x27a-common/res/charger
-
-## Bootanimation
-TARGET_BOOTANIMATION_USE_RGB565 := true
 
 ## Use device specific modules
-TARGET_PROVIDES_LIBLIGHTS := true
+TARGET_PROVIDES_LIBLIGHT := true
 TARGET_PROVIDES_LIBAUDIO := true
 
 ## Recovery
-TARGET_RECOVERY_INITRC := device/samsung/msm7x27a-common/recovery/init.recovery.rc
+TARGET_RECOVERY_INITRC := device/samsung/msm7x27a-common/recovery/init.recovery.qcom.rc
 TARGET_RECOVERY_FSTAB := device/samsung/msm7x27a-common/rootdir/fstab.qcom
-ifdef BUILD_RECOVERY
-BOARD_CUSTOM_GRAPHICS := ../../../device/samsung/msm7x27a-common/recovery/graphics.c
-endif
 BOARD_CUSTOM_RECOVERY_KEYMAPPING := ../../device/samsung/msm7x27a-common/recovery/recovery_keys.c
+TARGET_RECOVERY_LCD_BACKLIGHT_PATH := \"/sys/class/leds/lcd-backlight/brightness\"
+TARGET_RECOVERY_SWIPE := true
 TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
 TARGET_USERIMAGES_USE_EXT4 := true
 BOARD_HAS_SDCARD_INTERNAL := true

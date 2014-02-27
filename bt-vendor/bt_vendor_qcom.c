@@ -95,6 +95,9 @@ static int bt_vendor_qcom_op(bt_vendor_opcode_t opcode, void *param)
 		break;
 	case BT_VND_OP_LPM_WAKE_SET_STATE:
 		break;
+	case BT_VND_OP_EPILOG:
+		bt_vendor_callbacks->epilog_cb(BT_VND_OP_RESULT_SUCCESS);
+		break;
 	}
 
 	return 0;

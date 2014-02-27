@@ -21,8 +21,6 @@
 
 #define LOG_TAG "CameraHAL"
 
-#define GRALLOC_USAGE_PMEM_PRIVATE_ADSP GRALLOC_USAGE_PRIVATE_0
-
 #include <camera/CameraParameters.h>
 #include <hardware/camera.h>
 #include <binder/IMemory.h>
@@ -51,23 +49,25 @@ static int camera_get_number_of_cameras(void);
 static int camera_get_camera_info(int camera_id, struct camera_info *info);
 
 static struct hw_module_methods_t camera_module_methods = {
-    open: camera_device_open
+    .open = camera_device_open
+};
+
+static hw_module_t camera_common  = {
+    .tag = HARDWARE_MODULE_TAG,
+    .version_major = 1,
+    .version_minor = 1,
+    .id = CAMERA_HARDWARE_MODULE_ID,
+    .name = "Jellybean Camera Hal",
+    .author = "Raviprasad V Mummidi",
+    .methods = &camera_module_methods,
+    .dso = NULL,
+    .reserved = {0},
 };
 
 camera_module_t HAL_MODULE_INFO_SYM = {
-    common: {
-        tag: HARDWARE_MODULE_TAG,
-        module_api_version: CAMERA_DEVICE_API_VERSION_1_0,
-        hal_api_version: 0,
-        id: CAMERA_HARDWARE_MODULE_ID,
-        name: "Camera HAL",
-        author: "Zhibin Wu & Marcin Chojnacki & Pavel Kirpichyov",
-        methods: &camera_module_methods,
-        dso: NULL, /* remove compilation warnings */
-        reserved: {0}, /* remove compilation warnings */
-    },
-    get_number_of_cameras: camera_get_number_of_cameras,
-    get_camera_info: camera_get_camera_info,
+    .common = camera_common,
+    .get_number_of_cameras = camera_get_number_of_cameras,
+    .get_camera_info = camera_get_camera_info,
 };
 
 typedef struct priv_camera_device {
@@ -215,24 +215,43 @@ static void wrap_data_callback_timestamp(nsecs_t timestamp, int32_t msg_type, co
 
 void CameraHAL_FixupParams(android::CameraParameters &camParams) {
     const char *video_sizes = "640x480,384x288,352x288,320x240,240x160,176x144";
-    const char *preferred_video_size = "640x480";
-
-#ifdef ENABLE_FLASH_AND_AUTOFOCUS
-    const char *focus_mode_values = "auto,infinity,touch";
-    const char *flash_mode_values = "auto,on,off,torch";
-
-    camParams.set(CameraParameters::KEY_SUPPORTED_FOCUS_MODES, focus_mode_values);
-    camParams.set(CameraParameters::KEY_SUPPORTED_FLASH_MODES, flash_mode_values);
-#endif
+    const char *preferred_size = "480x320";
 
     camParams.set(CameraParameters::KEY_VIDEO_FRAME_FORMAT, CameraParameters::PIXEL_FORMAT_YUV420SP);
-    camParams.set(CameraParameters::KEY_VIDEO_SIZE, preferred_video_size);
 
+    camParams.set(CameraParameters::KEY_PREFERRED_PREVIEW_SIZE_FOR_VIDEO,  preferred_size);
+
+#if 0
     if (!camParams.get(CameraParameters::KEY_SUPPORTED_VIDEO_SIZES)) {
-         camParams.set(CameraParameters::KEY_SUPPORTED_VIDEO_SIZES, video_sizes); }
+         camParams.set(CameraParameters::KEY_SUPPORTED_VIDEO_SIZES, video_sizes);
+    }
+#endif
 
     if (!camParams.get(CameraParameters::KEY_MAX_NUM_FOCUS_AREAS)) {
-        camParams.set(CameraParameters::KEY_MAX_NUM_FOCUS_AREAS, 1); }
+        camParams.set(CameraParameters::KEY_MAX_NUM_FOCUS_AREAS, 1);
+    }
+
+    if (!camParams.get(CameraParameters::KEY_VIDEO_SIZE)) {
+         camParams.set(CameraParameters::KEY_VIDEO_SIZE, preferred_size);
+    }
+
+    if (camParams.get(android::CameraParameters::KEY_MAX_CONTRAST)) {
+      	camParams.set("max-contrast", camParams.get(android::CameraParameters::KEY_MAX_CONTRAST));
+    } else {
+      	camParams.set("max-contrast", -1);
+    }
+
+    if (camParams.get(android::CameraParameters::KEY_MAX_SATURATION)) {
+      	camParams.set("max-saturation", camParams.get(android::CameraParameters::KEY_MAX_SATURATION));
+    } else {
+      	camParams.set("max-saturation", -1);
+    }
+
+    if (camParams.get(android::CameraParameters::KEY_MAX_SHARPNESS)) {
+      	camParams.set("max-sharpness", camParams.get(android::CameraParameters::KEY_MAX_SHARPNESS));
+    } else {
+      	camParams.set("max-sharpness", -1);
+    }
 }
 
 int camera_set_preview_window(struct camera_device * device, struct preview_stream_ops *window) {
@@ -280,7 +299,7 @@ int camera_set_preview_window(struct camera_device * device, struct preview_stre
 
     ALOGV("%s: preview format %s", __FUNCTION__, str_preview_format);
 
-    dev->window->set_usage(dev->window, GRALLOC_USAGE_PMEM_PRIVATE_ADSP | GRALLOC_USAGE_SW_READ_OFTEN);
+    dev->window->set_usage(dev->window, GRALLOC_USAGE_PRIVATE_SYSTEM_HEAP | GRALLOC_USAGE_SW_READ_OFTEN);
 
     if (dev->window->set_buffers_geometry(dev->window, dev->preview_width,
                                      dev->preview_height, HAL_PIXEL_FORMAT_YCrCb_420_SP)) {
@@ -350,9 +369,11 @@ int camera_preview_enabled(struct camera_device * device) {
     return qCamera->previewEnabled();
 }
 
+#if 0
 int camera_store_meta_data_in_buffers(struct camera_device * device, int enable) {
     return 0;
 }
+#endif
 
 int camera_start_recording(struct camera_device * device) {
     return qCamera->startRecording();
@@ -496,7 +517,7 @@ int camera_device_open(const hw_module_t* module, const char* name, hw_device_t*
         camera_ops->start_preview              = camera_start_preview;
         camera_ops->stop_preview               = camera_stop_preview;
         camera_ops->preview_enabled            = camera_preview_enabled;
-        camera_ops->store_meta_data_in_buffers = camera_store_meta_data_in_buffers;
+        //camera_ops->store_meta_data_in_buffers = camera_store_meta_data_in_buffers;
         camera_ops->start_recording            = camera_start_recording;
         camera_ops->stop_recording             = camera_stop_recording;
         camera_ops->recording_enabled          = camera_recording_enabled;

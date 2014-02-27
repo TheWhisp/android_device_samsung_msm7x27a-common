@@ -15,6 +15,9 @@
  * along with this program.  If not, see [http://www.gnu.org/licenses/].
  */
 
+#define xstr(s) str(s)
+#define str(s) #s
+
 #define LOG_TAG "bt_vendor_qcom"
 
 #include <cutils/log.h>
@@ -26,6 +29,9 @@
 
 #include <bt_hardware.h>
 #include <bt_helper.h>
+
+#define BT_POWER_PROPERTY	"persist.service.bt.power"
+#define BT_POWER_DEFAULT	1
 
 char bt_hardware_power_state_path[64];
 
@@ -84,18 +90,34 @@ int bt_hardware_serial(bool _open)
 
 int bt_hardware_download_firmware(void)
 {
+	char bt_power_property[PROPERTY_VALUE_MAX];
+	int bt_power = BT_POWER_DEFAULT;
+
+	property_get(BT_POWER_PROPERTY, bt_power_property,
+		xstr(BT_POWER_DEFAULT));
+	bt_power = atoi(bt_power_property);
+
+	if (bt_power > 2)
+		bt_power = 2;
+	else if (bt_power < 0)
+		bt_power = 0;
+
 	// TODO: Replace this.
 	/* Run this as system call, because bt should wait until it is finished
 	 * downloading the firmware.
 	 * --force-hw-sleep - Disable In-Band Sleep (Use H4 Protocol).
-	 * --board-address - Program MAC address. */
+	 * --board-address - Program MAC address.
+	 * --power-class - Set RF power. */
 	char mac_argument[256];
 	snprintf(mac_argument, 256, "/system/bin/hci_qcomm_init"
 		" --force-hw-sleep --board-address "
-		"%.2X:%.2X:%.2X:%.2X:%.2X:%.2X",
+		"%02X:%02X:%02X:%02X:%02X:%02X"
+		" --power-class %d",
 		bt_vendor_local_bdaddr[0], bt_vendor_local_bdaddr[1],
 		bt_vendor_local_bdaddr[2], bt_vendor_local_bdaddr[3],
-		bt_vendor_local_bdaddr[4], bt_vendor_local_bdaddr[5]);
+		bt_vendor_local_bdaddr[4], bt_vendor_local_bdaddr[5],
+		bt_power);
+	ALOGD("%s", mac_argument);
 	system(mac_argument);
 	return 0;
 }
