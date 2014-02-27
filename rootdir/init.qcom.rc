@@ -4,7 +4,7 @@ on early-init
     mount debugfs debugfs /sys/kernel/debug
 
 on init
-    write /proc/sys/kernel/randomize_va_space 1
+    #write /proc/sys/kernel/randomize_va_space 1
 
     ## Setup storage
     mkdir /storage 0775 system sdcard_r
