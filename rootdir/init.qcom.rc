@@ -4,8 +4,6 @@ on early-init
     mount debugfs debugfs /sys/kernel/debug
 
 on init
-    write /proc/sys/kernel/randomize_va_space 1
-
     ## Setup storage
     mkdir /mnt/media_rw/sdcard0 0700 media_rw media_rw
     mkdir /mnt/media_rw/sdcard1 0700 media_rw media_rw
