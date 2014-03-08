@@ -833,14 +833,6 @@ String8 AudioHardware::getParameters(const String8& keys)
             param.addInt(String8("EVRC"), true );
         }
     }
-#ifdef QCOM_FM_ENABLED
-    key = String8("Fm-radio");
-    if ( param.get(key,value) == NO_ERROR ) {
-        if (IsFmon()||(mCurSndDevice == SND_DEVICE_FM_ANALOG_STEREO_HEADSET)){
-            param.addInt(String8("isFMON"), true );
-        }
-    }
-#endif
     key = String8(ECHO_SUPRESSION);
     if (param.get(key, value) == NO_ERROR) {
         value = String8("yes");
@@ -1926,12 +1918,6 @@ status_t AudioHardware::doRouting(AudioStreamInMSM72xx *input, int outputDevice)
         }
     }
 #ifdef QCOM_FM_ENABLED
-    if ((mFmFd == -1) && enableDgtlFmDriver ) {
-        enableFM();
-    } else if ((mFmFd != -1) && !enableDgtlFmDriver ) {
-        disableFM();
-    }
-
     if((outputDevices  == 0) && (FmA2dpStatus == true))
        new_snd_device = SND_DEVICE_FM_DIGITAL_BT_A2DP_HEADSET;
 #endif
@@ -2636,11 +2622,30 @@ bool AudioHardware::AudioStreamOutMSM72xx::checkStandby()
 status_t AudioHardware::AudioStreamOutMSM72xx::setParameters(const String8& keyValuePairs)
 {
     AudioParameter param = AudioParameter(keyValuePairs);
-    String8 key = String8(AudioParameter::keyRouting);
+    String8 key;
     status_t status = NO_ERROR;
     int device;
     ALOGV("AudioStreamOutMSM72xx::setParameters() %s", keyValuePairs.string());
 
+#ifdef QCOM_FM_ENABLED
+    float fm_volume;
+    key = String8(AudioParameter::keyFmVolume);
+    if (param.getFloat(key, fm_volume) == NO_ERROR) {
+        mHardware->setFmVolume(fm_volume);
+        param.remove(key);
+    }
+
+    key = String8(AudioParameter::keyHandleFm);
+    if (param.getInt(key, device) == NO_ERROR) {
+        if (device & AUDIO_DEVICE_OUT_FM)
+            mHardware->enableFM();
+        else
+            mHardware->disableFM();
+        param.remove(key);
+    }
+#endif
+
+    key = String8(AudioParameter::keyRouting);
     if (param.getInt(key, device) == NO_ERROR) {
         mDevices = device;
         ALOGV("set output routing %x", mDevices);

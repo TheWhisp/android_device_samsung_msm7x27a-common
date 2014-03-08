@@ -716,10 +716,10 @@ status_t AudioPolicyManager::setDeviceConnectionState(audio_devices_t device,
 #ifdef QCOM_FM_ENABLED
         if (device == AUDIO_DEVICE_OUT_FM) {
             if (state == AudioSystem::DEVICE_STATE_AVAILABLE) {
-                mOutputs.valueFor(mPrimaryOutput)->changeRefCount(AudioSystem::FM, 1);
+                mOutputs.valueFor(mPrimaryOutput)->changeRefCount(AudioSystem::MUSIC, 1);
             }
             else {
-                mOutputs.valueFor(mPrimaryOutput)->changeRefCount(AudioSystem::FM, -1);
+                mOutputs.valueFor(mPrimaryOutput)->changeRefCount(AudioSystem::MUSIC, -1);
             }
             if (newDevice == 0) {
                 newDevice = getDeviceForStrategy(STRATEGY_MEDIA, false);
@@ -1699,7 +1699,7 @@ status_t AudioPolicyManager::checkAndSetVolume(int stream, int index, audio_io_h
     // - the force flag is set
     if (volume != mOutputs.valueFor(output)->mCurVolume[stream] 
 #ifdef QCOM_FM_ENABLED
-            || (stream == AudioSystem::FM) 
+            || (stream == AudioSystem::MUSIC)
 #endif
             || force) {
         mOutputs.valueFor(output)->mCurVolume[stream] = volume;
@@ -1739,12 +1739,15 @@ status_t AudioPolicyManager::checkAndSetVolume(int stream, int index, audio_io_h
             mLastVoiceVolume = voiceVolume;
         }
 #ifdef QCOM_FM_ENABLED
-    } else if ((stream == AudioSystem::FM) && (mAvailableOutputDevices & AUDIO_DEVICE_OUT_FM)) {
+    } else if ((stream == AudioSystem::MUSIC) && (mAvailableOutputDevices & AUDIO_DEVICE_OUT_FM)) {
         float fmVolume = -1.0;
         fmVolume = (float)index/(float)mStreams[stream].mIndexMax;
         if (fmVolume >= 0 && output == mPrimaryOutput) {
-            ALOGV("Index = %d fmVolume = %f\n", index, fmVolume);
-            mpClientInterface->setFmVolume(fmVolume, delayMs);
+            AudioParameter param = AudioParameter();
+            param.addFloat(String8("fm_volume"), fmVolume);
+            ALOGV("checkAndSetVolume setParameters fm_volume, volume=:%f delay=:%d",fmVolume,delayMs*2);
+            //Double delayMs to avoid sound burst while device switch.
+            mpClientInterface->setParameters(mPrimaryOutput, param.toString(), delayMs*2);
             mLastVoiceVolume = fmVolume;
         }
 #endif
