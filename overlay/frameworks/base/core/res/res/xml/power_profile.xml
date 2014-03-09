@@ -20,10 +20,10 @@
 <device name="Android">
   <item name="none">0</item>
   <item name="screen.on">0.1</item>
-  <item name="bluetooth.active">10</item>
-  <item name="bluetooth.on">0.8</item>
-  <item name="bluetooth.at">35</item>
-  <item name="screen.full">100</item>
+  <item name="bluetooth.active">0.1</item>
+  <item name="bluetooth.on">0.1</item>
+  <item name="bluetooth.at">0.1</item>
+  <item name="screen.full">50</item>
   <item name="wifi.on">0.1</item>
   <item name="wifi.active">0.1</item>
   <item name="wifi.scan">0.1</item>
@@ -51,18 +51,18 @@
   </array>
   <item name="cpu.idle">1.0</item>
   <array name="cpu.active">
-      <value>51</value>
-      <value>58</value>
-      <value>63</value>
-      <value>70</value>
-      <value>80</value>
-      <value>120</value>
+      <value>50</value>
+      <value>56</value>
+      <value>60</value>
+      <value>69</value>
+      <value>78</value>
+      <value>119</value>
+      <value>123</value>
       <value>125</value>
-      <value>129</value>
+      <value>130</value>
       <value>132</value>
       <value>135</value>
-      <value>138</value>
-      <value>142</value>
+      <value>140</value>
   </array>
   <item name="battery.capacity">1000</item>
 </device>
