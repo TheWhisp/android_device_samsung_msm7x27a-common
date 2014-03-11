@@ -113,6 +113,9 @@ WIFI_DRIVER_MODULE_ARG := "suspend_mode=3 wow_mode=2 ath6kl_p2p=1 recovery_enabl
 BOARD_USES_LEGACY_RIL := true
 BOARD_RIL_CLASS := ../../../device/samsung/msm7x27a-common/ril/
 
+## Legacy touchscreen support
+BOARD_USE_LEGACY_TOUCHSCREEN := true
+
 ## Vold
 BOARD_VOLD_EMMC_SHARES_DEV_MAJOR := true
 BOARD_VOLD_MAX_PARTITIONS := 24
