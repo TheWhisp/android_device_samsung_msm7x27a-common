@@ -30,7 +30,7 @@
 
 extern "C" {
 #include <linux/msm_audio.h>
-#include <linux/ion.h>
+#include <linux/msm_ion.h>
 #include <linux/msm_audio_voicememo.h>
 #ifdef QCOM_VOIP_ENABLED
 #include <linux/msm_audio_mvs.h>
@@ -272,10 +272,10 @@ private:
             char af_quality[PROPERTY_VALUE_MAX];
             property_get("af.resampler.quality",af_quality,"0");
             if(strcmp("255",af_quality) == 0) {
-                ALOGV("SampleRate 48k");
+                ALOGD("SampleRate 48k");
                 return 48000;
             } else {
-                ALOGV("SampleRate 44.1k");
+                ALOGD("SampleRate 44.1k");
                 return 44100;
             }
         }
@@ -283,10 +283,10 @@ private:
             char af_quality[PROPERTY_VALUE_MAX];
             property_get("af.resampler.quality",af_quality,"0");
             if(strcmp("255",af_quality) == 0) {
-                ALOGV("Bufsize 5248");
+                ALOGD("Bufsize 5248");
                 return 5248;
             } else {
-                ALOGV("Bufsize 4800");
+                ALOGD("Bufsize 4800");
                 return 4800;
             }
         }
