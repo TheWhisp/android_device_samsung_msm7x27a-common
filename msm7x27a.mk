@@ -136,65 +136,6 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     device/samsung/msm7x27a-common/prebuilt/usr/idc/sec_touchscreen.idc:system/usr/idc/sec_touchscreen.idc
 
-## Properties
-PRODUCT_PROPERTY_OVERRIDES += \
-    rild.libpath=/system/lib/libsec-ril.so \
-    rild.libargs=-d/dev/smd0 \
-    ro.telephony.ril_class=SamsungRIL \
-    ro.telephony.ril.v3=datacall,icccardstatus,facilitylock \
-    ro.telephony.call_ring.multiple=false
-
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.bluetooth.remote.autoconnect=true \
-    ro.bluetooth.request.master=true \
-    ro.bt.bdaddr_path=/data/misc/bluedroid/bdaddr \
-    ro.qualcomm.bluetooth.dun=true \
-    ro.qualcomm.bluetooth.ftp=true
-
-PRODUCT_PROPERTY_OVERRIDES += \
-    debug.gr.numframebuffers=3 \
-    debug.egl.recordable.rgba8888=1 \
-    debug.composition.type=dyn \
-    debug.hwc.dynThreshold=1.9 \
-    ro.bq.gpu_to_cpu_unsupported=1 \
-    ro.max.fling_velocity=4000 \
-    ro.opengles.version=131072 \
-    ro.sf.lcd_density=160
-
-PRODUCT_PROPERTY_OVERRIDES += \
-    dalvik.vm.dexopt-data-only=1 \
-    dalvik.vm.jit.codecachesize=1 \
-    ro.config.low_ram=true
-
-PRODUCT_PROPERTY_OVERRIDES += \
-    lpa.decode=true
-
-PRODUCT_PROPERTY_OVERRIDES += \
-    com.qc.hardware=true \
-    dev.pm.dyn_sample_period=700000 \
-    dev.pm.dyn_samplingrate=1 \
-    ro.vendor.extension_library=/system/lib/libqc-opt.so
-
-PRODUCT_PROPERTY_OVERRIDES += \
-    persist.sys.usb.config=mtp,adb \
-    ro.vold.umsdirtyratio=50 \
-    persist.sys.vold.switchablepair=sdcard0,sdcard1
-
-PRODUCT_PROPERTY_OVERRIDES += \
-    persist.webview.provider=classic
-
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.cwm.enable_key_repeat=true
-
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.fm.analogpath.supported=true \
-    ro.fm.transmitter=false \
-    ro.fm.mulinst.recording.support=false
-
-PRODUCT_PROPERTY_OVERRIDES += \
-    wifi.interface=wlan0 \
-    wifi.supplicant_scan_interval=60
-
 ## Other
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=2
 PRODUCT_TAGS += dalvik.gc.type-precise
