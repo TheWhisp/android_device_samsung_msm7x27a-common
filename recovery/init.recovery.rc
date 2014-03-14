@@ -1,6 +1,5 @@
 on early-init
     start ueventd
-    start healthd
 
 on init
     export PATH /sbin
@@ -52,8 +51,6 @@ on init
     write /sys/class/android_usb/android0/iSerial ${ro.serialno}
 
 on boot
-    setprop recovery.perf.mode 0
-
     mount debugfs /sys/kernel/debug /sys/kernel/debug
 
     ifup lo
@@ -69,9 +66,6 @@ on boot
 service ueventd /sbin/ueventd
     critical
 
-service healthd /sbin/healthd -n
-    critical
-
 service recovery /sbin/recovery
 
 service setup_adbd /sbin/setup_adbd
@@ -79,7 +73,6 @@ service setup_adbd /sbin/setup_adbd
 
 service adbd /sbin/adbd recovery
     disabled
-    socket adbd stream 660 system system
 
 service rmt_storage /sbin/rmt_storage_recovery
     user root
@@ -103,9 +96,3 @@ on property:sys.storage.ums_enabled=0
     write /sys/class/android_usb/android0/enable 0
     write /sys/class/android_usb/android0/functions adb
     write /sys/class/android_usb/android0/enable ${service.adb.root}
-
-on property:recovery.perf.mode=1
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor performance
-
-on property:recovery.perf.mode=0
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor ondemand
