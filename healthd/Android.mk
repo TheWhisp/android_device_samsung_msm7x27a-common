@@ -1,3 +1,4 @@
+# Copyright (C) 2013 The Android Open Source Project
 # Copyright (C) 2013 The CyanogenMod Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,8 +15,9 @@
 
 LOCAL_PATH := $(call my-dir)
 
-SAMSUNG_TARGETS := jena jenad trebon
+include $(CLEAR_VARS)
+LOCAL_SRC_FILES := healthd_board_samsung-msm7x27a.cpp
+LOCAL_MODULE := libhealthd.msm7x27a
+LOCAL_C_INCLUDES := system/core/healthd
+include $(BUILD_STATIC_LIBRARY)
 
-ifneq ($(filter $(SAMSUNG_TARGETS),$(TARGET_DEVICE)),)
-include $(all-subdir-makefiles)
-endif

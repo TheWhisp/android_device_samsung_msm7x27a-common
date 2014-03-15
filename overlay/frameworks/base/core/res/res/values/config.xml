@@ -88,10 +88,10 @@
 
     <!-- Display low battery warning when battery level dips to this value.
          Also, the battery stats are flushed to disk when we hit this level.  -->
-    <integer name="config_criticalBatteryWarningLevel">10</integer>
+    <integer name="config_criticalBatteryWarningLevel">5</integer>
 
     <!-- Display low battery warning when battery level dips to this value -1 -->
-    <integer name="config_lowBatteryWarningLevel">20</integer>
+    <integer name="config_lowBatteryWarningLevel">15</integer>
 
    <string-array name="config_locationProviderPackageNames" translatable="false">
         <!-- The standard AOSP fused location provider -->
