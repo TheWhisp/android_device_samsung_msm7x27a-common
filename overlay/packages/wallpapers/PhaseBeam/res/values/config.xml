@@ -17,6 +17,6 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
     <!-- SGX540 is not powerful enough to handle horizontal scrolling without lag -->
-    <bool name="scrolling_enabled">false</bool>
+<!--    <bool name="scrolling_enabled">false</bool>-->
 
 </resources>
