@@ -179,7 +179,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.config.low_ram=true
 
 PRODUCT_PROPERTY_OVERRIDES += \
-    lpa.decode=true \
+    lpa.decode=false \
     use.non-omx.mp3.decoder=true \
     use.non-omx.aac.decoder=true
 
