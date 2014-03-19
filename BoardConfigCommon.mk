@@ -115,6 +115,9 @@ BOARD_RIL_CLASS := ../../../device/samsung/msm7x27a-common/ril/
 
 BOARD_MOBILEDATA_INTERFACE_NAME := "pdp0"
 
+## Legacy touchscreen support
+BOARD_USE_LEGACY_TOUCHSCREEN := true
+
 ## Vold
 BOARD_VOLD_EMMC_SHARES_DEV_MAJOR := true
 BOARD_VOLD_MAX_PARTITIONS := 24
