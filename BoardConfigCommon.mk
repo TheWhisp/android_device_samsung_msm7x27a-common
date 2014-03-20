@@ -134,7 +134,7 @@ BOARD_LPM_BOOT_ARGUMENT_NAME := androidboot.boot_pause
 BOARD_LPM_BOOT_ARGUMENT_VALUE := batt
 
 ## Use device specific modules
-TARGET_PROVIDES_LIBLIGHT := true
+TARGET_PROVIDES_LIBLIGHTS := true
 TARGET_PROVIDES_LIBAUDIO := true
 
 ## Override healthd HAL
