@@ -20,7 +20,7 @@ TARGET_NO_BOOTLOADER := true
 TARGET_NO_RADIOIMAGE := true
 BOARD_KERNEL_BASE := 0x00200000
 BOARD_KERNEL_PAGESIZE := 4096
-TARGET_KERNEL_SOURCE := kernel/samsung/caf
+TARGET_KERNEL_SOURCE := kernel/samsung/msm7x27a
 
 ## Platform
 TARGET_ARCH := arm
@@ -125,7 +125,7 @@ BOARD_LPM_BOOT_ARGUMENT_NAME := androidboot.boot_pause
 BOARD_LPM_BOOT_ARGUMENT_VALUE := batt
 
 ## Use device specific modules
-TARGET_PROVIDES_LIBLIGHT := true
+TARGET_PROVIDES_LIBLIGHTS := true
 TARGET_PROVIDES_LIBAUDIO := true
 
 ## Override healthd HAL
@@ -134,7 +134,6 @@ BOARD_HAL_STATIC_LIBRARIES := libhealthd.msm7x27a
 ## Recovery
 TARGET_RECOVERY_INITRC := device/samsung/msm7x27a-common/recovery/init.recovery.qcom.rc
 TARGET_RECOVERY_FSTAB := device/samsung/msm7x27a-common/rootdir/fstab.qcom
-BOARD_CUSTOM_RECOVERY_KEYMAPPING := ../../device/samsung/msm7x27a-common/recovery/recovery_keys.c
 TARGET_RECOVERY_LCD_BACKLIGHT_PATH := \"/sys/class/leds/lcd-backlight/brightness\"
 TARGET_RECOVERY_SWIPE := true
 TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
