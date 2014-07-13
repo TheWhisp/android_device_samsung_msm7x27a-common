@@ -199,13 +199,13 @@ PRODUCT_PROPERTY_OVERRIDES += \
     wifi.interface=wlan0 \
     wifi.supplicant_scan_interval=60
 
+$(call inherit-product, build/target/product/full.mk)
+$(call inherit-product, vendor/samsung/msm7x27a-common/blobs.mk)
+$(call inherit-product, device/common/gps/gps_eu_supl.mk)
+$(call inherit-product, frameworks/native/build/phone-hdpi-512-dalvik-heap.mk)
+
 ## Other
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=2
 PRODUCT_TAGS += dalvik.gc.type-precise
 PRODUCT_AAPT_CONFIG := normal mdpi hdpi
 PRODUCT_AAPT_PREF_CONFIG := mdpi
-
-$(call inherit-product, build/target/product/full.mk)
-$(call inherit-product, vendor/samsung/msm7x27a-common/blobs.mk)
-$(call inherit-product, device/common/gps/gps_eu_supl.mk)
-$(call inherit-product, frameworks/native/build/phone-hdpi-512-dalvik-heap.mk)
