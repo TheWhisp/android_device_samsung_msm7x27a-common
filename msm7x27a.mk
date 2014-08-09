@@ -18,14 +18,17 @@ DEVICE_PACKAGE_OVERLAYS += device/samsung/msm7x27a-common/overlay
 PRODUCT_PACKAGES += \
     libstagefrighthw \
     libmm-omxcore \
-    libOmxCore
+    libOmxCore \
+    libdashplayer
 
 ## Graphics
 PRODUCT_PACKAGES += \
     copybit.msm7x27a \
     gralloc.msm7x27a \
     hwcomposer.msm7x27a \
-    libtilerenderer
+    memtrack.msm7x27a \
+    libqdMetaData \
+    libgenlock
 
 ## Misc.
 PRODUCT_PACKAGES += \
@@ -156,38 +159,27 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.qualcomm.bluetooth.ftp=true
 
 PRODUCT_PROPERTY_OVERRIDES += \
-    debug.gr.numframebuffers=3 \
-    debug.egl.recordable.rgba8888=1 \
     debug.composition.type=dyn \
-    debug.hwc.dynThreshold=1.9 \
-    ro.bq.gpu_to_cpu_unsupported=1 \
-    ro.max.fling_velocity=4000 \
+    debug.gralloc.map_fb_memory=true \
+    persist.hwc.mdpcomp.enable=false \
+    debug.mdpcomp.logs=0 \
     ro.opengles.version=131072 \
     ro.sf.lcd_density=160
 
 PRODUCT_PROPERTY_OVERRIDES += \
     dalvik.vm.dexopt-data-only=1 \
     dalvik.vm.jit.codecachesize=1 \
-    ro.config.low_ram=true
+    ro.config.low_ram=false
 
 PRODUCT_PROPERTY_OVERRIDES += \
-    lpa.decode=true
-
-PRODUCT_PROPERTY_OVERRIDES += \
+    lpa.decode=true \
     com.qc.hardware=true \
-    dev.pm.dyn_sample_period=700000 \
-    dev.pm.dyn_samplingrate=1 \
     ro.vendor.extension_library=/system/lib/libqc-opt.so
 
 PRODUCT_PROPERTY_OVERRIDES += \
     persist.sys.usb.config=mtp,adb \
     ro.vold.umsdirtyratio=50 \
-    persist.sys.vold.switchablepair=sdcard0,sdcard1
-
-#PRODUCT_PROPERTY_OVERRIDES += \
-#    persist.webview.provider=classic
-
-PRODUCT_PROPERTY_OVERRIDES += \
+    persist.sys.vold.switchablepair=sdcard0,sdcard1 \
     ro.cwm.enable_key_repeat=true
 
 PRODUCT_PROPERTY_OVERRIDES += \

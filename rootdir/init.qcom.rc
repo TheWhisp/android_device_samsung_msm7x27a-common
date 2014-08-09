@@ -63,7 +63,7 @@ on boot
     ## Setup NFC
     chmod 0660 /dev/pn544
     chown nfc nfc /dev/pn544
-    setprop ro.nfc.port I2C
+    setprop ro.nfc.port "I2C"
 
     ## Lights
     chown system system /sys/class/misc/backlightnotification/enabled
