@@ -116,6 +116,10 @@ BOARD_LPM_BOOT_ARGUMENT_VALUE := batt
 TARGET_PROVIDES_LIBLIGHTS := true
 TARGET_PROVIDES_LIBAUDIO := true
 
+## Offline charging
+BOARD_LPM_BOOT_ARGUMENT_NAME := androidboot.boot_pause
+BOARD_LPM_BOOT_ARGUMENT_VALUE := batt
+
 ## Recovery
 TARGET_RECOVERY_INITRC := device/samsung/msm7x27a-common/recovery/init.recovery.qcom.rc
 TARGET_RECOVERY_FSTAB := device/samsung/msm7x27a-common/rootdir/fstab.qcom
