@@ -369,13 +369,6 @@ audio_devices_t AudioPolicyManager::getDeviceForStrategy(routing_strategy strate
             }
             break;
         }
-#ifdef QCOM_FM_ENABLED
-        if (mAvailableOutputDevices & AUDIO_DEVICE_OUT_FM) {
-            if (mForceUse[AudioSystem::FOR_MEDIA] == AudioSystem::FORCE_SPEAKER) {
-                device = AUDIO_DEVICE_OUT_SPEAKER;
-            }
-        }
-#endif
     break;
 
     case STRATEGY_SONIFICATION:
@@ -724,15 +717,13 @@ status_t AudioPolicyManager::setDeviceConnectionState(audio_devices_t device,
         if (device == AUDIO_DEVICE_OUT_FM) {
             if (state == AudioSystem::DEVICE_STATE_AVAILABLE) {
                 mOutputs.valueFor(mPrimaryOutput)->changeRefCount(AudioSystem::MUSIC, 1);
-                newDevice = (audio_devices_t)(getNewDevice(mPrimaryOutput, false) | AUDIO_DEVICE_OUT_FM);
-            } else {
+            }
+            else {
                 mOutputs.valueFor(mPrimaryOutput)->changeRefCount(AudioSystem::MUSIC, -1);
             }
-
-            AudioParameter param = AudioParameter();
-            param.addInt(String8("handle_fm"), (int)newDevice);
-            ALOGV("setDeviceConnectionState() setParameters handle_fm");
-            mpClientInterface->setParameters(mPrimaryOutput, param.toString());
+            if (newDevice == 0) {
+                newDevice = getDeviceForStrategy(STRATEGY_MEDIA, false);
+            }
         }
 #endif
         setOutputDevice(mPrimaryOutput, newDevice);
@@ -976,9 +967,6 @@ void AudioPolicyManager::setForceUse(AudioSystem::force_use usage, AudioSystem::
         break;
     case AudioSystem::FOR_MEDIA:
         if (config != AudioSystem::FORCE_HEADPHONES && config != AudioSystem::FORCE_BT_A2DP &&
-#ifdef QCOM_FM_ENABLED
-            config != AudioSystem::FORCE_SPEAKER &&
-#endif
             config != AudioSystem::FORCE_WIRED_ACCESSORY &&
             config != AudioSystem::FORCE_ANALOG_DOCK &&
             config != AudioSystem::FORCE_DIGITAL_DOCK && config != AudioSystem::FORCE_NONE &&
@@ -1710,6 +1698,9 @@ status_t AudioPolicyManager::checkAndSetVolume(int stream, int index, audio_io_h
     // - the float value returned by computeVolume() changed
     // - the force flag is set
     if (volume != mOutputs.valueFor(output)->mCurVolume[stream] 
+#ifdef QCOM_FM_ENABLED
+            || (stream == AudioSystem::MUSIC)
+#endif
             || force) {
         mOutputs.valueFor(output)->mCurVolume[stream] = volume;
         ALOGVV("checkAndSetVolume() for output %d stream %d, volume %f, delay %d", output, stream, volume, delayMs);
